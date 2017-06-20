@@ -1,7 +1,7 @@
-baseurl = "/"
+baseurl = "https://onceupondata.netlify.com/"
 relativeurls = true
 languageCode = "en-us"
-title = "A Hugo website"
+title = "Once Upon Data"
 theme = "hugo-lithium-theme"
 googleAnalytics = ""
 disqusShortname = ""
@@ -15,10 +15,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     url = "/about/"
 [[menu.main]]
     name = "GitHub"
-    url = "https://github.com/rstudio/blogdown"
-[[menu.main]]
-    name = "Twitter"
-    url = "https://twitter.com/rstudio"
+    url = "https://github.com/OmaymaS"
 
 [params]
     description = "A website built through Hugo and blogdown."
