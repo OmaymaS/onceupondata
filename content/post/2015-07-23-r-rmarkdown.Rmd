@@ -35,3 +35,8 @@ pie(
   init.angle = -50, border = NA
 )
 ```
+
+```{r}
+plot(1)
+```
+

@@ -1,4 +1,4 @@
-baseurl = "https://onceupondata.netlify.com/"
+baseurl = "http://www.onceupondata.com/"
 relativeurls = true
 languageCode = "en-us"
 title = "Once Upon Data"
