@@ -85,18 +85,6 @@ Source: local data frame [1,200 x 4]
 Here we will define regression functions to use for all the rows in the created dataframe. We will use **yr1900** as the predictor and **AverageTemperature** as the outcome. since it is hypothesized that the average temperature increases as we advance in time. The first model is a linear model. But since there are significant fluctuations in the average temperature over time, we will also define a generalized additive model to compare.
 
 
-```r
-#define function for linear model
-city_model_lm<-function(df) {
-        lm(AverageTemperature~yr1900, data=df)
-}
-
-#define function for GAM
-city_model_gam<-function(df) {
-        gam(AverageTemperature~s(yr1900), data=df)
-}
-```
-
 ### Fitting Regression Models
 
 Here we will use **map** function from **purrr** to fit both models for each row. Two new columns will be added to our dataframe. So now each row will also have lists of the linear model and GAM model details.
@@ -105,8 +93,8 @@ Here we will use **map** function from **purrr** to fit both models for each row
 ```r
 #create columns for the models
 cmodels <- by_city_month %>%
-        mutate(Model=map(data,city_model_lm),
-               ModelGam=map(data,city_model_gam)
+        mutate(Model=map(data, ~lm(AverageTemperature~yr1900, data=.x)),
+               ModelGam=map(data, ~gam(AverageTemperature~s(yr1900), data=.x))
                )
 ```
 
