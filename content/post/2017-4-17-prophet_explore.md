@@ -1,6 +1,6 @@
 ---
-layout: post
 title: 'Prophet Explore: A Simple Shiny App to Get Introduced to Prophet'
+date: 2017-04-17
 ---
 
 Last February, I read about [**prophet**](https://github.com/facebookincubator/prophet) package, which was released by Facebook's [**Core Data Science team**](https://research.fb.com/category/data-science/). I skimmed the published paper [**Forecasting at Scale**](https://facebookincubator.github.io/prophet/static/prophet_paper_20170113.pdf) quickly and I got the main concept. I also liked how the creators; Sean Taylor and Ben Letham were trying to empower analysts to produce high quality forecasts by offering them a flexible and configurable model that requires general understanding, but not necessarily deep knowledge about time series models.

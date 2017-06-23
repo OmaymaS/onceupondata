@@ -1,6 +1,6 @@
 ---
-layout: post
 title: A Glimpse into The Daily Life of a Data Scientist
+date: 2017-01-25
 ---
 
 
@@ -8,26 +8,22 @@ A couple of weeks ago, I had a discussion with a co-worker regarding a project I
 
 When I came back to work, I decided to share with other teams more details about my daily work to help them understand the nature of my job, set their expectations and avoid conflicts. So I sent them a shorter version of the following. 
 
-<br>
-
-
-
 <table>
 <tr>
 <td width="50%">
 <font color="dimgray "><i>"We are living in a Kafkaesque universe when we are doing data stuff." 
+<br>
+<i>Josh Wills,
+<br>
+<br>
+ Head of data engineering at Slack</i>
 <a href="https://youtu.be/-K9SjrWpeys?t=35">[1]</a></i>
-</font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Josh Wills,<br>
- Head of data engineering at Slack</i></td>
-<td width="50%"></td>
+</font>
+</td>
 </tr>
 </table>
 
-<br>
+
 
 As the  role of data scientists evolve in different industries, it might be hard for some individuals or teams to get exactly what data scientists are doing, what they need, what challenges they face and why do they take time to come up with the simplest outputs. Or simply **what on earth are we doing in the first place?**
 
@@ -59,16 +55,13 @@ So I will try to address the following questions:
 <td width="50%">
 <font color="dimgray "><i>"Practically, because of the diversity of data, you spend a lot of your time being a data janitor, before you can get to the cool, sexy things that got you into the field in the first place"
 <a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html?_r=1">[2]</a> </i>
+<br>
+<br>
+<i>Matt Mohebbi,<br>
+ Data scientist and co-founder of Iodine</i>
 </font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Matt Mohebbi,<br>
- Data scientist and co-founder of Iodine</i></td>
-<td width="50%"></td>
 </tr>
 </table>
-<br>
 
 
 Most of the time, the other teams see the tip of the iceberg. They see the results; the nice visualizations, the models, the patterns,..etc. However, as per a survey conducted by CrowdFlower<a href="http://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/#56343b777f75">[3]</a> , "data scientists spend, on average, around 80% of their time on preparing and managing data for analysis". And since this part is really critical and painful, researchers and data scientists try to create tools and systems to make it easier. For instance, [Taming Data](http://news.mit.edu/2017/system-finds-links-related-data-digital-files-querying-filtering-0119); a recent article on MIT news, mentions [Data Civilizer](http://cidrdb.org/cidr2017/papers/p44-deng-cidr17.pdf) system as a trial to *"decrease the grunt work needed to facilitate the analysis of
@@ -91,17 +84,15 @@ data in the wild"* <a href="http://cidrdb.org/cidr2017/papers/p44-deng-cidr17.pd
 <td width="50%">
 <font color="dimgray"><i>"It's an absolute myth that you can send an algorithm over raw data and have insights pop up."
 <a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html?_r=1">[2]</a> </i>
-</font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Jeffrey Heer, <br>
+<br>
+<br>
+<i>Jeffrey Heer, <br>
  Professor of computer science at the University of Washington and<br>  a co-founder of Trifacta
-</i></td>
-<td width="50%"></td>
+</i>
+</font>
+</td>
 </tr>
 </table>
-<br>
 
 Although data seems to be available all the time, one can still struggle to put it in the right format, which seems a simple quick task but the underlying known/unknown issues makes it really time consuming sometimes. From my experience, I could list some issues:
 
@@ -110,19 +101,23 @@ Although data seems to be available all the time, one can still struggle to put 
 
 <table>
 <tr>
-<td width="50%"><font color="dimgray "><i>"Reading data can be horrific."</i></font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Hadley Wickham, <br>
-Chief Scientist at RStudio</i></td>
-<td width="50%"></td>
+<td width="50%">
+  <font color="dimgray "><i>"Reading data can be horrific."</i>
+    <br>
+    <br>
+    <i>Hadley Wickham, <br>
+    Chief Scientist at RStudio</i>
+  </font>
+</td>
 </tr>
 </table>
-<br>
+
+
 
 
 It might be surprising that people keep developing packages in different languages just to read data in the desired format, handle missing values, handle encoding issues, assign the right data classes,..etc. Every time a new source is imported, a new issue might pop-up. One could identify it, spend some time tracking it or even lose one's sanity to find out!
+
+
 
 ### Preparing Data
 
@@ -133,16 +128,16 @@ It might be surprising that people keep developing packages in different languag
 <i>"Tidy datasets are all alike but every messy dataset is messy in its own way." 
 <a href="http://vita.had.co.nz/papers/tidy-data.pdf">[6]</a>
 </i>
-</font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Hadley Wickham, <br>
-Chief Scientist at RStudio</i></td>
-<td width="50%"></td>
+<br>
+<br>
+<i>Hadley Wickham, <br>
+Chief Scientist at RStudio</i>
+</font>
+</td>
 </tr>
 </table>
-<br>
+
+
 
 
 It is recommended, in almost every type of analysis to start with tidy data, i.e. data organized in form where:
@@ -162,15 +157,14 @@ In most of the cases, data does not come in such format or come from different s
 
 <table>
 <tr>
-<td width="50%"><font color="dimgray "><i>"You prepared your data for a certain purpose, but then you learn something new, and the purpose changes."<a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html?_r=1">[2]</a></i></font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Cathy O'Neil</i></td>
-<td width="50%"></td>
+<td width="50%"><font color="dimgray "><i>"You prepared your data for a certain purpose, but then you learn something new, and the purpose changes."<a href="https://www.nytimes.com/2014/08/18/technology/for-big-data-scientists-hurdle-to-insights-is-janitor-work.html?_r=1">[2]</a></i>
+<br>
+<br>
+<i>Cathy O'Neil</i>
+</font></td>
 </tr>
 </table>
-<br>
+
 
 During the journey of data analysis, one might need to change directions, go back to reinvestigate, or take a new path due to new discoveries, especially if one starts with exploratory analysis where everything is possible. 
 
@@ -187,16 +181,16 @@ The following issues makes things harder:
 
 
 <table>
-<tr>
-<td width="50%"><font color="dimgray "><i>"If you torture the data long enough, it will confess."</i></font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Ronald Coase</i></td>
-<td width="50%"></td>
-</tr>
+  <tr>
+    <td width="50%">
+      <font color="dimgray "><i>"If you torture the data long enough, it will confess."</i>
+        <br>
+        <br>
+        <i>Ronald Coase</i>
+      </font>
+    </td>
+  </tr>
 </table>
-<br>
 
 
 Data processing can be a really time consuming, it can even be a mutual torturing activity, however this depends on several factors such as data size, resources (hardware, software, internet connection!), purpose of analysis, using extracts versus live data, required accuracy and much more!
@@ -210,15 +204,15 @@ At some points, one does not have control over all the factors. One could get st
 
 <table>
 <tr>
-<td width="50%"><font color="dimgray "><i>"An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem."</i></font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>John Tukey</i></td>
-<td width="50%"></td>
+<td width="50%">
+<font color="dimgray "><i>"An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem."</i>
+<br>
+<br>
+<i>John Tukey</i>
+</font>
+</td>
 </tr>
 </table>
-<br>
 
 
 Here comes the final part where others see the results, and start to feel that the data scientists were not messing up. To get the desired results and avoid going into loops or repeating analysis a data scientist needs:
@@ -236,16 +230,15 @@ If a product manager, developers and business people are involved, I would like 
 
 <table>
 <tr>
-<td width="50%"><font color="dimgray "><i>"In real life there is no such person as the average man. There are only particular men, women and children, each with his or her inborn idiosyncrasies of mind and body."</i></font></td>
-<td width="50%"></td>
-</tr>
-<tr>
-<td width="50%" align="right"><i>Aldous Huxley<br>
-Brave New World Revisisted</i></td>
-<td width="50%"></td>
+<td width="50%"><font color="dimgray "><i>"In real life there is no such person as the average man. There are only particular men, women and children, each with his or her inborn idiosyncrasies of mind and body."</i>
+<br>
+<br>
+<i>Aldous Huxley<br>
+Brave New World Revisisted</i>
+</font></td>
 </tr>
 </table>
-<br>
+
 
 
 Whenever we deal with data; especially when it is about people, it is hard to summarize everything in one single measure. Sometimes people ask about the *"average number of users who do x"*, look at *R^2^*, or other measures and jump to a conclusion. But, in most of the cases, one needs to dig deeper, combine different measures, go to a lower level of granularity, etc. to make better inference and this may take some time.

@@ -1,5 +1,5 @@
 ---
-title: "The Power of (purrr,tidy,broom)-Exploring Climate Change Trends"
+title: "The Power of (purrr, tidy, broom)-Exploring Climate Change Trends"
 date: 2016-06-24
 ---
 
