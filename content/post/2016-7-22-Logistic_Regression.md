@@ -1,6 +1,6 @@
 ---
-layout: post
 title: Yet Another Post on Logistic Regression
+date: 2016-07-22
 ---
 
 
