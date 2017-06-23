@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.23" />
+
+
+<title> - Once Upon Data</title>
+<meta property="og:title" content=" - Once Upon Data">
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="../../../css/fonts.css" media="all">
+<link rel="stylesheet" href="../../../css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="../../../" class="nav-logo">
+    <img src="../../../images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="../../../about/">About</a></li>
+    
+    <li><a href="https://github.com/OmaymaS">GitHub</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">6 min read</span>
+    
+
+    <h1 class="article-title"></h1>
+
+    
+    <span class="article-date">0001/01/01</span>
+    
+
+    <div class="article-content">
+      
+
+<h1 id="exploring-climate-change-data-in-the-major-cities-1900-2014">Exploring Climate Change Data In The Major Cities (1900-2014)</h1>
+
+<h1 id="overview">Overview</h1>
+
+<p>This script explores the climate change data compiled by Berkeley Earth. It focuses on 100 major cities in the time interval 1900-2014.</p>
+
+<h1 id="data-processing">Data Processing</h1>
+
+<h2 id="reading-and-cleaning-data">Reading and Cleaning Data</h2>
+
+<p>Here we read the data of the major cities.</p>
+
+<pre><code class="language-r">#read data
+dat&lt;-read.csv(&quot;../data/GlobalLandTemperaturesByMajorCity.csv&quot;,
+              stringsAsFactors = F,header = T)
+
+#convert date column to class date
+dat$dt&lt;-as.Date(dat$dt,format= &quot;%Y-%m-%d&quot;)
+</code></pre>
+
+<h2 id="subseting-and-nesting-data">Subseting and Nesting Data</h2>
+
+<p>Here we:</p>
+
+<ul>
+<li><p>filter the data starting from year 1900</p></li>
+
+<li><p>extract the month from the date column</p></li>
+
+<li><p>add a new variable with the offset from year 1900 <em>(e.g. 2 corresponds to 1902)</em></p></li>
+
+<li><p>group the data by (City,Country,Month) and nest the rest of the variables</p></li>
+</ul>
+
+<p>Now we have a row for each (city,month) combination, and a nested dataframe containing the rest of the data. At the end, we will have a dataframe with 1200 rows <em>(100 city x 12 months)</em>.</p>
+
+<pre><code class="language-r">#nest data, 100 major cities
+by_city_month&lt;-dat %&gt;% 
+        filter(year(dt)&gt;=1900) %&gt;%
+        mutate(Month=month(dt)) %&gt;%
+        mutate(yr1900=year(dt)-1900) %&gt;%
+        group_by(City,Country,Month) %&gt;%
+        nest()
+
+by_city_month
+</code></pre>
+
+<pre><code>Source: local data frame [1,200 x 4]
+
+      City        Country Month             data
+     &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;
+1  Abidjan CÃ´te D'Ivoire     1 &lt;tbl_df [114,6]&gt;
+2  Abidjan CÃ´te D'Ivoire     2 &lt;tbl_df [114,6]&gt;
+3  Abidjan CÃ´te D'Ivoire     3 &lt;tbl_df [114,6]&gt;
+4  Abidjan CÃ´te D'Ivoire     4 &lt;tbl_df [114,6]&gt;
+5  Abidjan CÃ´te D'Ivoire     5 &lt;tbl_df [114,6]&gt;
+6  Abidjan CÃ´te D'Ivoire     6 &lt;tbl_df [114,6]&gt;
+7  Abidjan CÃ´te D'Ivoire     7 &lt;tbl_df [114,6]&gt;
+8  Abidjan CÃ´te D'Ivoire     8 &lt;tbl_df [114,6]&gt;
+9  Abidjan CÃ´te D'Ivoire     9 &lt;tbl_df [114,6]&gt;
+10 Abidjan CÃ´te D'Ivoire    10 &lt;tbl_df [113,6]&gt;
+..     ...            ...   ...              ...
+</code></pre>
+
+<h1 id="fitting-regression-models">Fitting regression Models</h1>
+
+<h2 id="defining-regression-functions">Defining Regression Functions</h2>
+
+<p>Here we will define regression functions to use for all the rows in the created dataframe. We will use <strong>yr1900</strong> as the predictor and <strong>AverageTemperature</strong> as the outcome. since it is hypothesized that the average temperature increases as we advance in time. The first model is a linear model. But since there are significant fluctuations in the average temperature over time, we will also define a generalized additive model to compare.</p>
+
+<pre><code class="language-r">#define function for linear model
+city_model_lm&lt;-function(df) {
+        lm(AverageTemperature~yr1900, data=df)
+}
+
+#define function for GAM
+city_model_gam&lt;-function(df) {
+        gam(AverageTemperature~s(yr1900), data=df)
+}
+</code></pre>
+
+<h2 id="fitting-the-models">Fitting The Models</h2>
+
+<p>Here we will use <strong>map</strong> function from <strong>purrr</strong> to fit both models for each row. Two new columns will be added to our dataframe. So now each row will also have lists of the linear model and GAM model details.</p>
+
+<pre><code class="language-r">#create columns for the models
+cmodels &lt;- by_city_month %&gt;%
+        mutate(Model=map(data,city_model_lm),
+               ModelGam=map(data,city_model_gam)
+               )
+</code></pre>
+
+<h2 id="extracting-models-details">Extracting Models&rsquo; Details</h2>
+
+<p>Here we will use <strong>broom</strong> functions:</p>
+
+<ul>
+<li><p><strong>glance</strong> to extract the details of the model</p></li>
+
+<li><p><strong>tidy</strong> to extract the model estimate</p></li>
+
+<li><p><strong>augment</strong> to extract the observations statistics.</p></li>
+</ul>
+
+<p>In addition we will extract <strong>r.squared</strong> from the linear model summary and <strong>AIC</strong> from the GAM model summary. All these values will be added in new columns, creating a new dataframe <em>cmodels_details</em>.</p>
+
+<pre><code class="language-r">cmodels_details&lt;-cmodels %&gt;%
+        mutate(
+                glance_lm=Model %&gt;% map(glance),  #model summary: rsquared...
+                rsq=glance_lm %&gt;% map_dbl(&quot;r.squared&quot;),  #extract rsquared
+                
+                glance_gam=ModelGam %&gt;% map(broom::glance), #GAM model summary
+                AIC_gam=glance_gam %&gt;% map_dbl(&quot;AIC&quot;), #extract AIC
+                
+                tidy_lm=Model %&gt;% map(tidy), #model estimate: coeff...
+                
+                augment_lm=Model %&gt;% map(augment), #observation stats: resid,hat...
+                res=augment_lm %&gt;% map(&quot;.resid&quot;) #extract resid
+               )
+</code></pre>
+
+<h3 id="r-squared-linear-model">R.squared (Linear Model)</h3>
+
+<p>Now if we arrange the new dataframe by the value of $R^2$, we can see that the highest value is around 0.75 for Jakarta in May.</p>
+
+<pre><code>Source: local data frame [6 x 4]
+
+      City   Country Month       rsq
+     &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1  Jakarta Indonesia     5 0.7508542
+2  Jakarta Indonesia     8 0.6973673
+3  Jakarta Indonesia     9 0.6918638
+4  Jakarta Indonesia     6 0.6740595
+5  Jakarta Indonesia     7 0.6739689
+6 Surabaya Indonesia    10 0.6463481
+</code></pre>
+
+<p>And if we look at the distribution of the values of $R^2$ in the following histogram, we will find that most of the values are very low and few values are higher than 0.6. This indicates that a linear model is not the best one to describe the change in our data. Consequently, interpreting the coefficients will not be indicative. And this goes with the nature of the data, which have high variations and fluctuations.</p>
+
+<pre><code class="language-r">ggplot(cmodels_details,aes(rsq))+
+        geom_histogram()+
+        labs(x=&quot;R^2&quot;,
+             y=&quot;Count&quot;)+
+        ggtitle(&quot;Distribution of R^2&quot;)
+</code></pre>
+
+<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-8-1.png" alt="" /></p>
+
+<p>If we want to look at the top cities with $R^2&gt;0.6$, we can see that we have 9 entries, 6 of them for Jakarta, 2 for Surabaya, and 1 in  Singapore.</p>
+
+<pre><code>Source: local data frame [9 x 13]
+
+       City   Country Month             data    Model         ModelGam
+      &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;   &lt;list&gt;           &lt;list&gt;
+1   Jakarta Indonesia     4 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+2   Jakarta Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+3   Jakarta Indonesia     6 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+4   Jakarta Indonesia     7 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+5   Jakarta Indonesia     8 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+6   Jakarta Indonesia     9 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+7 Singapore Singapore    11 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+8  Surabaya Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+9  Surabaya Indonesia    10 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+Variables not shown: glance_lm &lt;list&gt;, rsq &lt;dbl&gt;, glance_gam &lt;list&gt;,
+  AIC_gam &lt;dbl&gt;, tidy_lm &lt;list&gt;, augment_lm &lt;list&gt;, res &lt;list&gt;.
+</code></pre>
+
+<p>Let&rsquo;s look at the 6 months in Jakarta with relatively high $R^2$</p>
+
+<pre><code class="language-r">Jak&lt;-cmodels_details %&gt;% 
+        filter(rsq&gt;0.6 &amp; City %in% &quot;Jakarta&quot;) %&gt;%
+        unnest(data)%&gt;%
+        group_by(Month)
+        
+
+ggplot(Jak,aes(x=yr1900,y=AverageTemperature,colour=factor(Month)))+
+        geom_smooth(method=&quot;lm&quot;,se=F)+
+        geom_point(aes(alpha=0.3))+
+        facet_wrap(~Month,ncol=2)+
+        labs(x=&quot;Year Offset From 1900&quot;,
+             y=&quot;Average Temperature&quot;)+
+        ggtitle(&quot;Jakarta Linear Models (April-September)&quot;)+
+        guides(colour=FALSE,alpha=FALSE)
+</code></pre>
+
+<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-10-1.png" alt="" /></p>
+
+<h3 id="aic-gam-model">AIC (GAM Model)</h3>
+
+<p>Now if we look at the distribution of AIC for the GAM model, we can see that we have a reasonable number of low AIC values, which indicates that the GAM model might be a good fit for more entries.</p>
+
+<pre><code class="language-r">ggplot(cmodels_details,aes(AIC_gam))+
+        geom_histogram()+
+        labs(x=&quot;AIC&quot;,
+             y=&quot;Count&quot;)+
+        ggtitle(&quot;Distribution of AIC&quot;)
+</code></pre>
+
+<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-11-1.png" alt="" /></p>
+
+<p><em>We can work more on finding the best fit to describe our data. But the high variations caused by the change in measurement equipment or longitude/latitude can make this hard. And with more info, we might find a better way to fit for different time intervals since the measuring equipments changed over time.</em></p>
+
+<h1 id="plotting-avergae-temprature-change">Plotting Avergae Temprature Change</h1>
+
+<p>Having the dataframe organized in this way, we can unnest the data corresponding to each city and plot the average temperature change for each month. In the following example, we will look at <strong>Singapore</strong></p>
+
+<pre><code class="language-r">trendPolt&lt;-function(dd){
+        
+        ggplot(dd,aes(x=dt,y=AverageTemperature,
+                      colour=factor(Month)))+
+                stat_smooth(method=&quot;gam&quot;, formula=y~s(x),se=FALSE)+
+                labs(x=&quot;Year&quot;,
+                     y=&quot;Average Temperature&quot;)+
+                scale_color_discrete(name=&quot;Month&quot;,
+                                     breaks=c(1:12),
+                                     labels=month.abb)+
+                ggtitle( paste(dd$City[1],&quot;GAM fit&quot;,sep=&quot; &quot;))
+                }
+  
+##plot trends for a certain city
+
+city_data&lt;- cmodels_details %&gt;%
+        filter(City %in% &quot;Singapore&quot;) %&gt;%
+        unnest(data)
+        
+
+  
+trendPolt(city_data)
+</code></pre>
+
+<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-12-1.png" alt="" /><br />
+Now you can pick any city and plot the trends to see if they are going up or fluctuating heavily.</p>
+
+<h1 id="shiny-app">Shiny App</h1>
+
+<p>Here is also a <a href="https://omaymas.shinyapps.io/Exploring_Climate_Change_1900-2014/">Shiny App</a> to explore the data. You can plot the trend of the average temperature change over time from 1900-2014 in one or more of the 100 major cities. You can also select/deselect one or more months. In addition, you can choose to plot the GAM trend/s, point plot/s or both.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="../../../index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="../../../images/hugo-logo.png" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="../../../js/math-code.js"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+  }
+});
+</script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

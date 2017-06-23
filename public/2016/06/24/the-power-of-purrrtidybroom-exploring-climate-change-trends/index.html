@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>The Power of (purrr,tidy,broom)-Exploring Climate Change Trends</title>
+  <meta property="og:title" content="The Power of (purrr,tidy,broom)-Exploring Climate Change Trends" />
+  <meta name="twitter:title" content="The Power of (purrr,tidy,broom)-Exploring Climate Change Trends" />
+  <meta name="description" content="Few days ago, I wanted to explore the Climate Change: Earth Surface Temperature Data dataset published on Kaggle and originally compiled by Berkeley Earth. The dataset is relatively large as it contains entries from 1750-2014!
+This was shortly after watching Hadley Wickham&rsquo;s talk about managing many models with R. So I thought about using the power of purrr,tidy and broom to handle the climate change dataset and I decided to focus on the change in the average temprature in the 100 pre-selected major citis in the dataset.">
+  <meta property="og:description" content="Few days ago, I wanted to explore the Climate Change: Earth Surface Temperature Data dataset published on Kaggle and originally compiled by Berkeley Earth. The dataset is relatively large as it contains entries from 1750-2014!
+This was shortly after watching Hadley Wickham&rsquo;s talk about managing many models with R. So I thought about using the power of purrr,tidy and broom to handle the climate change dataset and I decided to focus on the change in the average temprature in the 100 pre-selected major citis in the dataset.">
+  <meta name="twitter:description" content="Few days ago, I wanted to explore the Climate Change: Earth Surface Temperature Data dataset published on Kaggle and originally compiled by Berkeley Earth. The dataset is relatively large as it …">
+  <meta name="author" content=""/>
+  <meta property="og:image" content="" />
+  <meta name="twitter:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/2016/06/24/the-power-of-purrrtidybroom-exploring-climate-change-trends/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Once Upon Data" />
+
+  <meta name="generator" content="Hugo 0.23" />
+  <link rel="canonical" href="../../../../2016/06/24/the-power-of-purrrtidybroom-exploring-climate-change-trends/" />
+  <link rel="alternate" href="../../../../index.xml" type="application/rss+xml" title="Once Upon Data">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../../../css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="../../../../css/pygment_highlights.css" />
+  <link rel="stylesheet" href="../../../../css/highlight.min.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../../../../">Once Upon Data</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="About" href="../../../../about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="GitHub" href="https://github.com/OmaymaS">GitHub</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Once Upon Data" href="../../../../">
+            <img class="avatar-img" src="" alt="Once Upon Data" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>The Power of (purrr,tidy,broom)-Exploring Climate Change Trends</h1>
+                
+                
+                  <span class="post-meta">
+  Posted on June 24, 2016
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>Few days ago, I wanted to explore the <a href="https://www.kaggle.com/berkeleyearth/climate-change-earth-surface-temperature-data">Climate Change: Earth Surface Temperature Data</a> dataset published on Kaggle and originally compiled by <a href="http://berkeleyearth.org/about/">Berkeley Earth</a>. The dataset is relatively large as it contains entries from 1750-2014!</p>
+
+<p>This was shortly after watching <a href="https://www.youtube.com/watch?v=rz3_FDVt9eg">Hadley Wickham&rsquo;s talk</a> about managing many models with R. So I thought about using the power of <strong>purrr</strong>,<strong>tidy</strong> and <strong>broom</strong> to handle the climate change dataset and I decided to focus on <strong>the change in the average temprature in the 100 pre-selected  major citis</strong>  in the dataset.</p>
+
+<p>In this post, I will share the highlights of my analysis to see how we can compress the dataset while keeping all the data in one place including the fitted models . At the end, I will also attach a Shiny App for further interactive exploration. So here we go!</p>
+
+<h2 id="earth-surface-temprature-dataset">Earth Surface Temprature Dataset</h2>
+
+<p>The dataset provided by Kaggle includes several files that group the temperature data by country,state,city and major city. Here I will focus on the major cities in the time interval (1900-2014), and the same process can be applied on other groups.</p>
+
+<h2 id="exploratory-data-analysis-main-steps">Exploratory Data Analysis (Main Steps)</h2>
+
+<p>The following are the main steps in exploring the trends of climate change in 100 cities.</p>
+
+<h3 id="reading-the-data">Reading The Data</h3>
+
+<p>First of all, I will the data from <em>GlobalLandTemperaturesByMajorCity.csv</em> and set the column that contains dates to class date. If we take a look at the dataframe, we will have the following summary:</p>
+
+<pre><code>'data.frame':   239177 obs. of  7 variables:
+ $ dt                           : Date, format: &quot;1849-01-01&quot; &quot;1849-02-01&quot; ...
+ $ AverageTemperature           : num  26.7 27.4 28.1 26.1 25.4 ...
+ $ AverageTemperatureUncertainty: num  1.44 1.36 1.61 1.39 1.2 ...
+ $ City                         : chr  &quot;Abidjan&quot; &quot;Abidjan&quot; &quot;Abidjan&quot; &quot;Abidjan&quot; ...
+ $ Country                      : chr  &quot;Côte D'Ivoire&quot; &quot;Côte D'Ivoire&quot; &quot;Côte D'Ivoire&quot; &quot;Côte D'Ivoire&quot; ...
+ $ Latitude                     : chr  &quot;5.63N&quot; &quot;5.63N&quot; &quot;5.63N&quot; &quot;5.63N&quot; ...
+ $ Longitude                    : chr  &quot;3.23W&quot; &quot;3.23W&quot; &quot;3.23W&quot; &quot;3.23W&quot; ...
+</code></pre>
+
+<h3 id="subseting-and-nesting-the-data">Subseting and Nesting The Data</h3>
+
+<p>Then I will:</p>
+
+<ul>
+<li><p>filter the data starting from year 1900</p></li>
+
+<li><p>extract the month from the date column</p></li>
+
+<li><p>add a new variable with the offset from year 1900 <em>(e.g. 2 corresponds to 1902)</em></p></li>
+
+<li><p>group the data by (City,Country,Month) and nest the rest of the variables</p></li>
+</ul>
+
+<p>Now we will have a row for each (city,month) combination, and a nested dataframe containing the rest of the data. At the end, we will have a dataframe with 1200 rows <em>(100 city x 12 months)</em>.</p>
+
+<pre><code class="language-r">#nest data, 100 major cities
+by_city_month&lt;-dat %&gt;% 
+        filter(year(dt)&gt;=1900) %&gt;%
+        mutate(Month=month(dt)) %&gt;%
+        mutate(yr1900=year(dt)-1900) %&gt;%
+        group_by(City,Country,Month) %&gt;%
+        nest()
+
+by_city_month
+</code></pre>
+
+<pre><code>Source: local data frame [1,200 x 4]
+
+      City        Country Month             data
+     &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;
+1  Abidjan Côte D'Ivoire     1 &lt;tbl_df [114,6]&gt;
+2  Abidjan Côte D'Ivoire     2 &lt;tbl_df [114,6]&gt;
+3  Abidjan Côte D'Ivoire     3 &lt;tbl_df [114,6]&gt;
+4  Abidjan Côte D'Ivoire     4 &lt;tbl_df [114,6]&gt;
+5  Abidjan Côte D'Ivoire     5 &lt;tbl_df [114,6]&gt;
+6  Abidjan Côte D'Ivoire     6 &lt;tbl_df [114,6]&gt;
+7  Abidjan Côte D'Ivoire     7 &lt;tbl_df [114,6]&gt;
+8  Abidjan Côte D'Ivoire     8 &lt;tbl_df [114,6]&gt;
+9  Abidjan Côte D'Ivoire     9 &lt;tbl_df [114,6]&gt;
+10 Abidjan Côte D'Ivoire    10 &lt;tbl_df [113,6]&gt;
+..     ...            ...   ...              ...
+</code></pre>
+
+<h3 id="defining-regression-functions">Defining Regression Functions</h3>
+
+<p>Here we will define regression functions to use for all the rows in the created dataframe. We will use <strong>yr1900</strong> as the predictor and <strong>AverageTemperature</strong> as the outcome. since it is hypothesized that the average temperature increases as we advance in time. The first model is a linear model. But since there are significant fluctuations in the average temperature over time, we will also define a generalized additive model to compare.</p>
+
+<pre><code class="language-r">#define function for linear model
+city_model_lm&lt;-function(df) {
+        lm(AverageTemperature~yr1900, data=df)
+}
+
+#define function for GAM
+city_model_gam&lt;-function(df) {
+        gam(AverageTemperature~s(yr1900), data=df)
+}
+</code></pre>
+
+<h3 id="fitting-regression-models">Fitting Regression Models</h3>
+
+<p>Here we will use <strong>map</strong> function from <strong>purrr</strong> to fit both models for each row. Two new columns will be added to our dataframe. So now each row will also have lists of the linear model and GAM model details.</p>
+
+<pre><code class="language-r">#create columns for the models
+cmodels &lt;- by_city_month %&gt;%
+        mutate(Model=map(data,city_model_lm),
+               ModelGam=map(data,city_model_gam)
+               )
+</code></pre>
+
+<h3 id="extracting-models-details">Extracting Models&rsquo; Details</h3>
+
+<p>Here we will use <strong>broom</strong> functions:</p>
+
+<ul>
+<li><p><strong>glance</strong> to extract the details of the model</p></li>
+
+<li><p><strong>tidy</strong> to extract the model estimate</p></li>
+
+<li><p><strong>augment</strong> to extract the observations statistics.</p></li>
+</ul>
+
+<p>In addition we will extract <strong>r.squared</strong> from the linear model summary and <strong>AIC</strong> from the GAM model summary. All these values will be added in new columns, creating a new dataframe <strong>cmodels_details</strong>.</p>
+
+<pre><code class="language-r">cmodels_details&lt;-cmodels %&gt;%
+        mutate(
+                glance_lm=Model %&gt;% map(glance),  #model summary: rsquared...
+                rsq=glance_lm %&gt;% map_dbl(&quot;r.squared&quot;),  #extract rsquared
+                
+                glance_gam=ModelGam %&gt;% map(broom::glance), #GAM model summary
+                AIC_gam=glance_gam %&gt;% map_dbl(&quot;AIC&quot;), #extract AIC
+                
+                tidy_lm=Model %&gt;% map(tidy), #model estimate: coeff...
+                
+                augment_lm=Model %&gt;% map(augment), #observation stats: resid,hat...
+                res=augment_lm %&gt;% map(&quot;.resid&quot;) #extract resid
+               )
+</code></pre>
+
+<h3 id="checking-fitted-models">Checking Fitted Models</h3>
+
+<h4 id="r-squared-linear-model">R.squared (Linear Model)</h4>
+
+<p>Now if we arrange the new dataframe by the value of <strong>R^2</strong>, we can see that the highest value is around 0.75 for Jakarta in May.</p>
+
+<pre><code>Source: local data frame [6 x 4]
+
+      City   Country Month       rsq
+     &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;     &lt;dbl&gt;
+1  Jakarta Indonesia     5 0.7508542
+2  Jakarta Indonesia     8 0.6973673
+3  Jakarta Indonesia     9 0.6918638
+4  Jakarta Indonesia     6 0.6740595
+5  Jakarta Indonesia     7 0.6739689
+6 Surabaya Indonesia    10 0.6463481
+</code></pre>
+
+<p>And if we look at the distribution of the values of <strong>R^2</strong> in the following histogram, we will find that most of the values are very low and few values are higher than 0.6. This indicates that a linear model is not the best one to describe the change in our data. Consequently, interpreting the coefficients will not be indicative. And this goes with the nature of the data, which have high variations and fluctuations.</p>
+
+<p><img src="../../../../post/2016-06-29-ClimateChangeExp_Data/unnamed-chunk-9-1.png" alt="" /></p>
+
+<p>If we want to look at the top cities with $R^2&gt;0.6$, we can see that we have 9 entries, 6 of them for Jakarta, 2 for Surabaya, and 1 in  Singapore.</p>
+
+<pre><code>Source: local data frame [9 x 13]
+
+       City   Country Month             data    Model         ModelGam
+      &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;   &lt;list&gt;           &lt;list&gt;
+1   Jakarta Indonesia     4 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+2   Jakarta Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+3   Jakarta Indonesia     6 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+4   Jakarta Indonesia     7 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+5   Jakarta Indonesia     8 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+6   Jakarta Indonesia     9 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+7 Singapore Singapore    11 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+8  Surabaya Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+9  Surabaya Indonesia    10 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
+Variables not shown: glance_lm &lt;list&gt;, rsq &lt;dbl&gt;, glance_gam &lt;list&gt;,
+  AIC_gam &lt;dbl&gt;, tidy_lm &lt;list&gt;, augment_lm &lt;list&gt;, res &lt;list&gt;.
+</code></pre>
+
+<p>Let&rsquo;s look at the 6 months in Jakarta with relatively high $R^2$. We can see that the linear model can somehow describe the variation in the data. But we will also check the GAM.</p>
+
+<p><img src="../../../../post/2016-06-29-ClimateChangeExp_Data/unnamed-chunk-11-1.png" alt="" /></p>
+
+<h4 id="aic-gam-model">AIC (GAM Model)</h4>
+
+<p>Now if we look at the distribution of AIC for the GAM model, we can see that we have a reasonable number of low AIC values, which indicates that the GAM model might be a good fit for more entries.</p>
+
+<p><img src="../../../../post/2016-06-29-ClimateChangeExp_Data/unnamed-chunk-12-1.png" alt="" /></p>
+
+<p><em>We can work more on finding the best fit to describe our data. But the high variations caused by the change in measurement equipment or longitude/latitude can make this hard. And with more info, we might find a better way to fit for different time intervals since the measuring equipments changed over time.</em></p>
+
+<h3 id="plotting-avergae-temprature-change">Plotting Avergae Temprature Change</h3>
+
+<p>Having the dataframe organized in this way, we can unnest the data corresponding to each city and plot the trend of the average temperature change for each month. For example if we take <strong>Singapore</strong>, we can unnest the corresponding data and pass <strong>city_data</strong> to the plotting function.</p>
+
+<pre><code class="language-r">city_data&lt;- cmodels_details %&gt;%
+        filter(City %in% &quot;Singapore&quot;) %&gt;%
+        unnest(data)
+</code></pre>
+
+<p><img src="../../../../post/2016-06-29-ClimateChangeExp_Data/unnamed-chunk-14-1.png" alt="" /></p>
+
+<p>But this is just one example. We might want to view the trends in fewer months or compare several cities, so an interactive graph would be a good solution for further exploration.</p>
+
+<h2 id="interactive-exploration-shiny-app">Interactive Exploration (Shiny App)</h2>
+
+<p>Now you can use this Shiny App to explore the data. You can plot the trend of the average temperature change over time from 1900-2014 in one or more of the 100 major cities. You can also select/deselect one or more months. In addition, you can choose to plot the GAM trend/s, point plot/s or both.</p>
+
+<iframe  src= "https://omaymas.shinyapps.io/Exploring_Climate_Change_1900-2014/"  style="border: none; width: 900px; height: 800px" ></iframe>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+          <li class="previous">
+            <a href="../../../../2015/07/23/hello-r-markdown/" data-toggle="tooltip" data-placement="top" title="Hello R Markdown">&larr; Previous Post</a>
+          </li>
+        
+        
+          <li class="next">
+            <a href="../../../../2016/12/30/a-plain-markdown-post/" data-toggle="tooltip" data-placement="top" title="A Plain Markdown Post">Next Post &rarr;</a>
+          </li>
+        
+      </ul>
+
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+          &nbsp;&bull;&nbsp;
+          2016
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="../../../../">Once Upon Data</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.23</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="../../../../js/main.js"></script>
+<script src="../../../../js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+<script src="../../../../js/load-photoswipe.js"></script>
+
+
+
+  </body>
+</html>
+
