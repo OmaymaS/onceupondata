@@ -3,8 +3,8 @@ relativeurls = true
 languageCode = "en-us"
 title = "Once Upon Data"
 theme = "beautifulhugo"
-googleAnalytics = ""
-disqusShortname = ""
+googleAnalytics = "UA-102384456-1"
+disqusShortname = "omaymaS"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
