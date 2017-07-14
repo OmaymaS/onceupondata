@@ -11,7 +11,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     post = "/:year/:month/:day/:slug/"
     
 [Author]
-    stackoverflow = "https://stackoverflow.com/users/6535741/omaymas"
+    stackoverflow = "users/6535741/omaymas"
     github = "OmaymaS"
 
 [[menu.main]]
