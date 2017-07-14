@@ -18,7 +18,9 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
     url = "https://github.com/OmaymaS"
 
 [params]
-    description = "A website built through Hugo and blogdown."
+    description = ""
+    rss = true
+    comments = true
 
     # options for highlight.js (version, additional languages, and theme)
     highlightjsVersion = "9.11.0"
