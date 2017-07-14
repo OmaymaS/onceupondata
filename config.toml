@@ -9,6 +9,10 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [permalinks]
     post = "/:year/:month/:day/:slug/"
+    
+[Author]
+    stackoverflow = "https://stackoverflow.com/users/6535741/omaymas"
+    github = "OmaymaS"
 
 [[menu.main]]
     name = "About"
