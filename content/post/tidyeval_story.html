@@ -1,0 +1,277 @@
+---
+date: 2017-08-12
+title: My First Steps into The World of Tidyeval
+subtitle: "Bang Bang!!"
+tags: [R, Tidyeval]
+---
+
+
+
+<p>A couple on months ago, Tidyeval was something that I passed by, but didn’t have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn’t sure how to pass a variable column names to <code>purrr::map</code>, so I opened an issue; <a href="https://github.com/tidyverse/purrr/issues/339">purrr::map() support for SE/variable column names?</a>.</p>
+<p><a href="https://github.com/jennybc">Jenny Bryan</a> and <a href="https://github.com/lionel-">Lionel Henry</a> guided me to different ways to approach the problem, mentioning <strong><a href="https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html">Tidyeval</a></strong>. So it was time I got to know it for real. I have to say that I am still exploring its capabilities and use cases, but this post is about my first steps!</p>
+<div id="what-i-wanted-to-do" class="section level3">
+<h3>What I Wanted to Do</h3>
+<p>What led me to Tidyeval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column <code>Tags_terms</code> in a dataframe <code>dat_r</code>, that I wanted to mutate with the count of tags in each row. Pretty simple!</p>
+<pre class="r"><code>library(dplyr)
+library(purrr)
+
+dat_r &lt;- tribble(
+  ~ Tags_terms,
+  c(&quot;R&quot;, &quot;ggplot2&quot;,&quot;dplyr&quot;),
+  &quot;tidyverse&quot;,
+  c(&quot;dplyr&quot;, &quot;lubridate&quot;)
+)</code></pre>
+<p>The straightforward way was:</p>
+<pre class="r"><code>dat_r %&gt;% 
+  mutate(tags_count = map_int(Tags_terms, length))</code></pre>
+<pre><code># A tibble: 3 x 2
+  Tags_terms tags_count
+      &lt;list&gt;      &lt;int&gt;
+1  &lt;chr [3]&gt;          3
+2  &lt;chr [1]&gt;          1
+3  &lt;chr [2]&gt;          2</code></pre>
+</div>
+<div id="which-limitations-i-faced" class="section level3">
+<h3>Which Limitations I Faced</h3>
+<p>However, I wanted to be able to pass the column as a variable, because it could be <code>Tags_terms</code> or any other name. Moreover, I wanted to have the option of wrapping this into a function. So I wondered whether there was a way to achieve this. Definitely I knew that doing something like the following was not the right thing. The column name would not be seen. Instead, <code>cname</code> would be seen as a character vector with 1 element!</p>
+<pre class="r"><code>cname &lt;- &quot;Tags_terms&quot;
+dat_r %&gt;% 
+  mutate(tags_count = map_int(cname, length))</code></pre>
+<pre><code># A tibble: 3 x 2
+  Tags_terms tags_count
+      &lt;list&gt;      &lt;int&gt;
+1  &lt;chr [3]&gt;          1
+2  &lt;chr [1]&gt;          1
+3  &lt;chr [2]&gt;          1</code></pre>
+</div>
+<div id="how-tidyeval-helped-me" class="section level3">
+<h3>How Tidyeval Helped Me</h3>
+<p>At this point, I opened the issue and one of the suggestion was to use <strong><code>quo</code></strong> which <em>“quotes its input rather than evaluating it”</em> then <code>!!</code> to unquote the input to be evaluated. This seems confusing at the beginning, but let’s see how it works!</p>
+<p>As we can see, <code>cname</code> quotes the input <code>Tags_terms</code> and returns a <code>quosure</code> <em>(a special type of formula)</em>. Then it gets unquoted using <code>!!</code>, and that’s how we get the desired result.</p>
+<pre class="r"><code>cname &lt;- quo(Tags_terms)
+print(cname)</code></pre>
+<pre><code>&lt;quosure: global&gt;
+~Tags_terms</code></pre>
+<pre class="r"><code>dat_r %&gt;% 
+  mutate(tags_count = map_int(!!cname, length))</code></pre>
+<pre><code># A tibble: 3 x 2
+  Tags_terms tags_count
+      &lt;list&gt;      &lt;int&gt;
+1  &lt;chr [3]&gt;          3
+2  &lt;chr [1]&gt;          1
+3  &lt;chr [2]&gt;          2</code></pre>
+<div id="turning-the-code-into-a-function" class="section level4">
+<h4>Turning the code into a function</h4>
+<p>Having this kind of flexibility, we can create general functions like <code>add_tag_count</code> to reuse for the same purpose. But inside a function, we use <strong><code>enquo</code></strong> which <em>“sees what the user typed, and returns that value as a quosure”</em>.</p>
+<pre class="r"><code>add_tag_count &lt;- function(x, cname){
+  
+  cname &lt;- enquo(cname)
+
+  x %&gt;% 
+    mutate(tags_count = map_int(!!cname, length))
+}</code></pre>
+<p>So here we can see how it works properly with <code>dat_books</code>.</p>
+<pre class="r"><code>dat_books &lt;- tribble(
+  ~ genre,
+  c(&quot;fiction&quot;, &quot;comedy&quot;),
+  c(&quot;tragedy&quot;, &quot;fiction&quot;, &quot;fantasy&quot;),
+  c(&quot;satire&quot;, &quot;tragedy&quot;)
+)
+
+add_tag_count(dat_books, genre)</code></pre>
+<pre><code># A tibble: 3 x 2
+      genre tags_count
+     &lt;list&gt;      &lt;int&gt;
+1 &lt;chr [2]&gt;          2
+2 &lt;chr [3]&gt;          3
+3 &lt;chr [2]&gt;          2</code></pre>
+</div>
+<div id="varying-the-name-of-the-output-variable" class="section level4">
+<h4>Varying the name of the output variable</h4>
+<p>In the previous function, the new column will always be called <code>tags_count</code>. What if we wanted to call it <code>genre_count</code> in the <code>dat_books</code> example, or any other arbitrary name?</p>
+<p>We need to do the following:</p>
+<ul>
+<li><p>Use <code>quo_name()</code> to convert the input expression to string</p></li>
+<li><p>Use <code>:=</code> helper provided by <code>rlang</code></p></li>
+</ul>
+<pre class="r"><code>add_tag_count &lt;- function(x, cname, count_col){
+  
+  cname &lt;- enquo(cname)
+  
+  count_col &lt;- enquo(count_col)
+  count_col_name &lt;- quo_name(count_col)
+
+  x %&gt;% 
+    mutate(!!count_col_name := map_int(!!cname, length))
+}</code></pre>
+<p>And now we can pass both the list column name <code>genre</code>, and the desired output name <code>genre_count</code>.</p>
+<pre class="r"><code>add_tag_count(dat_books, genre, genre_count)</code></pre>
+<pre><code># A tibble: 3 x 2
+      genre genre_count
+     &lt;list&gt;       &lt;int&gt;
+1 &lt;chr [2]&gt;           2
+2 &lt;chr [3]&gt;           3
+3 &lt;chr [2]&gt;           2</code></pre>
+</div>
+</div>
+<div id="other-examples-using-tidyeval" class="section level2">
+<h2>Other Examples using Tidyeval</h2>
+<p>After getting acquainted with Tidy eval, I had other situations when I wanted to to write general functions to avoid repetition. So here are two examples:</p>
+<div id="example-1-capturing-multiple-variables" class="section level3">
+<h3>Example 1 : Capturing multiple variables</h3>
+<p>Here I wanted to write a function that:</p>
+<ul>
+<li><p>takes multiple columns</p></li>
+<li><p>group_by the given columns</p></li>
+<li><p>provides the count of each group and the percentage <em>(if TRUE)</em>, descendingly ordered</p></li>
+</ul>
+<p>So to capture multiple variables, we can:</p>
+<ul>
+<li><p>use <strong><code>quos()x</code></strong> to capture all the … as a list of formulas.</p></li>
+<li><p>use <strong><code>!!!</code></strong> to splice the arguments into <strong><code>group_by()</code></strong></p></li>
+</ul>
+<pre class="r"><code>freq_tbl &lt;- function(df, ..., percent = TRUE, freq){
+  group &lt;- quos(...)
+  
+  out &lt;- df %&gt;% 
+    group_by(!!!group) %&gt;% 
+    summarise(freq = n()) %&gt;% 
+    arrange(desc(freq)) %&gt;% 
+    ungroup()
+  
+  if(percent == TRUE){
+    out &lt;- out %&gt;% 
+      mutate(percentage = 100*freq/sum(freq))
+  }
+  return(out)
+}</code></pre>
+<p>Now we can use it with any number of variables. For instance, if we use <code>starwars</code> dataset, we pass any number of columns.</p>
+<p>Here we pass <code>homeworld</code> &amp; <code>species</code> to group by.</p>
+<pre class="r"><code>starwars_gp2 &lt;- starwars %&gt;% 
+  freq_tbl(homeworld, species, percent = F)
+
+head(starwars_gp2)</code></pre>
+<pre><code># A tibble: 6 x 3
+  homeworld species  freq
+      &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;
+1  Tatooine   Human     8
+2     Naboo   Human     5
+3      &lt;NA&gt;   Human     5
+4  Alderaan   Human     3
+5     Naboo  Gungan     3
+6  Corellia   Human     2</code></pre>
+<p>Similarly, we can simply add <code>gender</code> or any other column.</p>
+<pre class="r"><code>starwars_gp3 &lt;- starwars %&gt;% 
+  freq_tbl(homeworld, species, gender) 
+head(starwars_gp3)</code></pre>
+<pre><code># A tibble: 6 x 5
+  homeworld species gender  freq percentage
+      &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;
+1  Tatooine   Human   male     6   6.896552
+2      &lt;NA&gt;   Human   male     4   4.597701
+3     Naboo  Gungan   male     3   3.448276
+4     Naboo   Human female     3   3.448276
+5  Alderaan   Human   male     2   2.298851
+6  Corellia   Human   male     2   2.298851</code></pre>
+</div>
+<div id="example-2-ngrams-table" class="section level3">
+<h3>Example 2: Ngrams Table</h3>
+<p>In this case, I wanted to create unigrams. bigrams and trigrams tables with counts In the normal case, this means writing identical lines three times <em>(as shown below)</em>, with minor changes in the type of ngrams, and the name of the output columns.</p>
+<pre class="r"><code>library(tidytext)
+library(janeaustenr)
+
+
+# unigram table
+unigrams &lt;- data_frame(txt = prideprejudice) %&gt;%
+  unnest_tokens(ngram, txt, token = &quot;ngrams&quot;, n = 1) %&gt;% 
+  rename(unigram = ngram) %&gt;% 
+  group_by(unigram) %&gt;% 
+  summarise(unigram_freq = n()) %&gt;% 
+  arrange(desc(unigram_freq))
+
+# bigram table
+bigrams &lt;- data_frame(txt = prideprejudice) %&gt;%
+  unnest_tokens(ngram, txt, token = &quot;ngrams&quot;, n = 2) %&gt;% 
+  rename(bigram = ngram) %&gt;% 
+  group_by(bigram) %&gt;% 
+  summarise(bigram_freq = n()) %&gt;% 
+  arrange(desc(bigram_freq))
+
+# bigram table
+trigram &lt;- data_frame(txt = prideprejudice) %&gt;%
+  unnest_tokens(ngram, txt, token = &quot;ngrams&quot;, n = 3) %&gt;% 
+  rename(trigram = ngram) %&gt;% 
+  group_by(trigram) %&gt;% 
+  summarise(trigram_freq = n()) %&gt;% 
+  arrange(desc(trigram_freq))</code></pre>
+<p><strong>So how can we wrap this into a general function?</strong></p>
+<p>Ideally, we would like to write a function that takes:</p>
+<ul>
+<li><p><code>n</code> : the type of ngram</p></li>
+<li><p><code>gram_col</code> : the name of the ngram column</p></li>
+<li><p><code>freq_col</code> : the name of the ngram count column</p></li>
+</ul>
+<p>And this can be achieved as follows:</p>
+<pre class="r"><code>create_gram_table &lt;- function(input_txt, n, gram_col, freq_col){
+  
+  gram_col &lt;- enquo(gram_col)
+  gram_col_name &lt;- quo_name(gram_col)
+  
+  freq_col &lt;- enquo(freq_col)
+  freq_col_name &lt;- quo_name(freq_col)
+  
+  x &lt;- data_frame(txt = input_txt)
+  
+  g &lt;- tidytext::unnest_tokens(x, ngram, txt,
+                               token = &quot;ngrams&quot;, n = n) %&gt;%
+    rename(!!gram_col_name := ngram) %&gt;%
+    group_by(!!gram_col) %&gt;%
+    summarise(!!freq_col_name := n()) %&gt;%
+    arrange(desc( !!freq_col))
+  
+  return(g)
+}</code></pre>
+<p>So now instead of the duplication, we can use <code>create_gram_table</code>, which gives us the desired output with less repetition.</p>
+<pre class="r"><code>create_gram_table(prideprejudice, 1, unigram, unigram_freq) %&gt;% head</code></pre>
+<pre><code># A tibble: 6 x 2
+  unigram unigram_freq
+    &lt;chr&gt;        &lt;int&gt;
+1     the         4331
+2      to         4162
+3      of         3610
+4     and         3585
+5     her         2203
+6       i         2065</code></pre>
+<pre class="r"><code>create_gram_table(prideprejudice, 2, bigram, bigram_freq) %&gt;% head</code></pre>
+<pre><code># A tibble: 6 x 2
+  bigram bigram_freq
+   &lt;chr&gt;       &lt;int&gt;
+1 of the         464
+2  to be         443
+3 in the         382
+4   i am         302
+5 of her         260
+6 to the         252</code></pre>
+<pre class="r"><code>create_gram_table(prideprejudice, 3, trigram, trigram_freq) %&gt;% head</code></pre>
+<pre><code># A tibble: 6 x 2
+        trigram trigram_freq
+          &lt;chr&gt;        &lt;int&gt;
+1     i am sure           62
+2      i do not           59
+3    as soon as           55
+4 she could not           50
+5   that he had           37
+6  in the world           34</code></pre>
+</div>
+</div>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<p><strong>So those were my first steps in the world of the Tidyeval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I’ll keep learning about it. And I’d be grateful to receive any feedback regarding the use cases I showed and better ways to handle them</strong></p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><p><a href="http://dplyr.tidyverse.org/articles/programming.html#warm-up">Programming with dplyr</a></p></li>
+<li><p><a href="https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html">Tidy evaluation</a></p></li>
+</ul>
+</div>
