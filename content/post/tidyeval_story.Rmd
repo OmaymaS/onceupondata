@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
 ```
 
 
-A couple on months ago, Tidyeval was something that I passed by, but didn't have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn't sure how to pass a variable column names to `purrr::map`, so I opened an issue; [purrr::map() support for SE/variable column names?](https://github.com/tidyverse/purrr/issues/339).
+A couple of months ago, Tidyeval was something that I passed by, but didn't have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn't sure how to pass a variable column names to `purrr::map`, so I opened an issue; [purrr::map() support for SE/variable column names?](https://github.com/tidyverse/purrr/issues/339).
 
 [Jenny Bryan](https://github.com/jennybc) and [Lionel Henry](https://github.com/lionel-) guided me to different ways to approach the problem, mentioning **[Tidyeval](https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html)**. So it was time I got to know it for real. I have to say that I am still exploring its capabilities and use cases, but this post is about my first steps!
 
