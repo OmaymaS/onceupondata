@@ -1,0 +1,274 @@
+---
+date: 2017-08-12
+title: My First Steps into The World of Tidyeval
+subtitle: "Bang Bang!!"
+tags: [R, Tidyeval]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
+```
+
+
+A couple on months ago, Tidyeval was something that I passed by, but didn't have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn't sure how to pass a variable column names to `purrr::map`, so I opened an issue; [purrr::map() support for SE/variable column names?](https://github.com/tidyverse/purrr/issues/339).
+
+[Jenny Bryan](https://github.com/jennybc) and [Lionel Henry](https://github.com/lionel-) guided me to different ways to approach the problem, mentioning **[Tidyeval](https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html)**. So it was time I got to know it for real. I have to say that I am still exploring its capabilities and use cases, but this post is about my first steps!
+
+
+### What I Wanted to Do
+
+What led me to Tidyeval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column `Tags_terms` in a dataframe `dat_r`, that I wanted to mutate with the count of tags in each row. Pretty simple!
+
+```{r, warning=FALSE, message=FALSE}
+library(dplyr)
+library(purrr)
+
+dat_r <- tribble(
+  ~ Tags_terms,
+  c("R", "ggplot2","dplyr"),
+  "tidyverse",
+  c("dplyr", "lubridate")
+)
+
+```
+
+The straightforward way was:
+
+```{r}
+dat_r %>% 
+  mutate(tags_count = map_int(Tags_terms, length))
+```
+
+### Which Limitations I Faced 
+
+However, I wanted to be able to pass the column as a variable, because it could be `Tags_terms` or any other name. Moreover, I wanted to have the option of wrapping this into a function. So I wondered whether there was a way to achieve this.
+Definitely I knew that doing something like the following was not the right thing. The column name would not be seen. Instead, `cname` would be seen as a character vector with 1 element!
+
+```{r}
+cname <- "Tags_terms"
+dat_r %>% 
+  mutate(tags_count = map_int(cname, length))
+```
+
+### How Tidyeval Helped Me
+
+At this point, I opened the issue and one of the suggestion was to use  **`quo`** which *"quotes its input rather than evaluating it"* then `!!` to unquote the input to be evaluated. This seems confusing at the beginning, but let's see how it works!
+
+As we can see, `cname` quotes the input `Tags_terms` and returns a `quosure` *(a special type of formula)*. Then it gets unquoted using `!!`, and that's how we get the desired result.
+
+```{r}
+cname <- quo(Tags_terms)
+print(cname)
+```
+
+
+```{r}
+dat_r %>% 
+  mutate(tags_count = map_int(!!cname, length))
+```
+
+#### Turning the code into a function
+
+Having this kind of flexibility, we can create general functions like `add_tag_count` to reuse for the same purpose. But inside a function, we use **`enquo`** which *"sees what the user typed, and returns that value as a quosure"*.
+
+```{r}
+add_tag_count <- function(x, cname){
+  
+  cname <- enquo(cname)
+
+  x %>% 
+    mutate(tags_count = map_int(!!cname, length))
+}
+```
+So here we can see how it works properly with `dat_books`.
+
+```{r}
+dat_books <- tribble(
+  ~ genre,
+  c("fiction", "comedy"),
+  c("tragedy", "fiction", "fantasy"),
+  c("satire", "tragedy")
+)
+
+add_tag_count(dat_books, genre)
+```
+
+#### Varying the name of the output variable
+
+In the previous function, the new column will always be called `tags_count`. What if we wanted to call it `genre_count` in the `dat_books` example, or any other arbitrary name? 
+
+We need to do the following:
+
+- Use `quo_name()` to convert the input expression to string
+
+- Use `:=` helper provided by `rlang`
+
+
+```{r}
+add_tag_count <- function(x, cname, count_col){
+  
+  cname <- enquo(cname)
+  
+  count_col <- enquo(count_col)
+  count_col_name <- quo_name(count_col)
+
+  x %>% 
+    mutate(!!count_col_name := map_int(!!cname, length))
+}
+```
+
+And now we can pass both the list column name `genre`, and the desired output name `genre_count`.
+
+```{r}
+add_tag_count(dat_books, genre, genre_count)
+```
+
+
+## Other Examples using Tidyeval
+
+After getting acquainted with Tidy eval, I had other situations when I wanted to to write general functions to avoid repetition. So here are two examples:
+
+
+### Example 1 : Capturing multiple variables
+
+Here I wanted to write a function that:
+
+- takes multiple columns
+
+- group_by the given columns
+
+- provides the count of each group and the percentage *(if TRUE)*, descendingly ordered 
+
+
+So to capture multiple variables, we can:
+
+- use **`quos()x`** to capture all the ... as a list of formulas.
+
+- use **`!!!`** to splice the arguments into **`group_by()`**
+
+
+```{r}
+freq_tbl <- function(df, ..., percent = TRUE, freq){
+  group <- quos(...)
+  
+  out <- df %>% 
+    group_by(!!!group) %>% 
+    summarise(freq = n()) %>% 
+    arrange(desc(freq)) %>% 
+    ungroup()
+  
+  if(percent == TRUE){
+    out <- out %>% 
+      mutate(percentage = 100*freq/sum(freq))
+  }
+  return(out)
+}
+```
+
+Now we can use it with any number of variables. For instance, if we use `starwars` dataset, we pass any number of columns.  
+
+Here we pass `homeworld` & `species` to group by.
+
+```{r}
+starwars_gp2 <- starwars %>% 
+  freq_tbl(homeworld, species, percent = F)
+
+head(starwars_gp2)
+```
+Similarly, we can simply add `gender` or any other column.
+
+```{r}
+starwars_gp3 <- starwars %>% 
+  freq_tbl(homeworld, species, gender) 
+head(starwars_gp3)
+```
+
+
+### Example 2: Ngrams Table
+
+In this case, I wanted to create unigrams. bigrams and trigrams tables with counts In the normal case, this means writing identical lines three times *(as shown below)*, with minor changes in the type of ngrams, and the name of the output columns.
+
+```{r}
+library(tidytext)
+library(janeaustenr)
+
+
+# unigram table
+unigrams <- data_frame(txt = prideprejudice) %>%
+  unnest_tokens(ngram, txt, token = "ngrams", n = 1) %>% 
+  rename(unigram = ngram) %>% 
+  group_by(unigram) %>% 
+  summarise(unigram_freq = n()) %>% 
+  arrange(desc(unigram_freq))
+
+# bigram table
+bigrams <- data_frame(txt = prideprejudice) %>%
+  unnest_tokens(ngram, txt, token = "ngrams", n = 2) %>% 
+  rename(bigram = ngram) %>% 
+  group_by(bigram) %>% 
+  summarise(bigram_freq = n()) %>% 
+  arrange(desc(bigram_freq))
+
+# bigram table
+trigram <- data_frame(txt = prideprejudice) %>%
+  unnest_tokens(ngram, txt, token = "ngrams", n = 3) %>% 
+  rename(trigram = ngram) %>% 
+  group_by(trigram) %>% 
+  summarise(trigram_freq = n()) %>% 
+  arrange(desc(trigram_freq))
+
+```
+
+**So how can we wrap this into a general function?**
+
+Ideally, we would like to write a function that takes:
+
+- `n` : the type of ngram
+
+- `gram_col` : the name of the ngram column
+
+- `freq_col` : the name of the ngram count column
+
+And this can be achieved as follows:
+
+```{r}
+create_gram_table <- function(input_txt, n, gram_col, freq_col){
+  
+  gram_col <- enquo(gram_col)
+  gram_col_name <- quo_name(gram_col)
+  
+  freq_col <- enquo(freq_col)
+  freq_col_name <- quo_name(freq_col)
+  
+  x <- data_frame(txt = input_txt)
+  
+  g <- tidytext::unnest_tokens(x, ngram, txt,
+                               token = "ngrams", n = n) %>%
+    rename(!!gram_col_name := ngram) %>%
+    group_by(!!gram_col) %>%
+    summarise(!!freq_col_name := n()) %>%
+    arrange(desc( !!freq_col))
+  
+  return(g)
+}
+
+```
+
+So now instead of the duplication, we can use `create_gram_table`, which gives us the desired output with less repetition.
+
+```{r}
+create_gram_table(prideprejudice, 1, unigram, unigram_freq) %>% head
+create_gram_table(prideprejudice, 2, bigram, bigram_freq) %>% head
+create_gram_table(prideprejudice, 3, trigram, trigram_freq) %>% head
+```
+
+
+## Conclusion
+
+**So those were my first steps in the world of the Tidyeval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I'll keep learning about it. And I'd be grateful to receive any feedback regarding the use cases I showed and better ways to handle them** 
+
+## References
+
+- [Programming with dplyr](http://dplyr.tidyverse.org/articles/programming.html#warm-up)
+
+- [Tidy evaluation](https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html)
