@@ -1,17 +1,17 @@
 ---
 date: 2017-08-12
-title: My First Steps into The World of Tidyeval
+title: My First Steps into The World of Tidy Eval
 subtitle: "Bang Bang!!"
 tags: [R, Tidyeval]
 ---
 
 
 
-<p>A couple of months ago, Tidyeval was something that I passed by, but didn’t have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn’t sure how to pass a variable column names to <code>purrr::map</code>, so I opened an issue; <a href="https://github.com/tidyverse/purrr/issues/339">purrr::map() support for SE/variable column names?</a>.</p>
+<p>A couple of months ago, Tidy eval was something that I passed by, but didn’t have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn’t sure how to pass a variable column names to <code>purrr::map</code>, so I opened an issue; <a href="https://github.com/tidyverse/purrr/issues/339">purrr::map() support for SE/variable column names?</a>.</p>
 <p><a href="https://github.com/jennybc">Jenny Bryan</a> and <a href="https://github.com/lionel-">Lionel Henry</a> guided me to different ways to approach the problem, mentioning <strong><a href="https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html">Tidyeval</a></strong>. So it was time I got to know it for real. I have to say that I am still exploring its capabilities and use cases, but this post is about my first steps!</p>
 <div id="what-i-wanted-to-do" class="section level3">
 <h3>What I Wanted to Do</h3>
-<p>What led me to Tidyeval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column <code>Tags_terms</code> in a dataframe <code>dat_r</code>, that I wanted to mutate with the count of tags in each row. Pretty simple!</p>
+<p>What led me to Tidy eval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column <code>Tags_terms</code> in a dataframe <code>dat_r</code>, that I wanted to mutate with the count of tags in each row. Pretty simple!</p>
 <pre class="r"><code>library(dplyr)
 library(purrr)
 
@@ -44,8 +44,8 @@ dat_r %&gt;%
 2  &lt;chr [1]&gt;          1
 3  &lt;chr [2]&gt;          1</code></pre>
 </div>
-<div id="how-tidyeval-helped-me" class="section level3">
-<h3>How Tidyeval Helped Me</h3>
+<div id="how-tidy-eval-helped-me" class="section level3">
+<h3>How Tidy eval Helped Me</h3>
 <p>At this point, I opened the issue and one of the suggestion was to use <strong><code>quo</code></strong> which <em>“quotes its input rather than evaluating it”</em> then <code>!!</code> to unquote the input to be evaluated. This seems confusing at the beginning, but let’s see how it works!</p>
 <p>As we can see, <code>cname</code> quotes the input <code>Tags_terms</code> and returns a <code>quosure</code> <em>(a special type of formula)</em>. Then it gets unquoted using <code>!!</code>, and that’s how we get the desired result.</p>
 <pre class="r"><code>cname &lt;- quo(Tags_terms)
@@ -114,8 +114,8 @@ add_tag_count(dat_books, genre)</code></pre>
 3 &lt;chr [2]&gt;           2</code></pre>
 </div>
 </div>
-<div id="other-examples-using-tidyeval" class="section level2">
-<h2>Other Examples using Tidyeval</h2>
+<div id="other-examples-using-tidy-eval" class="section level2">
+<h2>Other Examples using Tidy eval</h2>
 <p>After getting acquainted with Tidy eval, I had other situations when I wanted to to write general functions to avoid repetition. So here are two examples:</p>
 <div id="example-1-capturing-multiple-variables" class="section level3">
 <h3>Example 1 : Capturing multiple variables</h3>
@@ -266,7 +266,7 @@ trigram &lt;- data_frame(txt = prideprejudice) %&gt;%
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
-<p><strong>So those were my first steps in the world of the Tidyeval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I’ll keep learning about it. And I’d be grateful to receive any feedback regarding the use cases I showed and better ways to handle them</strong></p>
+<p><strong>So those were my first steps in the world of the Tidy eval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I’ll keep learning about it. And I’d be grateful to receive any feedback regarding the use cases I showed and better ways to handle them</strong></p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

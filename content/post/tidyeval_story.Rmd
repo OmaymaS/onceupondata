@@ -1,6 +1,6 @@
 ---
 date: 2017-08-12
-title: My First Steps into The World of Tidyeval
+title: My First Steps into The World of Tidy Eval
 subtitle: "Bang Bang!!"
 tags: [R, Tidyeval]
 ---
@@ -10,14 +10,14 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
 ```
 
 
-A couple of months ago, Tidyeval was something that I passed by, but didn't have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn't sure how to pass a variable column names to `purrr::map`, so I opened an issue; [purrr::map() support for SE/variable column names?](https://github.com/tidyverse/purrr/issues/339).
+A couple of months ago, Tidy eval was something that I passed by, but didn't have time to explore. As usual, sometimes one gets busy with the daily work, and puts some stuff aside to come back to. However, I like to find ways that give me a higher level of flexibility and more control. So mid June, I had an inquiry regarding programming around dplyr. I wasn't sure how to pass a variable column names to `purrr::map`, so I opened an issue; [purrr::map() support for SE/variable column names?](https://github.com/tidyverse/purrr/issues/339).
 
 [Jenny Bryan](https://github.com/jennybc) and [Lionel Henry](https://github.com/lionel-) guided me to different ways to approach the problem, mentioning **[Tidyeval](https://cran.r-project.org/web/packages/rlang/vignettes/tidy-evaluation.html)**. So it was time I got to know it for real. I have to say that I am still exploring its capabilities and use cases, but this post is about my first steps!
 
 
 ### What I Wanted to Do
 
-What led me to Tidyeval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column `Tags_terms` in a dataframe `dat_r`, that I wanted to mutate with the count of tags in each row. Pretty simple!
+What led me to Tidy eval was the the desire to prgram around dplyr. The example I shared in the issue was having a list column `Tags_terms` in a dataframe `dat_r`, that I wanted to mutate with the count of tags in each row. Pretty simple!
 
 ```{r, warning=FALSE, message=FALSE}
 library(dplyr)
@@ -50,7 +50,7 @@ dat_r %>%
   mutate(tags_count = map_int(cname, length))
 ```
 
-### How Tidyeval Helped Me
+### How Tidy eval Helped Me
 
 At this point, I opened the issue and one of the suggestion was to use  **`quo`** which *"quotes its input rather than evaluating it"* then `!!` to unquote the input to be evaluated. This seems confusing at the beginning, but let's see how it works!
 
@@ -124,7 +124,7 @@ add_tag_count(dat_books, genre, genre_count)
 ```
 
 
-## Other Examples using Tidyeval
+## Other Examples using Tidy eval
 
 After getting acquainted with Tidy eval, I had other situations when I wanted to to write general functions to avoid repetition. So here are two examples:
 
@@ -265,7 +265,7 @@ create_gram_table(prideprejudice, 3, trigram, trigram_freq) %>% head
 
 ## Conclusion
 
-**So those were my first steps in the world of the Tidyeval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I'll keep learning about it. And I'd be grateful to receive any feedback regarding the use cases I showed and better ways to handle them** 
+**So those were my first steps in the world of the Tidy eval. I like how it gives me more control and flexibility, yet I am still learning and grasping its capabilities. I am not sure if all what I am doing adheres to the best practices, so I'll keep learning about it. And I'd be grateful to receive any feedback regarding the use cases I showed and better ways to handle them** 
 
 ## References
 
