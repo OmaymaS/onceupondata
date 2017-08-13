@@ -2,6 +2,7 @@
 date: 2017-08-12
 title: My First Steps into The World of Tidy Eval
 subtitle: "Bang Bang!!"
+slug: "my-first-steps-into-the-world-of-tidyeval"
 tags: [R, Tidyeval]
 ---
 
