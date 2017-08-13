@@ -265,7 +265,7 @@ create_gram_table(prideprejudice, 3, trigram, trigram_freq) %>% head
 
 ## Tidy eval & ggplot2
 
-After using tidy eval in some examples, I thought it would be great to have it with `ggplot2`. So I tried it but it didn't work. I didn't know whether I was missing something or they were not compatible yet. I [asked](https://twitter.com/OmaymaS_/status/887329478669729793) to find out and the answer was that `ggplot2` is planned to be ported to tidy eval within months. So I am looking forward!
+After using tidy eval in some examples, I thought it would be great to have it with `ggplot2`. So I tried it but it didn't work. I didn't know whether I was missing something or they were not compatible yet. I [asked](https://twitter.com/OmaymaS_/status/887329478669729793) to find out, and the answer was that `ggplot2` was planned to be ported to tidy eval within months. So I am looking forward!
 
 ![](/post/2017-08-13-tidyeval_story/tweet1.png)
 ![](/post/2017-08-13-tidyeval_story/tweet2.png)
