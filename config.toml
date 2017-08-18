@@ -1,43 +1,54 @@
 baseurl = "http://onceupondata.com/"
+DefaultContentLanguage = "en"
 relativeurls = false
-languageCode = "en-us"
 title = "Once Upon Data"
 theme = "beautifulhugo"
 googleAnalytics = "UA-102384456-1"
 disqusShortname = "onceupondata"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
+
+[Params]
+  subtitle = ""
+  logo = "img/logo.jpg"
+  favicon = ""
+  dateFormat = "January 2, 2006"
+  commit = false
+  rss = true
+  comments = true
+#  gcse = "012345678901234567890:abcdefghijk" # Get your code from google.com/cse. Make sure to go to "Look and Feel" and change Layout to "Full Width" and Theme to "Classic"
+
+#[[Params.bigimg]]
+#  src = "img/triangle.jpg"
+#  desc = "Triangle"
+#[[Params.bigimg]]
+#  src = "img/sphere.jpg"
+#  desc = "Sphere"
+#[[Params.bigimg]]
+#  src = "img/hexagon.jpg"
+#  desc = "Hexagon"
+
+
 [permalinks]
-    post = "/:year/:month/:day/:slug/"
-    
+post = "/:year/:month/:day/:slug/"
+
 [Author]
     stackoverflow = "users/6535741/omaymas"
     github = "OmaymaS"
 
 [[menu.main]]
-    name = "About"
-    url = "/about/"
+  name = "About"
+  url = "/about/"
 [[menu.main]]
-    name = "GitHub"
-    url = "https://github.com/OmaymaS"
+  name = "GitHub"
+  url = "https://github.com/OmaymaS"
 
-[params]
-    description = ""
-    rss = true
-    comments = true
 
-    # options for highlight.js (version, additional languages, and theme)
-    highlightjsVersion = "9.11.0"
-    highlightjsCDN = "//cdn.bootcss.com"
-    highlightjsLang = ["r", "yaml"]
-    highlightjsTheme = "github"
+# options for highlight.js (version, additional languages, and theme)
+highlightjsVersion = "9.11.0"
+highlightjsCDN = "//cdn.bootcss.com"
+highlightjsLang = ["r", "yaml"]
+highlightjsTheme = "github"
 
-    MathJaxCDN = "//cdn.bootcss.com"
-    MathJaxVersion = "2.7.1"
-
-    [params.logo]
-    url = "logo.png"
-    width = 50
-    height = 50
-    alt = "Logo"
-
+MathJaxCDN = "//cdn.bootcss.com"
+MathJaxVersion = "2.7.1"
