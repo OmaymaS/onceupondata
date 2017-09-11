@@ -1,0 +1,30 @@
+---
+title: Spark Histograms in Dataframe Columns
+date: '2017-09-11'
+slug: spark-histograms-in-dataframe-columns
+categories: []
+tags: []
+subtitle: ''
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
+```
+
+A couple of weeks ago, I was looking for a package I previously passed by that prints summary statistics with inline histograms. I checked all my bookmarks and likes on twitter, but I couldn't find it out! So I asked on twitter. fortunately **[Maëlle Salmon](https://twitter.com/ma_salmon)** read the tweet and guided me to [`skimr`](https://github.com/ropenscilabs/skimr) by [ropenscilabs](https://github.com/ropenscilabs).
+
+So basically 
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+books <- read_csv("../../static/data/books.csv")
+head(books)
+```
+
+
+
+
+
