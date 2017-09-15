@@ -1,30 +1,90 @@
 ---
-title: Spark Histograms in Dataframe Columns
+title: "Spark Histograms in Dataframe Columns"
 date: '2017-09-11'
+output:
+html_document:
+keep_md: yes
 slug: spark-histograms-in-dataframe-columns
-categories: []
-tags: []
 subtitle: ''
+tags: []
+categories: []
+font-family: "DejaVu Sans"
+mainfont: "DejaVu Sans"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
 ```
 
-A couple of weeks ago, I was looking for a package I previously passed by that prints summary statistics with inline histograms. I checked all my bookmarks and likes on twitter, but I couldn't find it out! So I asked on twitter. fortunately **[Maëlle Salmon](https://twitter.com/ma_salmon)** read the tweet and guided me to [`skimr`](https://github.com/ropenscilabs/skimr) by [ropenscilabs](https://github.com/ropenscilabs).
 
-So basically 
+A couple of weeks ago, I was looking for a package, I previously passed by that, prints summary statistics with inline histograms. I checked all my bookmarks and liked tweets, but I couldn't find it! So I asked on twitter. fortunately **[Maëlle Salmon](https://twitter.com/ma_salmon)** read the tweet and guided me to [`skimr`](https://github.com/ropenscilabs/skimr) by [ropenscilabs](https://github.com/ropenscilabs), who release many useful packages.
 
-```{r}
+
+## skimr Summary Statistics
+
+So basically `skimr` can show summary statistics, that one can go through quickly, handling different data types (numerics, factors, etc). For example, if we skim `storms`, and look at one variable  we can see the summaries as follows:
+
+```{r load libraries}
+# load libraries
 library(tidyverse)
+library(skimr)
+library(knitr)
+
+# Set locale (for windows)
+slang <- Sys.setlocale("LC_CTYPE", "Chinese")
+```
+
+```{r skimr example}
+# skim storms
+storm_skim <- skim(storms)
+
+storm_skim %>% 
+  filter(var == "wind") %>% 
+  kable()
+```
+
+So we can see the inline histogram, which might be useful while skimming a summary of many variables. And we can extract all the histograms for all the variables as follows:
+
+```{r}
+storm_skim %>% 
+  filter(stat == "hist") %>% 
+  kable()
+```
+
+
+
+## Spark Histograms Beyond Summary Statistics 
+
+After exploring `skimr`, I thought what if I wanted to have spark histograms in a dataframe as a summary for a group?, i.e. something like ` df %>% group_by(x) %>% summarize(hist = plot_sark_hist())`. 
+
+For the next example, I will use [WUZZUF Job Posts](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts/downloads/Wuzzuf_Job_Posts_Sample.csv) dataset released on [Kaggle](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts). 
+
+
+```{r read dataset, echo=FALSE}
+jobs <- read_csv("../../static/data/Wuzzuf_Job_Posts_Sample.csv")
 ```
 
 ```{r}
-books <- read_csv("../../static/data/books.csv")
-head(books)
+str(jobs)
 ```
 
 
+
+```{r}
+# m <- gapminder::gapminder %>% 
+#   select(country, lifeExp) %>% 
+#   group_by(country) %>% 
+#   nest() %>% 
+#   mutate(s = map(data, ~skimr::skim(.x) %>% filter(stat == "hist")) %>%
+#            map("level") %>% 
+#            map_chr(unlist))
+```
+
+
+
+```{r, results='asis'}
+DT::datatable(head(storm_skim))
+```
 
 
 
