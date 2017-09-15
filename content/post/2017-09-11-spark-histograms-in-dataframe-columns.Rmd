@@ -1,7 +1,7 @@
 ---
 title: "Adding Skimr Spark Histograms in Dataframe Columns"
 subtitle: ''
-date: '2017-09-11'
+date: '2017-09-16'
 output:
 html_document:
 keep_md: yes
@@ -114,6 +114,3 @@ jobs_2015_top_hist %>%
 
 
 Now, we have a quick way to see the distribution of views in different categories. Similarly, We can add more columns with other variables. This is definitly not enough for good exploration, and one will need to plot real histograms or other plots to gain better understanding of the data. But after all, it is just something to **skim** the data. And if we can try it, why not?!
-
-
-
