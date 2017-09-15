@@ -1,0 +1,321 @@
+---
+title: "Adding Skimr Spark Histograms in Dataframe Columns"
+subtitle: ''
+date: '2017-09-15'
+slug: spark-histograms
+tags: [R, skimr, purrr, tidyverse]
+categories: []
+---
+
+
+
+<p>A couple of weeks ago, I was looking for a package, I previously passed by, prints summary statistics with <strong>inline histograms</strong>. I checked all my bookmarks and liked tweets, but I couldn’t find it! So I asked on twitter. fortunately <strong><a href="https://twitter.com/ma_salmon">Maëlle Salmon</a></strong> read the tweet and guided me to <a href="https://github.com/ropenscilabs/skimr"><code>skimr</code></a> by <strong><a href="https://github.com/ropenscilabs">ropenscilabs</a></strong>, who actually release many useful packages.</p>
+<p>In this post, I will focus on spark histograms in summary statistics and beyond. I will give an example of summarizing data in a dataframe, and adding a new column with spark histograms, since I like to play and fit anything in list columns!</p>
+<div id="skimr-summary-statistics" class="section level2">
+<h2>skimr Summary Statistics</h2>
+<p>Basically <code>skimr</code> can show summary statistics, that one can go through quickly, handling different data types (numerics, factors, etc). For example, if we skim <code>storms</code>, and look at one variable, we can see the summaries as follows:</p>
+<pre class="r"><code>## load libraries
+library(tidyverse)
+library(skimr)
+library(knitr)
+library(lubridate)
+library(DT)
+
+## Set locale (for windows)
+slang &lt;- Sys.setlocale(&quot;LC_CTYPE&quot;, &quot;Chinese&quot;)</code></pre>
+<pre class="r"><code>## skim storms
+storm_skim &lt;- skim(storms)
+
+storm_skim %&gt;% 
+  filter(var == &quot;wind&quot;) %&gt;% 
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">var</th>
+<th align="left">type</th>
+<th align="left">stat</th>
+<th align="left">level</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">missing</td>
+<td align="left">.all</td>
+<td align="right">0.00000</td>
+</tr>
+<tr class="even">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">complete</td>
+<td align="left">.all</td>
+<td align="right">10010.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">n</td>
+<td align="left">.all</td>
+<td align="right">10010.00000</td>
+</tr>
+<tr class="even">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">mean</td>
+<td align="left">.all</td>
+<td align="right">53.49500</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">sd</td>
+<td align="left">.all</td>
+<td align="right">26.21387</td>
+</tr>
+<tr class="even">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">min</td>
+<td align="left">.all</td>
+<td align="right">10.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">median</td>
+<td align="left">.all</td>
+<td align="right">45.00000</td>
+</tr>
+<tr class="even">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">quantile</td>
+<td align="left">25%</td>
+<td align="right">30.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">quantile</td>
+<td align="left">75%</td>
+<td align="right">65.00000</td>
+</tr>
+<tr class="even">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">max</td>
+<td align="left">.all</td>
+<td align="right">160.00000</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">hist</td>
+<td align="left">▂▇▅▃▂▂▁▁▁▁</td>
+<td align="right">0.00000</td>
+</tr>
+</tbody>
+</table>
+<p>So we can see the inline histogram, which might be useful while skimming a summary of many variables. And we can extract all the histograms for all the numerical variables as follows:</p>
+<pre class="r"><code>## print kable
+storm_skim %&gt;% 
+  filter(stat == &quot;hist&quot;) %&gt;% 
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">var</th>
+<th align="left">type</th>
+<th align="left">stat</th>
+<th align="left">level</th>
+<th align="right">value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▃▃▃▆▇▆▇▇▇▆</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">month</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▁▁▁▁▁▂▅▇▃▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">day</td>
+<td align="left">integer</td>
+<td align="left">hist</td>
+<td align="left">▇▆▆▆▆▆▆▆▆▆</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">hour</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▇▁▇▁▁▇▁▇▁▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">lat</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▂▇▇▆▇▇▅▂▁▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">long</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▁▅▇▇▇▆▆▃▁▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">wind</td>
+<td align="left">integer</td>
+<td align="left">hist</td>
+<td align="left">▂▇▅▃▂▂▁▁▁▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">pressure</td>
+<td align="left">integer</td>
+<td align="left">hist</td>
+<td align="left">▁▁▁▁▁▁▂▃▇▂</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">ts_diameter</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▇▇▅▂▁▁▁▁▁▁</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">hu_diameter</td>
+<td align="left">numeric</td>
+<td align="left">hist</td>
+<td align="left">▇▁▁▁▁▁▁▁▁▁</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="spark-histograms-beyond-summary-statistics" class="section level2">
+<h2>Spark Histograms Beyond Summary Statistics</h2>
+<p>After exploring <code>skimr</code>, I thought <strong>what if I wanted to have spark histograms in a dataframe as a summary for a group?</strong>, i.e. something like <code>df %&gt;% group_by(x) %&gt;% summarize(hist = plot_spark_hist())</code>. This is part of my interest in fitting anything in list columns!</p>
+<p>So for the next example, I will use <a href="https://www.kaggle.com/WUZZUF/wuzzuf-job-posts/downloads/Wuzzuf_Job_Posts_Sample.csv">Wuzzuf_Job_Posts_Sample.csv</a> dataset released on Kaggle <a href="https://www.kaggle.com/WUZZUF/wuzzuf-job-posts">Here</a>. The dataset provides a a sample of jobs posted in 2014-2016 with some details. Here we will focus on 2015 posts.</p>
+<p><strong>First</strong>: we will parse the post date and extract the job posted in 2015.</p>
+<pre class="r"><code>## parse date
+jobs &lt;- jobs %&gt;% 
+  mutate(post_date = as.Date(post_date)) 
+
+## filter jobs in 2015
+jobs_2015 &lt;- jobs %&gt;% 
+  filter(year(post_date) == 2015) </code></pre>
+<p><strong>Second</strong> : We will group by the <code>job_category1</code> and nest the rest of the data to keep it in the same dataframe. Then we can count the number of jobs in each category and select the top ten.</p>
+<pre class="r"><code>## select the top ten categories with their details nested in data column
+jobs_2015_topx &lt;- jobs_2015 %&gt;% 
+  group_by(job_category1) %&gt;% 
+  nest() %&gt;% 
+  mutate(job_posts = map_int(data, ~nrow(.x))) %&gt;% 
+  arrange(desc(job_posts)) %&gt;% 
+  filter(between(row_number(), 1, 10))</code></pre>
+<p><strong>THEN</strong> we will pick any numerical variable <em>(let’s say <code>views</code>)</em> and mutate the dataframe with a new column including the spark histograms. It might seem confusing at first glance, but we can do it as follows:</p>
+<ul>
+<li><p>pass the nested <code>data</code> to a formula that skims a dataframe that only includes the target variable <code>views</code></p></li>
+<li><p>extract the histogram from the result <code>stats</code></p></li>
+<li><p>extract the <code>level</code> value, which is spark histograms <em>(character after all)</em></p></li>
+</ul>
+<pre class="r"><code>## count views and mutate histograms
+jobs_2015_top_hist &lt;- jobs_2015_topx %&gt;% 
+  mutate(views_sum = map_int(data, ~sum(.x[[&quot;views&quot;]]))) %&gt;% 
+  mutate(views_hist = map(data, ~skim(select(.x, views)) %&gt;% 
+                            filter(stat == &quot;hist&quot;)) %&gt;% 
+           map_chr(&quot;level&quot;)) 
+
+## print kable excluding nested data
+jobs_2015_top_hist %&gt;% 
+  select(-data) %&gt;% 
+  kable()</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">job_category1</th>
+<th align="right">job_posts</th>
+<th align="right">views_sum</th>
+<th align="left">views_hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">IT/Software Development</td>
+<td align="right">2812</td>
+<td align="right">3658423</td>
+<td align="left">▇▇▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Engineering</td>
+<td align="right">1674</td>
+<td align="right">2817031</td>
+<td align="left">▂▇▃▂▁▁▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Customer Service/Support</td>
+<td align="right">1334</td>
+<td align="right">2320181</td>
+<td align="left">▇▅▁▁▁▁▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Marketing</td>
+<td align="right">1201</td>
+<td align="right">1446364</td>
+<td align="left">▃▅▇▃▁▁▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Sales/Retail/Business Development</td>
+<td align="right">951</td>
+<td align="right">1210833</td>
+<td align="left">▂▇▇▃▁▁▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Creative/Design</td>
+<td align="right">777</td>
+<td align="right">1038488</td>
+<td align="left">▂▂▇▆▃▁▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Quality Assurance/Quality Control</td>
+<td align="right">199</td>
+<td align="right">405129</td>
+<td align="left">▃▇▆▃▁▁▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Administration</td>
+<td align="right">199</td>
+<td align="right">294276</td>
+<td align="left">▅▂▇▇▂▁▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Editorial/Writing</td>
+<td align="right">195</td>
+<td align="right">317639</td>
+<td align="left">▅▂▅▇▇▇▃▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Installation/Maintenance/Repair</td>
+<td align="right">129</td>
+<td align="right">220305</td>
+<td align="left">▃▂▇▇▃▂▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+<p>Now, we have a quick way to see the distribution of views in different categories. Similarly, We can add more columns with other variables. This is definitly not enough for good exploration, and one will need to plot real histograms or other plots to gain better understanding of the data. But after all, it is just something to <strong>skim</strong> the data. And if we can try it, why not?!</p>
+</div>
