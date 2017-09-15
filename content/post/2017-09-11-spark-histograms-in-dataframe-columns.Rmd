@@ -14,7 +14,6 @@ categories: []
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
 ```
 
-
 A couple of weeks ago, I was looking for a package, I previously passed by, prints summary statistics with **inline histograms**. I checked all my bookmarks and liked tweets, but I couldn't find it! So I asked on twitter. fortunately **[Maëlle Salmon](https://twitter.com/ma_salmon)** read the tweet and guided me to [`skimr`](https://github.com/ropenscilabs/skimr) by **[ropenscilabs](https://github.com/ropenscilabs)**, who actually release many useful packages.
 
 In this post, I will focus on spark histograms in summary statistics and beyond. I will give an example of summarizing data in a dataframe, and adding a new column with spark histograms, since I like to play and fit anything in list columns!
