@@ -1,12 +1,12 @@
 ---
 title: "Adding Skimr Spark Histograms in Dataframe Columns"
+subtitle: ''
 date: '2017-09-11'
 output:
 html_document:
 keep_md: yes
 slug: spark-histograms
-subtitle: ''
-tags: []
+tags: [R, skimr, purrr, tidyverse]
 categories: []
 ---
 
