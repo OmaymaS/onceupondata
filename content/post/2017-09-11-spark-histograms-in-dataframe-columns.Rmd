@@ -8,8 +8,6 @@ slug: spark-histograms-in-dataframe-columns
 subtitle: ''
 tags: []
 categories: []
-font-family: "DejaVu Sans"
-mainfont: "DejaVu Sans"
 ---
 
 ```{r setup, include=FALSE}
@@ -18,6 +16,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="")
 
 
 A couple of weeks ago, I was looking for a package, I previously passed by that, prints summary statistics with inline histograms. I checked all my bookmarks and liked tweets, but I couldn't find it! So I asked on twitter. fortunately **[Maëlle Salmon](https://twitter.com/ma_salmon)** read the tweet and guided me to [`skimr`](https://github.com/ropenscilabs/skimr) by [ropenscilabs](https://github.com/ropenscilabs), who release many useful packages.
+
+In this post, I will focus on spark histograms in summary statistics and beyond. I will give an example of summarizing data in a dataframe, and adding a new column with spark histograms.
 
 
 ## skimr Summary Statistics
@@ -29,6 +29,8 @@ So basically `skimr` can show summary statistics, that one can go through quickl
 library(tidyverse)
 library(skimr)
 library(knitr)
+library(lubridate)
+library(DT)
 
 # Set locale (for windows)
 slang <- Sys.setlocale("LC_CTYPE", "Chinese")
@@ -57,27 +59,54 @@ storm_skim %>%
 
 After exploring `skimr`, I thought what if I wanted to have spark histograms in a dataframe as a summary for a group?, i.e. something like ` df %>% group_by(x) %>% summarize(hist = plot_sark_hist())`. 
 
-For the next example, I will use [WUZZUF Job Posts](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts/downloads/Wuzzuf_Job_Posts_Sample.csv) dataset released on [Kaggle](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts). 
+For the next example, I will use [Wuzzuf_Job_Posts_Sample.csv](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts/downloads/Wuzzuf_Job_Posts_Sample.csv) dataset released on Kaggle [Here](https://www.kaggle.com/WUZZUF/wuzzuf-job-posts). The dataset provides a a sample of jobs posts with some details.
 
 
 ```{r read dataset, echo=FALSE}
 jobs <- read_csv("../../static/data/Wuzzuf_Job_Posts_Sample.csv")
 ```
+The dataset includesjob posts from 2014-2016, but we will focus on 2015 sample.
+
+
+**First**: we will pasre the post date and extract the job posted in 2015.
 
 ```{r}
-str(jobs)
+# parse date
+jobs <- jobs %>% 
+  mutate(post_date =  as.Date(post_date)) 
+
+# filter jobs in 2015
+jobs_2015 <- jobs %>% 
+  filter(year(post_date) == 2015) 
+```
+
+**Second** : We will group by the `job_category1` and nest the rest of the data to keep it in the same dataframe. Then we can count the number of jobs in each category and select the top ten categories.
+
+```{r}
+# select the top ten categories with their details nested in data column
+jobs_2015_topx <- jobs_2015 %>% 
+  group_by(job_category1) %>% 
+  nest() %>% 
+  mutate(job_posts = map_int(data, ~nrow(.x))) %>% 
+  arrange(desc(job_posts)) %>% 
+  filter(between(row_number(), 1, 10))
 ```
 
 
 
 ```{r}
-# m <- gapminder::gapminder %>% 
-#   select(country, lifeExp) %>% 
-#   group_by(country) %>% 
-#   nest() %>% 
-#   mutate(s = map(data, ~skimr::skim(.x) %>% filter(stat == "hist")) %>%
-#            map("level") %>% 
-#            map_chr(unlist))
+
+m <- jobs_2015_topx %>% 
+  mutate(salary_min_hist = map(data, ~skimr::skim(select(.x, views)) %>% 
+                                 filter(stat == "hist")) %>% 
+           map("level") %>% 
+           map_chr(unlist)) 
+  # mutate(salary_min_hist = map(data, ~skimr::skim(select(.x, salary_maximum)) %>% 
+  #                                filter(stat == "hist")) %>% 
+  #          map("level") %>% 
+  #          map_chr(unlist))
+
+m %>% select(-data) %>% kable
 ```
 
 
