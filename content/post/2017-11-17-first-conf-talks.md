@@ -39,7 +39,7 @@ First of all I'd like to point out that I got **THREE** rejected submissions in 
 
 - A poster at [**Rstudio::conf 2018**](https://www.rstudio.com/conference/), but unfortunately won't be able to make it for logistical reasons :(. 
 
-## So How did the rstats community help?
+## So how did the rstats community help?
 
 While writing my first three submissions, I haven't asked others to review them. Maybe I thought they were ok, or I didn't know whom should I ask!. But when I went to UseR! conference, I met many people from the community, especially from [Rladies](https://rladies.org/) who offered to read my abstract and advise me. 
 
@@ -57,6 +57,6 @@ or what [**David Robinson**](https://twitter.com/drob) says about the value of a
 
 <figure><img src='/post/2017-11-17_first-conf-talk/drob_fig.png'><figcaption><i>Source: The Procrastinator's Guide to a Data Science Career - David Robinson</i></figcaption></figure>
 
-So I moved on, and since i had to submit it a week before the conference, I had time to rehearse and share with a couple of colleagues who also gave some comments regarding the story, slides and flow. But I haven't promoted my talk since I don't feel comfortable doing so, I just wrote that I'll be sppeaking at EARL. But [Maëlle Salmon](https://twitter.com/ma_salmon), [Emily Riederer](https://twitter.com/EmilyRiederer), and [Rladies](https://twitter.com/RLadiesGlobal) advertised my talk, although they haven't seen any previous talks by me. And then came the day of the talk where things went well. People connected to what I was saying and I got positive feedback.
+So I moved on, and since i had to submit it a week before the conference, I had time to rehearse and share with a couple of colleagues who also gave some comments regarding the story, slides and flow. But I haven't promoted my talk since I don't feel comfortable doing so, I just wrote that I'll be speaking at EARL. But [Maëlle Salmon](https://twitter.com/ma_salmon), [Emily Riederer](https://twitter.com/EmilyRiederer), and [Rladies](https://twitter.com/RLadiesGlobal) advertised my talk, although they haven't seen any previous talks by me. And then came the day of the talk where things went well. People connected to what I was saying and I got positive feedback.
 
 **So this was my journey to the first talk, and I hope more people contribute to the community and write similar posts *(as I was inspired by Emily Robinson's)*. Because usually the beginners see the final result; a speaker on the stage without the history of trials, the abstract drafts that were thrown away, the anxiety that kicks in, and all what's behind the scenes!**
