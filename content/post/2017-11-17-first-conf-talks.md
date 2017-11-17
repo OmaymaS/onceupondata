@@ -6,7 +6,7 @@ slug: giving-my-first-conference-talk
 tags: [rstats]
 ---
 
-A couple of weeks ago, I gave my first talk [Fitting Humans Stories in List Columns: Cases from an Online Recruitment Platform](bit.ly/earl-omayma) in a data science/rstats conference. It was at [EARL Boston](https://earlconf.com/boston/) and it was a good experience as I received positive feedback from the attendees. I intended to write about the story I shared in my talk. But then I recalled [Emily Robinson's](https://twitter.com/robinson_es) post [Giving Your First Data Science Talk](https://robinsones.github.io/Giving-Your-First-Data-Science-Talk/), published last July. And I though about writing about my own experience and how the rstats community provided support.
+A couple of weeks ago, I gave my first talk in a data science/rstats conference; [Fitting Humans Stories in List Columns: Cases from an Online Recruitment Platform](bit.ly/earl-omayma). It was at [EARL Boston](https://earlconf.com/boston/) and it was a good experience as I received positive feedback from the attendees. I intended to write about the story I shared in my talk. But then I recalled [Emily Robinson's](https://twitter.com/robinson_es) post [Giving Your First Data Science Talk](https://robinsones.github.io/Giving-Your-First-Data-Science-Talk/), published last July. And I though about writing about my own experience and how the rstats community provided support.
 
 ## Why to give a talk in the first place?
 
