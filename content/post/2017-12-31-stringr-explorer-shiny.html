@@ -1,0 +1,79 @@
+---
+title: Stringr Explorer
+subtitle: 'What do you want to do with strings?'
+date: '2017-12-31'
+slug: stringr-explorer
+categories: []
+tags: [R, shiny, stringr, tidyverse]
+---
+
+
+
+<p>A couple of days ago, I passed by <a href="https://twitter.com/sarah_edo">Sarah Drasner’s</a> <a href="https://sdras.github.io/array-explorer/">Array Explorer</a>. It was through a retweet by <a href="https://twitter.com/robinson_es">Emily Robinson</a>, who proposed the idea of a similar app for working with strings in R. I thought about giving it a try, and I deployed a preliminary Shiny App <a href="https://omaymas.shinyapps.io/stringr_help/">Stringr Explorer</a>; which is still under development.</p>
+<p>In the following sections, I will give a brief about the data extracted from the package documentation to use in the <strong>Stringr Explorer</strong> app, and I’ll be glad to get better suggestions and contributions.</p>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="en" dir="ltr">
+🎁 A present for people learning JS! Finding the right array method can mean searching the docs one method at a time. I made this resource to help people quickly find what they need!<br><br>site: <a href="https://t.co/wTanUwhoJc">https://t.co/wTanUwhoJc</a><br>codepen: <a href="https://t.co/b6G5uzJBl2">https://t.co/b6G5uzJBl2</a> <a href="https://t.co/yFiyrrDaCV">pic.twitter.com/yFiyrrDaCV</a>
+</p>
+— Sarah Drasner (<span class="citation">@sarah_edo</span>) <a href="https://twitter.com/sarah_edo/status/946091648773013504?ref_src=twsrc%5Etfw">December 27, 2017</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="en" dir="ltr">
+What an awesome idea. <a href="https://twitter.com/hashtag/rstats?src=hash&amp;ref_src=twsrc%5Etfw">#rstats</a> shiny app anyone? Maybe one for working with strings? <a href="https://t.co/Cf0pYmirdY">https://t.co/Cf0pYmirdY</a>
+</p>
+— Emily Robinson (<span class="citation">@robinson_es</span>) <a href="https://twitter.com/robinson_es/status/946416338246844416?ref_src=twsrc%5Etfw">December 28, 2017</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<div id="first-of-all-heres-the-shiny-app" class="section level2">
+<h2>First of all here’s the Shiny App</h2>
+<center>
+<iframe src="https://omaymas.shinyapps.io/stringr_help/" style="border: none; width: 100%; height: 600px">
+</iframe>
+</center>
+</div>
+<div id="creating-a-dataset-with-stringr-functions-info" class="section level2">
+<h2>Creating a dataset with stringr functions info</h2>
+<p>I wanted to create a dataframe with stringr functions along with their usage and corresponding examples. I didn’t want to write everything from scratch, so I tried to extract whatever I can get from the documentation.</p>
+<div id="package-function-names" class="section level3">
+<h3>Package function names</h3>
+<p>To extract package functions I used:</p>
+<pre class="r"><code>str_fn_names &lt;- ls(&quot;package:stringr&quot;) </code></pre>
+</div>
+<div id="function-help-text" class="section level3">
+<h3>Function help text</h3>
+<p>Then I used <code>utils:::.getHelpFile</code> to get the help text associated with each function <em>(This is what lives inside man/ directory)</em></p>
+<pre class="r"><code>str_fn_help &lt;- map(str_fn_names,
+                   ~ utils:::.getHelpFile(help(.x, package = &quot;stringr&quot;)))</code></pre>
+</div>
+<div id="function-title" class="section level3">
+<h3>Function title</h3>
+<p>From the help text, I could get the title that corresponds to each function, as follows:</p>
+<pre class="r"><code>str_fn_title &lt;- map_chr(str_fn_help,
+                        ~ tools:::.Rd_get_metadata(.x, &quot;title&quot;))</code></pre>
+<p>so for instance, <strong>str_extract</strong> title will be <strong>Extract matching patterns from a string.</strong></p>
+<p>This might not be the best thing, but I wanted to start with the original titles, to save the time of writing everything. I said that I can modify them later, if they are not descriptive enough.</p>
+</div>
+<div id="function-usage-text" class="section level3">
+<h3>Function usage text</h3>
+<p>Then I got the usage text, removed any empty lines, and <code>glued</code> the extracted lines.</p>
+<pre class="r"><code>str_fn_usage &lt;- map(str_fn_help, ~ tools:::.Rd_get_metadata(.x, &quot;usage&quot;)) %&gt;%  
+  map(~.x[.x!=&quot;&quot;]) %&gt;% 
+  map(~paste(.x, collapse = &quot;\n&quot;)) %&gt;% 
+  map(glue)</code></pre>
+<p>so here, <strong>str_extract</strong> usage will be:</p>
+<pre><code>str_extract(string, pattern)
+str_extract_all(string, pattern, simplify = FALSE)</code></pre>
+<p>Using the extracted data, I created a dataframe to gather everything:</p>
+<pre class="r"><code>dat &lt;- tibble(str_fn_names = str_fn_names,
+              str_fn_help = str_fn_help,
+              str_fn_title = str_fn_title,
+              str_fn_usage = str_fn_usage)</code></pre>
+</div>
+<div id="but-what-about-the-functions-examples" class="section level3">
+<h3>But what about the functions examples?</h3>
+<p>I tried different ways to extract parts of the examples from the help text, but I wanted to have more control and get certain examples. So I had to write them in a dataframe and join with the created <code>dat</code>. The examples are listed <a href="https://github.com/OmaymaS/stringr_explorer/blob/master/data-raw/stringr_dat.R">here</a>, and still being updated.</p>
+<p><strong>I wasn’t sure if the data structure I used was the best for the problem, but I started with it till I move on and revisit it, or maybe get recommendation from others!</strong></p>
+<p><strong>So here’s the preliminary version of the app, I am still working on it. Meanwhile if anyone wants to share suggestions or contribute, you could send me or contribute on <a href="https://github.com/OmaymaS/stringr_explorer">Github repo</a></strong></p>
+</div>
+</div>
