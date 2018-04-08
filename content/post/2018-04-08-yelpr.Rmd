@@ -1,0 +1,133 @@
+---
+title: yelpr Package for Yelp Fusion API
+subtitle: 'Or My Story with Package Developmet'
+date: '2018-04-08'
+slug: yelpr
+tags: [rstats, packages, yelp]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "")
+```
+
+Today I pushed a preliminary version of [yelpr](https://github.com/OmaymaS/yelpr) an R library for the [Yelp Fusion API](https://www.yelp.com/developers/documentation/v3/get_started), and my first public package. I am still working on it and intended to share it with others to get feedback. But I also thought about writing a blog post to tell my story with package development in general, and my thought process while developing `yelpr`.
+
+## What was my journey with package development? 
+
+When I started to learn R, end of 2015, I was benefiting from the great amount of packages developed by "others". However, at this time I didn't see myself among them, I was more into analysis per se. later on, mid 2016, I got to know more about the R community and all the collaboration behind many of the packages. I started to feel that I could contribute to package development but I thought that I needed to learn more before getting into this. In January 2017, I attended **Rstudio::conf** which was a great opportunity, where I got to see a representation of the R community. I came back positively charged feeling that regardless of my level of knowledge, I could be one of those "others".
+
+I started to learn about package development through different resources, but the main source was [Hadley Wickham's](https://github.com/hadley) book [R Packages](http://r-pkgs.had.co.nz/). I also have to say that I definitely passed by [Hilary Parker's](https://github.com/hilaryparker) post [Writing an R package from scratch], which I knew about from one of [NSSD Podcast](http://nssdeviations.com/) episodes.
+
+However, during 2017, I just wrote packages for myself, as a way of organizing projects, or practicing. And because most of my work was confidential, I didn't have the chance to share my packages with others to get feedback, till I started to work on `yelpr`.
+
+## So how did I think about yelpr?
+
+In the previous couple of months, I was looking for different data sets to use for education purposes. I passed by different packages that enabled users to import data through APIs. For instance [bikedata](https://github.com/ropensci/bikedata) or [weathercan](https://github.com/ropensci/weathercan) by [rOpenSci](https://github.com/ropensci). I also appreciated all the work done to develop packages to deal with google cloud APIs or something I personally benefited from like [googlesheets](https://github.com/jennybc/googlesheets) by [Jenny Brian](https://github.com/jennybc). 
+
+I felt all these packages are empowering, and I would start with a simple package to import data through an API. I had several ideas but either there were already developed packages or the APIs where not public. And I saw that Yelp had several official and unofficial [libraries](https://github.com/Yelp/yelp-api) in different languages for [Yelp Fusion API](https://www.yelp.com/developers/documentation/v3/get_started), but `R` was not on the list. So I thought about giving it a try.
+
+## What does yelpr do?
+
+`yelpr` is an interface to the **Business Endpoints** and **Events Endpoints** from [Yelp Fusion API](https://www.yelp.com/developers/documentation/v3/get_started). Using an API key, one could retrieve data about business and user reviews from millions of businesses across 32 countries.
+
+
+### Business Endpoint 
+
+The available functions to search businesses are:
+
+- `business_search()`
+- `business_lookup_id()`
+- `business_search_phone()`
+- `business_search_review()`
+- `business_search_autocomplete()`
+- `business_search_transaction()`
+- `business_match_name()`
+
+
+For example `business_search()` returns up to 1000 businesses based on the provided search criteria. The location OR (longitude+latitude) are required, plus Additional [optional parameters](https://www.yelp.com/developers/documentation/v3/business_search).
+
+Here we can retrieve the first 5 results in 'New York' with the term 'chinese'
+
+```{r example business_search, eval = FALSE}
+# search businesses with keyword 'chinese' in 'New York'
+business_ny <- business_search(api_key = key,
+                location = 'New York',
+                term = "chinese",
+                limit = 5)
+```
+
+
+### Events Endpoint
+
+The available functions to search events are:
+
+- `event_lookup_id()`
+- `event_search()`
+- `event_search_featured()`
+
+For example, `event_search_featured` returns the featured event, chosen by Yelp's community managers, for a given location.
+
+So we can get details of featured event in the given location using the longitude and latitude.
+
+```{r example event_search_featured, eval = FALSE}
+# search featured event in the given location coordinates
+event <- event_search_featured(api_key = key,
+                      longitude = "-74.01385", latitude = "40.70387")
+```
+
+
+## What questions did I have in mind while developing yelpr?
+
+So the current development version is the thing I decided to share for feedback and contributions. But let me mention some of the questions I had in mind while writing the functions and the documentation.
+
+### Passing required and optional parameters
+
+Since most of the functions have required and optional parameters, I was not sure whether to:
+
+- build the function to take one list with both, or pass the required first then use `...` for the optional
+- use `...` for the optional parameters or have them all with default values `NULL`
+
+```{r parameters, eval = FALSE}
+
+function (api_key,
+          type = "lookup",
+          parameters = list()) {
+    # .....
+}
+
+## OR
+
+function (api_key,
+          type = "lookup",
+          name, city, state, country, ...){
+    # .....
+}
+```
+
+And I ended up with the second choice.
+
+### Handling errors
+
+Since the functions deal with endpoints that return informative error messages, I thought whether to check for missing parameters inside each function and throw errors accordingly or to just make use of the errors returned in the response. 
+
+I feel that the first approach adheres to the best practices in writing functions but in this version I just let the user see the errors in the repose.
+
+
+### Test cases
+
+I have been thinking about the test cases to write for these functions but I think I haven't practiced enough in this area. So I haven't pushed any tests yet.
+
+### Reusability and minimal code
+
+I was also thinking if any functions could be merged or inherit from the same class to reduce the repetition in code. But I started with separate functions to test them first and will dig deeper into this later.
+
+### Documentation
+
+Since some functions take up to 10 optional parameters, I wondered whether I should include their description in the documentation, or just refer to their link on the original API [endpoint link](https://www.yelp.com/developers/documentation/v3/business_search). For now I did a mix of both and same for the returned values.
+
+
+## What's Next?
+
+So these were my first steps and my thoughts on developing `yelpr` in specific. The previous practice on my private packages was beneficial that I could find my way using `devtools`. I could understand some of the confusing points like the usage of `@import` or the use of `Namespace`. But there remains some caveats that I expect to know more about when I receive feedback, get some reviews or discuss about the current version with all its flaws. 
+
+**So if you have any feedback or suggestions, please comment or open an [issue](https://github.com/OmaymaS/yelpr/issues). I'd be glad to hear from you!**

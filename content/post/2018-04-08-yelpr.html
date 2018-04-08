@@ -1,0 +1,108 @@
+---
+title: yelpr Package for Yelp Fusion API
+subtitle: 'Or My Story with Package Developmet'
+date: '2018-04-08'
+slug: yelpr
+tags: [rstats, packages, yelp]
+---
+
+
+
+<p>Today I pushed a preliminary version of <a href="https://github.com/OmaymaS/yelpr">yelpr</a> an R library for the <a href="https://www.yelp.com/developers/documentation/v3/get_started">Yelp Fusion API</a>, and my first public package. I am still working on it and intended to share it with others to get feedback. But I also thought about writing a blog post to tell my story with package development in general, and my thought process while developing <code>yelpr</code>.</p>
+<div id="what-was-my-journey-with-package-development" class="section level2">
+<h2>What was my journey with package development?</h2>
+<p>When I started to learn R, end of 2015, I was benefiting from the great amount of packages developed by “others”. However, at this time I didn’t see myself among them, I was more into analysis per se. later on, mid 2016, I got to know more about the R community and all the collaboration behind many of the packages. I started to feel that I could contribute to package development but I thought that I needed to learn more before getting into this. In January 2017, I attended <strong>Rstudio::conf</strong> which was a great opportunity, where I got to see a representation of the R community. I came back positively charged feeling that regardless of my level of knowledge, I could be one of those “others”.</p>
+<p>I started to learn about package development through different resources, but the main source was <a href="https://github.com/hadley">Hadley Wickham’s</a> book <a href="http://r-pkgs.had.co.nz/">R Packages</a>. I also have to say that I definitely passed by <a href="https://github.com/hilaryparker">Hilary Parker’s</a> post [Writing an R package from scratch], which I knew about from one of <a href="http://nssdeviations.com/">NSSD Podcast</a> episodes.</p>
+<p>However, during 2017, I just wrote packages for myself, as a way of organizing projects, or practicing. And because most of my work was confidential, I didn’t have the chance to share my packages with others to get feedback, till I started to work on <code>yelpr</code>.</p>
+</div>
+<div id="so-how-did-i-think-about-yelpr" class="section level2">
+<h2>So how did I think about yelpr?</h2>
+<p>In the previous couple of months, I was looking for different data sets to use for education purposes. I passed by different packages that enabled users to import data through APIs. For instance <a href="https://github.com/ropensci/bikedata">bikedata</a> or <a href="https://github.com/ropensci/weathercan">weathercan</a> by <a href="https://github.com/ropensci">rOpenSci</a>. I also appreciated all the work done to develop packages to deal with google cloud APIs or something I personally benefited from like <a href="https://github.com/jennybc/googlesheets">googlesheets</a> by <a href="https://github.com/jennybc">Jenny Brian</a>.</p>
+<p>I felt all these packages are empowering, and I would start with a simple package to import data through an API. I had several ideas but either there were already developed packages or the APIs where not public. And I saw that Yelp had several official and unofficial <a href="https://github.com/Yelp/yelp-api">libraries</a> in different languages for <a href="https://www.yelp.com/developers/documentation/v3/get_started">Yelp Fusion API</a>, but <code>R</code> was not on the list. So I thought about giving it a try.</p>
+</div>
+<div id="what-does-yelpr-do" class="section level2">
+<h2>What does yelpr do?</h2>
+<p><code>yelpr</code> is an interface to the <strong>Business Endpoints</strong> and <strong>Events Endpoints</strong> from <a href="https://www.yelp.com/developers/documentation/v3/get_started">Yelp Fusion API</a>. Using an API key, one could retrieve data about business and user reviews from millions of businesses across 32 countries.</p>
+<div id="business-endpoint" class="section level3">
+<h3>Business Endpoint</h3>
+<p>The available functions to search businesses are:</p>
+<ul>
+<li><code>business_search()</code></li>
+<li><code>business_lookup_id()</code></li>
+<li><code>business_search_phone()</code></li>
+<li><code>business_search_review()</code></li>
+<li><code>business_search_autocomplete()</code></li>
+<li><code>business_search_transaction()</code></li>
+<li><code>business_match_name()</code></li>
+</ul>
+<p>For example <code>business_search()</code> returns up to 1000 businesses based on the provided search criteria. The location OR (longitude+latitude) are required, plus Additional <a href="https://www.yelp.com/developers/documentation/v3/business_search">optional parameters</a>.</p>
+<p>Here we can retrieve the first 5 results in ‘New York’ with the term ‘chinese’</p>
+<pre class="r"><code># search businesses with keyword &#39;chinese&#39; in &#39;New York&#39;
+business_ny &lt;- business_search(api_key = key,
+                location = &#39;New York&#39;,
+                term = &quot;chinese&quot;,
+                limit = 5)</code></pre>
+</div>
+<div id="events-endpoint" class="section level3">
+<h3>Events Endpoint</h3>
+<p>The available functions to search events are:</p>
+<ul>
+<li><code>event_lookup_id()</code></li>
+<li><code>event_search()</code></li>
+<li><code>event_search_featured()</code></li>
+</ul>
+<p>For example, <code>event_search_featured</code> returns the featured event, chosen by Yelp’s community managers, for a given location.</p>
+<p>So we can get details of featured event in the given location using the longitude and latitude.</p>
+<pre class="r"><code># search featured event in the given location coordinates
+event &lt;- event_search_featured(api_key = key,
+                      longitude = &quot;-74.01385&quot;, latitude = &quot;40.70387&quot;)</code></pre>
+</div>
+</div>
+<div id="what-questions-did-i-have-in-mind-while-developing-yelpr" class="section level2">
+<h2>What questions did I have in mind while developing yelpr?</h2>
+<p>So the current development version is the thing I decided to share for feedback and contributions. But let me mention some of the questions I had in mind while writing the functions and the documentation.</p>
+<div id="passing-required-and-optional-parameters" class="section level3">
+<h3>Passing required and optional parameters</h3>
+<p>Since most of the functions have required and optional parameters, I was not sure whether to:</p>
+<ul>
+<li>build the function to take one list with both, or pass the required first then use <code>...</code> for the optional</li>
+<li>use <code>...</code> for the optional parameters or have them all with default values <code>NULL</code></li>
+</ul>
+<pre class="r"><code>function (api_key,
+          type = &quot;lookup&quot;,
+          parameters = list()) {
+    # .....
+}
+
+## OR
+
+function (api_key,
+          type = &quot;lookup&quot;,
+          name, city, state, country, ...){
+    # .....
+}</code></pre>
+<p>And I ended up with the second choice.</p>
+</div>
+<div id="handling-errors" class="section level3">
+<h3>Handling errors</h3>
+<p>Since the functions deal with endpoints that return informative error messages, I thought whether to check for missing parameters inside each function and throw errors accordingly or to just make use of the errors returned in the response.</p>
+<p>I feel that the first approach adheres to the best practices in writing functions but in this version I just let the user see the errors in the repose.</p>
+</div>
+<div id="test-cases" class="section level3">
+<h3>Test cases</h3>
+<p>I have been thinking about the test cases to write for these functions but I think I haven’t practiced enough in this area. So I haven’t pushed any tests yet.</p>
+</div>
+<div id="reusability-and-minimal-code" class="section level3">
+<h3>Reusability and minimal code</h3>
+<p>I was also thinking if any functions could be merged or inherit from the same class to reduce the repetition in code. But I started with separate functions to test them first and will dig deeper into this later.</p>
+</div>
+<div id="documentation" class="section level3">
+<h3>Documentation</h3>
+<p>Since some functions take up to 10 optional parameters, I wondered whether I should include their description in the documentation, or just refer to their link on the original API <a href="https://www.yelp.com/developers/documentation/v3/business_search">endpoint link</a>. For now I did a mix of both and same for the returned values.</p>
+</div>
+</div>
+<div id="whats-next" class="section level2">
+<h2>What’s Next?</h2>
+<p>So these were my first steps and my thoughts on developing <code>yelpr</code> in specific. The previous practice on my private packages was beneficial that I could find my way using <code>devtools</code>. I could understand some of the confusing points like the usage of <code>@import</code> or the use of <code>Namespace</code>. But there remains some caveats that I expect to know more about when I receive feedback, get some reviews or discuss about the current version with all its flaws.</p>
+<p><strong>So if you have any feedback or suggestions, please comment or open an <a href="https://github.com/OmaymaS/yelpr/issues">issue</a>. I’d be glad to hear from you!</strong></p>
+</div>
