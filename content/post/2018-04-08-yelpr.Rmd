@@ -92,7 +92,7 @@ Since most of the functions have required and optional parameters, I was not sur
 function (api_key,
           type = "lookup",
           parameters = list()) {
-    # .....
+    # ......
 }
 
 ## OR
@@ -100,7 +100,7 @@ function (api_key,
 function (api_key,
           type = "lookup",
           name, city, state, country, ...){
-    # .....
+    # ......
 }
 ```
 
@@ -124,7 +124,6 @@ I was also thinking if any functions could be merged or inherit from the same cl
 ### Documentation
 
 Since some functions take up to 10 optional parameters, I wondered whether I should include their description in the documentation, or just refer to their link on the original API [endpoint link](https://www.yelp.com/developers/documentation/v3/business_search). For now I did a mix of both and same for the returned values.
-
 
 ## What's Next?
 
