@@ -7,7 +7,7 @@ tags: [rstats, packages, yelp]
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "")
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "", out.width='100%')
 ```
 
 Today I pushed a preliminary version of [yelpr](https://github.com/OmaymaS/yelpr) an R library for the [Yelp Fusion API](https://www.yelp.com/developers/documentation/v3/get_started), and my first public package. I am still working on it and intended to share it with others to get feedback. But I also thought about writing a blog post to tell my story with package development in general, and my thought process while developing `yelpr`.
