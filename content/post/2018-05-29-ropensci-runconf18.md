@@ -18,7 +18,7 @@ I don't remember exactly the first time I heard about rOpenSci, but I think it w
 
 **This was how I got to know more about rOpenSci and their mission, then came the nomination time for runconf18**!
 
-I opened the application several time, hesitating because I felt that my chances were already low, but [Maëlle Salmon](https://twitter.com/ma_salmon) encouraged me to give it a try, and it worked! 
+I opened the application several times, hesitating because I felt that my chances were already low, but [Maëlle Salmon](https://twitter.com/ma_salmon) encouraged me to give it a try, and it worked! 
 
 Once they announced the attendees, [Stefanie Butland](https://twitter.com/StefanieButland), rOpenSci Community Manager, followed up on the tiniest details to make sure everyone was ready to attend, informed of the process and open to share any concerns. besides my normal anxiety, I had the fear of being on a lower level compared to others, and she assured us that almost 30 of the attendees had this feeling. I also was not sure how things would go on the two days, but she explained to me and to others more through a pre-unconf call. I imagine this was a huge effort from her which contributed to the success of the unconf.
 
@@ -37,7 +37,7 @@ The other good things were:
 
 - Things were flexible, so people could move or switch groups during the 1st or 2nd day
 
-- We had an open space where you could interact with other groups and ask for help. So for instance when I got weird git problems I went to [Jenny Brian](https://twitter.com/JennyBryan) :). Many others were offering their help throughout the two days.
+- We had an open space where you could interact with other groups and ask for help. So for instance when I got weird git problems I went to [Jenny Bryan](https://twitter.com/JennyBryan) :). Many others were offering their help throughout the two days.
 
 - The attendees were from different backgrounds, so one could find out about more research areas or applications through the discussions.
 
