@@ -101,17 +101,23 @@ Then you can either pass column names directly or the variabl names.
 
 ```{r, eval = FALSE}
 ## pass column names directly
-plot_points(x = "total_bill", y = "tip_percent", alpha = 0.5)
+plot_points(x = "total_bill",
+            y = "tip_percent",
+            alpha = 0.5)
 
 ## pass variable names
-plot_points(x = x_var, y = y_var, alpha = alpha_var)
+plot_points(x = x_var,
+            y = y_var,
+            alpha = alpha_var)
 
 ```
 
 And you can reuse the function to create similar plots with different variables.
 ```{r, eval = FALSE}
 ## plot tip vs. total_bill
-plot_points(x = "total_bill", y = "tip", alpha = 0.5)
+plot_points(x = "total_bill",
+            y = "tip",
+            alpha = 0.5)
 ```
 
 ## ggplot2 the tidy eval way
@@ -127,11 +133,14 @@ plot_points2 <- function(x, y, alpha){
 }
 
 ## invalid way
-plot_points2(x = total_bill, y = tip_percent, alpha = 0.5)
+plot_points2(x = total_bill,
+             y = tip_percent,
+             alpha = 0.5)
 ```
 This will just break and give you errors like:
 `Error in FUN(X[[i]], ...) : object 'total_bill' not found`
 
+### Unquoted column names / NSE 
 
 Previously there was no straightforward way to handle this, but with `tidy eval` you can use `enquo()` and the bang bang operator `!!` to create a function like `plot_points_tidyeval_01()` where you can pass the column names unquoted, and it will work properly.
 
@@ -148,10 +157,40 @@ plot_points_tidyeval_01 <- function(x, y, alpha){
 }
 
 ## pass column names unquoted 
-plot_points_tidyeval_01(x = total_bill, y = tip_percent, alpha = 0.5)
+plot_points_tidyeval_01(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5)
 ```
 
-You might still see this as a simple use case that could be handled by `aes_string()`. But there are more things yiu can do., like variable facets.
+You might still see this as a simple use case that could be handled by `aes_string()`. But there are more things you can do, like variable facets.
+
+### Variable Facets 
+
+Suppose that you wanted to define a variable facet, you wouldn't have this flexibility even with `aes_string`. But now you can have it as in the following example. Notice that `vars()` is a new helper instead of `~`
+
+
+```{r}
+plot_points_tidyeval_02 <- function(x, y, alpha, facet){
+  
+  x_var <- enquo(x)
+  y_var <- enquo(y)
+  facet_var <- enquo(facet)
+  
+  ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)+
+    facet_grid(cols = vars(!!facet_var))
+}
+
+##
+plot_points_tidyeval_02(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        facet = sex)
+```
+
+
 
 
 
