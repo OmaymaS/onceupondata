@@ -71,7 +71,7 @@ ggplot(tips, aes_string(x = "total_bill",
 
 This version could be helpful when you want pass variables to `ggplot` function. For instance, you can have handle the followinh scenario, where you have pre defined variables to use. It will work fine and give the same result.
 
-```{raes_string_var, eval = FALSE}
+```{r aes_string_var, eval = FALSE}
 
 ## define variables
 x_var <- "total_bill"
@@ -166,7 +166,8 @@ You might still see this as a simple use case that could be handled by `aes_stri
 
 ### Variable Facets 
 
-Suppose that you wanted to define a variable facet, you wouldn't have this flexibility even with `aes_string`. But now you can have it as in the following example. Notice that `vars()` is a new helper instead of `~`
+Suppose that you wanted to define a variable facet, you wouldn't have this flexibility even with `aes_string`. But now you can have implement it as follows. 
+*Notice that `vars()` is a new helper inside `facet_grid` instead of the `~`.*
 
 
 ```{r}
@@ -180,17 +181,54 @@ plot_points_tidyeval_02 <- function(x, y, alpha, facet){
     geom_point()+
     theme_minimal()+
     guides(alpha = FALSE)+
-    facet_grid(cols = vars(!!facet_var))
-}
+    facet_grid(cols = vars(!!facet_var))}
 
-##
+```
+
+So you can pass `sex` to the facet variable in the function
+
+```{r facet_sex}
+
+## use sex for facet
 plot_points_tidyeval_02(x = total_bill,
                         y = tip_percent,
                         alpha = 0.5,
                         facet = sex)
 ```
+or use `day` for facets 
+
+```{r facet_day}
+## use day for facet
+plot_points_tidyeval_02(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        facet = day)
+```
 
 
+You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directlt to the facet layer `facet_wrap` as follows.
+
+
+```{r facet_dots}
+plot_points_tidyeval_03 <- function(x, y, alpha, ...){
+  
+  x_var <- enquo(x)
+  y_var <- enquo(y)
+  facet_vars <- quos(...)
+  
+  ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)+
+    facet_wrap(facet_vars, nrow = 2)
+}
+
+## use both sex and day for facets
+plot_points_tidyeval_03(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        sex, day)
+```
 
 
 
