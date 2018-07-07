@@ -1,11 +1,9 @@
 ---
-title: Bang Bang Plots
-author: ~
+title: 'Tidy Eval Meets ggplot2'  
+subtitle: 'The Bang Bang Plots'
 date: '2018-07-06'
-slug: bang-bang-plots
-categories: []
-tags: []
-subtitle: ''
+slug: ggplot-tidyeval
+tags: [R, ggplot2, tidyeval, tidyverse]
 ---
 
 ```{r setup, include=FALSE}
@@ -235,4 +233,7 @@ plot_points_tidyeval_03(x = total_bill,
 ```
 
 
+## In Conclusion
+
+`tidy eval` with `ggplot2` offers new options and more capabilities. It solves problems people used to struggle with and gives a higher level of flexibilty in writing functions and programming. I just covered a couple of options in this post, but I am sure I will discover more stuff and hopefully write about them later.
 
