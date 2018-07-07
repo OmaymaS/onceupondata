@@ -45,7 +45,7 @@ as_tibble(tips)
 
 ### aes()
 
-The common way of using `ggplot2` functions, and the first example most people try is using Non standard Evaluation (`NSE`), by passing column names unquoted. For instance if you want to plot `tip_percent` versus `total_bill` you could simply write the following chunk of code.
+The common way of using `ggplot2` functions, and the first example most people try is using Non standard Evaluation (`NSE`), by passing variable names unquoted. For instance if you want to plot `tip_percent` versus `total_bill` you could simply write the following chunk of code.
 
 ```{r aes}
 ggplot(tips, aes(x = total_bill,
@@ -58,7 +58,7 @@ ggplot(tips, aes(x = total_bill,
 
 ### aes_string()
 
-Another way is using `aes_string` instead of `aes` and passing column names quotes as follows, which will give the same result.
+Another way is using `aes_string()` instead of `aes` and passing column names quoted as follows, which will give the same result.
 
 ```{r aes_string, eval = FALSE}
 ggplot(tips, aes_string(x = "total_bill",
@@ -69,7 +69,7 @@ ggplot(tips, aes_string(x = "total_bill",
   guides(alpha = FALSE)
 ```
 
-This version could be helpful when you want pass variables to `ggplot` function. For instance, you can have handle the following scenario, where you have pre defined variables to use. It will work fine and give the same result.
+This version could be helpful when you want to pass variables to `ggplot2` function. For instance, you can have handle the following scenario, when you have pre-defined variables to use, or if you take the variable names from a user in a an interface. The following examples will work fine and give the same result.
 
 ```{r aes_string_var, eval = FALSE}
 
@@ -86,9 +86,9 @@ ggplot(tips, aes_string(x = x_var,
   guides(alpha = FALSE)
 ```
 
-And usually the use case for this, is writing a reusable function that wraps several `ggplot` layers and works with whatever variables passed to it. For example, you can wrap the previous chunk in a function as follows
+And usually the use case for this, is the need to write a reusable function that wraps several `ggplot2` layers to work with whatever variables passed to it. For example, you can wrap the previous chunk in a function as follows
 
-```{r, eval = FALSE}
+```{r aes_string_fn, eval = FALSE}
 plot_points <- function(x, y, alpha){
   ggplot(tips, aes_string(x = x, y = y, alpha = alpha))+
   geom_point()+
@@ -99,7 +99,7 @@ plot_points <- function(x, y, alpha){
 
 Then you can either pass column names directly or the variable names.
 
-```{r, eval = FALSE}
+```{r plot_points_ex1, eval = FALSE}
 ## pass column names directly
 plot_points(x = "total_bill",
             y = "tip_percent",
@@ -112,8 +112,9 @@ plot_points(x = x_var,
 
 ```
 
-And you can reuse the function to create similar plots with different variables.
-```{r, eval = FALSE}
+And you can reuse the function to create similar plots with different variables. For instance `tip` on the y-exis instead of `tip_percent`
+
+```{r plot_points_ex2, eval = FALSE}
 ## plot tip vs. total_bill
 plot_points(x = "total_bill",
             y = "tip",
@@ -122,9 +123,9 @@ plot_points(x = "total_bill",
 
 ## ggplot2 the tidy eval way
 
-So previous options are good and valid in many cases, but there are some limitations. For instance, you cannot create a function and pass column names unquoted as follows. 
+So the previous options are good and valid in many cases, but there are some limitations. For instance, you cannot create a function and pass column names unquoted as follows. 
 
-```{r, eval = FALSE}
+```{r define plot_points2, eval = FALSE}
 plot_points2 <- function(x, y, alpha){
   ggplot(tips, aes(x = x, y = y, alpha = alpha))+
     geom_point()+
@@ -138,13 +139,14 @@ plot_points2(x = total_bill,
              alpha = 0.5)
 ```
 This will just break and give you errors like:
+
 `Error in FUN(X[[i]], ...) : object 'total_bill' not found`
 
 ### Unquoted column names / NSE 
 
 Previously there was no straightforward way to handle this, but with `tidy eval` you can use `enquo()` and the bang bang operator `!!` to create a function like `plot_points_tidyeval_01()` where you can pass the column names unquoted, and it will work properly.
 
-```{r}
+```{r define plot_points_tidyeval_01}
 plot_points_tidyeval_01 <- function(x, y, alpha){
   
   x_var <- enquo(x)
@@ -166,11 +168,12 @@ You might still see this as a simple use case that could be handled by `aes_stri
 
 ### Variable Facets 
 
-Suppose that you wanted to define a variable facet, you wouldn't have this flexibility even with `aes_string`. But now you can have implement it as follows. 
+Suppose that you wanted to define a variable facet, you wouldn't have this flexibility even with `aes_string()`. But now you can implement it as follows. 
+
 *Notice that `vars()` is a new helper inside `facet_grid` instead of the `~`.*
 
 
-```{r}
+```{r define plot_points_tidyeval_02}
 plot_points_tidyeval_02 <- function(x, y, alpha, facet){
   
   x_var <- enquo(x)
@@ -185,7 +188,7 @@ plot_points_tidyeval_02 <- function(x, y, alpha, facet){
 
 ```
 
-So you can pass `sex` to the facet variable in the function
+So you can pass `sex` to the facet variable in the `plot_points_tidyeval_02()` function.
 
 ```{r facet_sex}
 
@@ -195,7 +198,8 @@ plot_points_tidyeval_02(x = total_bill,
                         alpha = 0.5,
                         facet = sex)
 ```
-or use `day` for facets 
+
+or a different variable like `day`
 
 ```{r facet_day}
 ## use day for facet
@@ -206,7 +210,7 @@ plot_points_tidyeval_02(x = total_bill,
 ```
 
 
-You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directly to the facet layer `facet_wrap` as follows.
+You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directly to the facet layer `facet_wrap()` as follows.
 
 
 ```{r facet_dots}
