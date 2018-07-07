@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "", eval 
 
 Almost a year ago I wrote about my [My First Steps into The World of Tidy Eval](http://www.onceupondata.com/2017/08/12/my-first-steps-into-the-world-of-tidyeval/). At the end I [tweeted](https://twitter.com/OmaymaS_/status/887329478669729793) asking [Hadley Wickham](https://twitter.com/hadleywickham) and [Lionel Henrey](https://twitter.com/_lionelhenry) whether `ggplot2` was compatible with the `tidy eval`, They said that it was on the todo list.
 
-Finally, `ggplot2 3.0.0` got released last week with the support of `tidy eval`, so I thought it was time to write about it!
+Finally, `ggplot2 3.0.0` got [released](https://www.tidyverse.org/articles/2018/07/ggplot2-3-0-0/) last week with the support of `tidy eval`, so I thought it was time to write about it!
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">ggplot2 3.0.0 now on CRAN — <a href="https://t.co/m8fSDaaSbu">https://t.co/m8fSDaaSbu</a> 🎉 Headline features are tidy eval, sf support, position_dodge2(), &amp; viridis. Huge thanks to all 300+ contributors to this release, and particularly to <a href="https://twitter.com/ClausWilke?ref_src=twsrc%5Etfw">@ClausWilke</a>, <a href="https://twitter.com/kara_woo?ref_src=twsrc%5Etfw">@kara_woo</a>,  <a href="https://twitter.com/_lionelhenry?ref_src=twsrc%5Etfw">@_lionelhenry</a> and <a href="https://twitter.com/thomasp85?ref_src=twsrc%5Etfw">@thomasp85</a> <a href="https://t.co/igb9k0Z89C">pic.twitter.com/igb9k0Z89C</a></p>&mdash; Hadley Wickham (@hadleywickham) <a href="https://twitter.com/hadleywickham/status/1014511041609453568?ref_src=twsrc%5Etfw">July 4, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -23,7 +23,7 @@ In this post, I will go over the traditional ways of using `ggplot2` then I will
 
 ## Dataset
 
-In all the following examples We will use a simple datase, which is`tips` from `reshape2` package. The dataset contains information about tips received by a waiter over a period of a few months. We will add a new column with `tip_percent` to use in our plots.
+In all the following examples We will use a simple dataset, which is `tips` from `reshape2` package. The dataset contains information about tips received by a waiter over a period of a few months. We will add a new column with `tip_percent` to use in our plots.
 
 ```{r load package}
 ## Load packages
@@ -56,7 +56,7 @@ ggplot(tips, aes(x = total_bill,
 
 ### aes_string()
 
-Another way is using `aes_string()` instead of `aes` and passing column names quoted as follows, which will give the same result.
+Another way is using `aes_string()` instead of `aes()`. In this case, you will  need to pass column names quoted as follows, which will give the same result.
 
 ```{r aes_string, eval = FALSE}
 ggplot(tips, aes_string(x = "total_bill",
@@ -67,7 +67,7 @@ ggplot(tips, aes_string(x = "total_bill",
   guides(alpha = FALSE)
 ```
 
-This version could be helpful when you want to pass variables to `ggplot2` function. For instance, you can have handle the following scenario, when you have pre-defined variables to use, or if you take the variable names from a user in a an interface. The following examples will work fine and give the same result.
+This version could be helpful when you want to pass variables to `ggplot2` functions. For instance, you can handle a scenario, when you have pre-defined variables to use, or in case you take the variable names from a user through an interface. The following examples will work fine and give the same result.
 
 ```{r aes_string_var, eval = FALSE}
 
@@ -110,7 +110,7 @@ plot_points(x = x_var,
 
 ```
 
-And you can reuse the function to create similar plots with different variables. For instance `tip` on the y-exis instead of `tip_percent`
+And you can reuse the function to create similar plots with different variables. For instance `tip` on the y-axis instead of `tip_percent`
 
 ```{r plot_points_ex2, eval = FALSE}
 ## plot tip vs. total_bill
@@ -121,7 +121,7 @@ plot_points(x = "total_bill",
 
 ## ggplot2 the tidy eval way
 
-So the previous options are good and valid in many cases, but there are some limitations. For instance, you cannot create a function and pass column names unquoted as follows. 
+The previous options are good and valid in many cases, but there are some limitations. For instance, you cannot create a function and pass column names unquoted as follows. 
 
 ```{r define plot_points2, eval = FALSE}
 plot_points2 <- function(x, y, alpha){
@@ -136,13 +136,15 @@ plot_points2(x = total_bill,
              y = tip_percent,
              alpha = 0.5)
 ```
-This will just break and give you errors like:
+This will just break and gives an error like:
 
 `Error in FUN(X[[i]], ...) : object 'total_bill' not found`
 
+Previously there was no straightforward way to handle this, but with `tidy eval` it became possible and easy.
+
 ### Unquoted column names / NSE 
 
-Previously there was no straightforward way to handle this, but with `tidy eval` you can use `enquo()` and the bang bang operator `!!` to create a function like `plot_points_tidyeval_01()` where you can pass the column names unquoted, and it will work properly.
+You can use `enquo()` and the bang bang operator `!!` to create a function like `plot_points_tidyeval_01()` which takes the column names unquoted, and it will work properly.
 
 ```{r define plot_points_tidyeval_01}
 plot_points_tidyeval_01 <- function(x, y, alpha){
@@ -235,5 +237,5 @@ plot_points_tidyeval_03(x = total_bill,
 
 ## In Conclusion
 
-`tidy eval` with `ggplot2` offers new options and more capabilities. It solves problems people used to struggle with and gives a higher level of flexibilty in writing functions and programming. I just covered a couple of options in this post, but I am sure I will discover more stuff and hopefully write about them later.
+**`tidy eval` with `ggplot2` offers new options and more capabilities. It solves problems people used to struggle with and gives a higher level of flexibilty in writing functions and programming. I just covered a couple of options in this post, but I am sure I will discover more stuff and hopefully write about them later.**
 
