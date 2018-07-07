@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "", eval 
 
 Almost a year ago I wrote about my [My First Steps into The World of Tidy Eval](http://www.onceupondata.com/2017/08/12/my-first-steps-into-the-world-of-tidyeval/). At the end I [tweeted](https://twitter.com/OmaymaS_/status/887329478669729793) asking [Hadley Wickham](https://twitter.com/hadleywickham) and [Lionel Henrey](https://twitter.com/_lionelhenry) whether `ggplot2` was compatible with the `tidy eval`, They said that it was on the todo list.
 
-Finaly, `ggplot2 3.0.0` got released last week with the support of `tidy eval`, so I thought it was time to write about it!
+Finally, `ggplot2 3.0.0` got released last week with the support of `tidy eval`, so I thought it was time to write about it!
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">ggplot2 3.0.0 now on CRAN — <a href="https://t.co/m8fSDaaSbu">https://t.co/m8fSDaaSbu</a> 🎉 Headline features are tidy eval, sf support, position_dodge2(), &amp; viridis. Huge thanks to all 300+ contributors to this release, and particularly to <a href="https://twitter.com/ClausWilke?ref_src=twsrc%5Etfw">@ClausWilke</a>, <a href="https://twitter.com/kara_woo?ref_src=twsrc%5Etfw">@kara_woo</a>,  <a href="https://twitter.com/_lionelhenry?ref_src=twsrc%5Etfw">@_lionelhenry</a> and <a href="https://twitter.com/thomasp85?ref_src=twsrc%5Etfw">@thomasp85</a> <a href="https://t.co/igb9k0Z89C">pic.twitter.com/igb9k0Z89C</a></p>&mdash; Hadley Wickham (@hadleywickham) <a href="https://twitter.com/hadleywickham/status/1014511041609453568?ref_src=twsrc%5Etfw">July 4, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -45,7 +45,7 @@ as_tibble(tips)
 
 ### aes()
 
-The common way of using `ggplot2` functions, and the first example most people try is using Non standard Evaluation (`NSE`), by passing column names unquoted. For instance if you want to plot `tip_percent` versus `total_bill` you could simply write the following chunck of code.
+The common way of using `ggplot2` functions, and the first example most people try is using Non standard Evaluation (`NSE`), by passing column names unquoted. For instance if you want to plot `tip_percent` versus `total_bill` you could simply write the following chunk of code.
 
 ```{r aes}
 ggplot(tips, aes(x = total_bill,
@@ -69,7 +69,7 @@ ggplot(tips, aes_string(x = "total_bill",
   guides(alpha = FALSE)
 ```
 
-This version could be helpful when you want pass variables to `ggplot` function. For instance, you can have handle the followinh scenario, where you have pre defined variables to use. It will work fine and give the same result.
+This version could be helpful when you want pass variables to `ggplot` function. For instance, you can have handle the following scenario, where you have pre defined variables to use. It will work fine and give the same result.
 
 ```{r aes_string_var, eval = FALSE}
 
@@ -97,7 +97,7 @@ plot_points <- function(x, y, alpha){
 }
 ```
 
-Then you can either pass column names directly or the variabl names.
+Then you can either pass column names directly or the variable names.
 
 ```{r, eval = FALSE}
 ## pass column names directly
@@ -206,7 +206,7 @@ plot_points_tidyeval_02(x = total_bill,
 ```
 
 
-You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directlt to the facet layer `facet_wrap` as follows.
+You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directly to the facet layer `facet_wrap` as follows.
 
 
 ```{r facet_dots}
