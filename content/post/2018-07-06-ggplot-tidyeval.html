@@ -1,0 +1,197 @@
+---
+title: 'Tidy Eval Meets ggplot2'  
+subtitle: 'The Bang Bang Plots'
+date: '2018-07-06'
+slug: ggplot-tidyeval
+tags: [R, ggplot2, tidyeval, tidyverse]
+---
+
+
+
+<p>Almost a year ago I wrote about my <a href="http://www.onceupondata.com/2017/08/12/my-first-steps-into-the-world-of-tidyeval/">My First Steps into The World of Tidy Eval</a>. At the end I <a href="https://twitter.com/OmaymaS_/status/887329478669729793">tweeted</a> asking <a href="https://twitter.com/hadleywickham">Hadley Wickham</a> and <a href="https://twitter.com/_lionelhenry">Lionel Henrey</a> whether <code>ggplot2</code> was compatible with the <code>tidy eval</code>, They said that it was on the todo list.</p>
+<p>Finally, <code>ggplot2 3.0.0</code> got <a href="https://www.tidyverse.org/articles/2018/07/ggplot2-3-0-0/">released</a> last week with the support of <code>tidy eval</code>, so I thought it was time to write about it!</p>
+<blockquote class="twitter-tweet" data-lang="en">
+<p lang="en" dir="ltr">
+ggplot2 3.0.0 now on CRAN — <a href="https://t.co/m8fSDaaSbu">https://t.co/m8fSDaaSbu</a> 🎉 Headline features are tidy eval, sf support, position_dodge2(), &amp; viridis. Huge thanks to all 300+ contributors to this release, and particularly to <a href="https://twitter.com/ClausWilke?ref_src=twsrc%5Etfw"><span class="citation">@ClausWilke</span></a>, <a href="https://twitter.com/kara_woo?ref_src=twsrc%5Etfw"><span class="citation">@kara_woo</span></a>, <a href="https://twitter.com/_lionelhenry?ref_src=twsrc%5Etfw"><span class="citation">@_lionelhenry</span></a> and <a href="https://twitter.com/thomasp85?ref_src=twsrc%5Etfw"><span class="citation">@thomasp85</span></a> <a href="https://t.co/igb9k0Z89C">pic.twitter.com/igb9k0Z89C</a>
+</p>
+— Hadley Wickham (<span class="citation">@hadleywickham</span>) <a href="https://twitter.com/hadleywickham/status/1014511041609453568?ref_src=twsrc%5Etfw">July 4, 2018</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>In this post, I will go over the traditional ways of using <code>ggplot2</code> then I will highlight some cases, in which <code>tidy eval</code> solves problems and provides more flexibility.</p>
+<div id="dataset" class="section level2">
+<h2>Dataset</h2>
+<p>In all the following examples We will use a simple dataset, which is <code>tips</code> from <code>reshape2</code> package. The dataset contains information about tips received by a waiter over a period of a few months. We will add a new column with <code>tip_percent</code> to use in our plots.</p>
+<pre class="r"><code>## Load packages
+library(reshape2)
+library(tidyverse)</code></pre>
+<pre class="r"><code>## add a new column with tip_percent
+tips &lt;- tips %&gt;% 
+  mutate(tip_percent = tip/total_bill)
+
+as_tibble(tips)</code></pre>
+<pre><code># A tibble: 244 x 8
+   total_bill   tip sex    smoker day   time    size tip_percent
+        &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  &lt;fct&gt;  &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;       &lt;dbl&gt;
+ 1      17.0   1.01 Female No     Sun   Dinner     2      0.0594
+ 2      10.3   1.66 Male   No     Sun   Dinner     3      0.161 
+ 3      21.0   3.5  Male   No     Sun   Dinner     3      0.167 
+ 4      23.7   3.31 Male   No     Sun   Dinner     2      0.140 
+ 5      24.6   3.61 Female No     Sun   Dinner     4      0.147 
+ 6      25.3   4.71 Male   No     Sun   Dinner     4      0.186 
+ 7       8.77  2    Male   No     Sun   Dinner     2      0.228 
+ 8      26.9   3.12 Male   No     Sun   Dinner     4      0.116 
+ 9      15.0   1.96 Male   No     Sun   Dinner     2      0.130 
+10      14.8   3.23 Male   No     Sun   Dinner     2      0.219 
+# ... with 234 more rows</code></pre>
+</div>
+<div id="ggplot2-the-common-way" class="section level2">
+<h2>ggplot2 the common way</h2>
+<div id="aes" class="section level3">
+<h3>aes()</h3>
+<p>The common way of using <code>ggplot2</code> functions, and the first example most people try is using Non standard Evaluation (<code>NSE</code>), by passing variable names unquoted. For instance if you want to plot <code>tip_percent</code> versus <code>total_bill</code> you could simply write the following chunk of code.</p>
+<pre class="r"><code>ggplot(tips, aes(x = total_bill,
+                 y = tip_percent,
+                 alpha = 0.5))+
+  geom_point()+
+  theme_minimal()+
+  guides(alpha = FALSE)</code></pre>
+<p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/aes-1.png" width="672" /></p>
+</div>
+<div id="aes_string" class="section level3">
+<h3>aes_string()</h3>
+<p>Another way is using <code>aes_string()</code> instead of <code>aes()</code>. In this case, you will need to pass column names quoted as follows, which will give the same result.</p>
+<pre class="r"><code>ggplot(tips, aes_string(x = &quot;total_bill&quot;,
+                 y = &quot;tip_percent&quot;,
+                 alpha = 0.5))+
+  geom_point()+
+  theme_minimal()+
+  guides(alpha = FALSE)</code></pre>
+<p>This version could be helpful when you want to pass variables to <code>ggplot2</code> functions. For instance, you can handle a scenario, when you have pre-defined variables to use, or in case you take the variable names from a user through an interface. The following examples will work fine and give the same result.</p>
+<pre class="r"><code>## define variables
+x_var &lt;- &quot;total_bill&quot;
+y_var &lt;- &quot;tip_percent&quot;
+alpha_var &lt;- 0.5
+
+ggplot(tips, aes_string(x = x_var,
+                 y = y_var,
+                 alpha = alpha_var))+
+  geom_point()+
+  theme_minimal()+
+  guides(alpha = FALSE)</code></pre>
+<p>And usually the use case for this, is the need to write a reusable function that wraps several <code>ggplot2</code> layers to work with whatever variables passed to it. For example, you can wrap the previous chunk in a function as follows</p>
+<pre class="r"><code>plot_points &lt;- function(x, y, alpha){
+  ggplot(tips, aes_string(x = x, y = y, alpha = alpha))+
+  geom_point()+
+  theme_minimal()+
+  guides(alpha = FALSE)
+}</code></pre>
+<p>Then you can either pass column names directly or the variable names.</p>
+<pre class="r"><code>## pass column names directly
+plot_points(x = &quot;total_bill&quot;,
+            y = &quot;tip_percent&quot;,
+            alpha = 0.5)
+
+## pass variable names
+plot_points(x = x_var,
+            y = y_var,
+            alpha = alpha_var)</code></pre>
+<p>And you can reuse the function to create similar plots with different variables. For instance <code>tip</code> on the y-axis instead of <code>tip_percent</code></p>
+<pre class="r"><code>## plot tip vs. total_bill
+plot_points(x = &quot;total_bill&quot;,
+            y = &quot;tip&quot;,
+            alpha = 0.5)</code></pre>
+</div>
+</div>
+<div id="ggplot2-the-tidy-eval-way" class="section level2">
+<h2>ggplot2 the tidy eval way</h2>
+<p>The previous options are good and valid in many cases, but there are some limitations. For instance, you cannot create a function and pass column names unquoted as follows.</p>
+<pre class="r"><code>plot_points2 &lt;- function(x, y, alpha){
+  ggplot(tips, aes(x = x, y = y, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)
+}
+
+## invalid way
+plot_points2(x = total_bill,
+             y = tip_percent,
+             alpha = 0.5)</code></pre>
+<p>This will just break and gives an error like:</p>
+<p><code>Error in FUN(X[[i]], ...) : object 'total_bill' not found</code></p>
+<p>Previously there was no straightforward way to handle this, but with <code>tidy eval</code> it became possible and easy.</p>
+<div id="unquoted-column-names-nse" class="section level3">
+<h3>Unquoted column names / NSE</h3>
+<p>You can use <code>enquo()</code> and the bang bang operator <code>!!</code> to create a function like <code>plot_points_tidyeval_01()</code> which takes the column names unquoted, and it will work properly.</p>
+<pre class="r"><code>plot_points_tidyeval_01 &lt;- function(x, y, alpha){
+  
+  x_var &lt;- enquo(x)
+  y_var &lt;- enquo(y)
+  
+  ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)
+}
+
+## pass column names unquoted 
+plot_points_tidyeval_01(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5)</code></pre>
+<p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/define%20plot_points_tidyeval_01-1.png" width="672" /></p>
+<p>You might still see this as a simple use case that could be handled by <code>aes_string()</code>. But there are more things you can do, like variable facets.</p>
+</div>
+<div id="variable-facets" class="section level3">
+<h3>Variable Facets</h3>
+<p>Suppose that you wanted to define a variable facet, you wouldn’t have this flexibility even with <code>aes_string()</code>. But now you can implement it as follows.</p>
+<p><em>Notice that <code>vars()</code> is a new helper inside <code>facet_grid</code> instead of the <code>~</code>.</em></p>
+<pre class="r"><code>plot_points_tidyeval_02 &lt;- function(x, y, alpha, facet){
+  
+  x_var &lt;- enquo(x)
+  y_var &lt;- enquo(y)
+  facet_var &lt;- enquo(facet)
+  
+  ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)+
+    facet_grid(cols = vars(!!facet_var))}</code></pre>
+<p>So you can pass <code>sex</code> to the facet variable in the <code>plot_points_tidyeval_02()</code> function.</p>
+<pre class="r"><code>## use sex for facet
+plot_points_tidyeval_02(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        facet = sex)</code></pre>
+<p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/facet_sex-1.png" width="672" /></p>
+<p>or a different variable like <code>day</code></p>
+<pre class="r"><code>## use day for facet
+plot_points_tidyeval_02(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        facet = day)</code></pre>
+<p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/facet_day-1.png" width="672" /></p>
+<p>You can even use the dots <code>...</code> to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use <code>quos()</code> to capture the dots and pass the result directly to the facet layer <code>facet_wrap()</code> as follows.</p>
+<pre class="r"><code>plot_points_tidyeval_03 &lt;- function(x, y, alpha, ...){
+  
+  x_var &lt;- enquo(x)
+  y_var &lt;- enquo(y)
+  facet_vars &lt;- quos(...)
+  
+  ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
+    geom_point()+
+    theme_minimal()+
+    guides(alpha = FALSE)+
+    facet_wrap(facet_vars, nrow = 2)
+}
+
+## use both sex and day for facets
+plot_points_tidyeval_03(x = total_bill,
+                        y = tip_percent,
+                        alpha = 0.5,
+                        sex, day)</code></pre>
+<p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/facet_dots-1.png" width="672" /></p>
+</div>
+</div>
+<div id="in-conclusion" class="section level2">
+<h2>In Conclusion</h2>
+<p><strong><code>tidy eval</code> with <code>ggplot2</code> offers new options and more capabilities. It solves problems people used to struggle with and gives a higher level of flexibilty in writing functions and programming. I just covered a couple of options in this post, but I am sure I will discover more stuff and hopefully write about them later.</strong></p>
+</div>
