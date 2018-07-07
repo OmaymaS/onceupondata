@@ -169,19 +169,19 @@ plot_points_tidyeval_02(x = total_bill,
                         alpha = 0.5,
                         facet = day)</code></pre>
 <p><img src="/post/2018-07-06-ggplot-tidyeval_files/figure-html/facet_day-1.png" width="672" /></p>
-<p>You can even use the dots <code>...</code> to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use <code>quos()</code> to capture the dots and pass the result directly to the facet layer <code>facet_wrap()</code> as follows.</p>
+<p>You can even use the dots <code>...</code> to have more flexibility and allow the function to take more than one variable for faceting. You can pass the dots <code>...</code> directly to <code>vars()</code> inside <code>facet_wrap()</code> as follows.</p>
 <pre class="r"><code>plot_points_tidyeval_03 &lt;- function(x, y, alpha, ...){
   
   x_var &lt;- enquo(x)
   y_var &lt;- enquo(y)
-  facet_vars &lt;- quos(...)
   
   ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
     geom_point()+
     theme_minimal()+
     guides(alpha = FALSE)+
-    facet_wrap(facet_vars, nrow = 2)
+    facet_wrap(vars(...), nrow = 2)
 }
+
 
 ## use both sex and day for facets
 plot_points_tidyeval_03(x = total_bill,

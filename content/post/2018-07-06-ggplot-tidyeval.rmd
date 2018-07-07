@@ -210,7 +210,7 @@ plot_points_tidyeval_02(x = total_bill,
 ```
 
 
-You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. Here you will need to use `quos()` to capture the dots and pass the result directly to the facet layer `facet_wrap()` as follows.
+You can even use the dots `...` to have more flexibility and allow the function to take more than one variable for faceting. You can pass the dots `...` directly to `vars()` inside `facet_wrap()` as follows.
 
 
 ```{r facet_dots}
@@ -218,14 +218,14 @@ plot_points_tidyeval_03 <- function(x, y, alpha, ...){
   
   x_var <- enquo(x)
   y_var <- enquo(y)
-  facet_vars <- quos(...)
   
   ggplot(tips, aes(x = !!x_var, y = !!y_var, alpha = alpha))+
     geom_point()+
     theme_minimal()+
     guides(alpha = FALSE)+
-    facet_wrap(facet_vars, nrow = 2)
+    facet_wrap(vars(...), nrow = 2)
 }
+
 
 ## use both sex and day for facets
 plot_points_tidyeval_03(x = total_bill,
