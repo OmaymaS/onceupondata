@@ -1,4 +1,4 @@
-baseurl = "http://onceupondata.com/"
+baseurl = "https://onceupondata.com/"
 DefaultContentLanguage = "en"
 relativeurls = false
 title = "Once Upon Data"
