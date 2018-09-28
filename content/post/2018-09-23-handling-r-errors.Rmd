@@ -1,11 +1,14 @@
 ---
 title: handling-r-errors
-author: ~
+author: null
 date: '2018-09-23'
 slug: handling-r-errors
 categories: []
 tags: []
 subtitle: ''
+output: 
+  html_document: 
+    toc: yes
 ---
 
 ```{r setup, include=FALSE }
@@ -16,7 +19,7 @@ Every day we deal with `errors`, `warnings` and `messages` while writing, debugg
 
 In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`.  
 
-## Conditions in R
+## Conditions in base R
 
 in `R` `conditions` are regular objects and they mainly include:
 
@@ -45,13 +48,13 @@ Now if you pass -1 to `my_sqrt()`, it will exit and show you the message which y
 my_sqrt(-1)
 ```
 
-**But how can we handle `conditions`?**
+**But how can we handle `conditions` and decide what to do when they are generated?**
 
 ## Condition handling
 
 `tryCatch` is one of the ways to inspect condition objects and control what happens when a condition is signalled.
 
-For instance, we can define an error handler to decide what happens when `my_sqrt()` fails. So here  `function(cnd) cnd` says *"catch the error object and return it"*. If you inspect the returned value `sqrt_cnd` you can see a list with:
+For instance, we can define an error handler to decide what happens when `my_sqrt()` fails. So here  `function(cnd) cnd` says ***"catch the error object and return it"***. If you inspect the returned value `sqrt_cnd` you can see a list with:
 
 - `message`: the error message you defined in `my_sqrt`.
 - `call`: the function call that raised this error.
@@ -70,7 +73,6 @@ Since the error handler is a normal function, you can decide what to return othe
 ## define an error handler to return 0 when an error is thrown
 sqrt_cnd <- tryCatch(error = function(x) 0, my_sqrt(-1))
 
-## inspect sqrt_cnd
 str(sqrt_cnd)
 ```
 
@@ -142,7 +144,7 @@ In both cases, we have the same error message and we have no info about the valu
 **So is there a way to see more info about the error, like the exact value of `val`?, or could we write more detailed messages?**
 
 
-## conditions with `rlang` functions
+## Conditions in `rlang`
 
 In principle, it is possible to create custom condition objects to pass more meta-data about the error. But in `base R`, it is kind of confusing compared to what `rlang` provides. I had to look up the `base R` way and check some examples every time I wanted to hanldle such cases!
 
@@ -156,7 +158,9 @@ So `rlang` provides functions that correspond to `base R` ones as follows:
 
 `rlang` functions are designed to deal with condition objects and create custom ones easily, unlike `base R` functions that are focused on messages.
 
-### `abort()` versus `stop()`
+### Custom conditions 
+
+#### `abort()` versus `stop()`
 
 To clarify the difference, let's modify `get_val()` and use `abort()` instead of `stop()`. Here you can see three arguments passed to `abort()`:
 
@@ -212,7 +216,7 @@ str(custom_cnd, max.level = 1)
 
 **So now we have more meta-data about the error and specific subclasses. How can we use this with chained functions?**
 
-### Condition handling with subclasses
+#### Error messages (Catch, modify, rethrow)
 
 Let's say, we want to get a more precise message when we call `calc_val()` that calls `get_val()`. For instance, a message like:
 
@@ -224,7 +228,7 @@ We can define an error handler `get_val_handler()` to access the values returned
 What `get_val_handler()` basically does is to:
 
 - define a basic error message *"Can't calculate value"*, that will be shown anyways.
-- check the class of the error object returned by `get_val()`. If the class belongs to a specific subclass `get_val_error`, it modifies the message and includes the value of `val`.
+- check the class of the error object returned by `get_val()`. If the class belongs to a specific subclass `get_val_error`, the message gets modified to include the value of `val`.
 - return an error object with the final message and a subclass `calc_val_error`.
     
 
@@ -265,10 +269,9 @@ calc_val()
 If you want to inspect the error object returned by `calc_val()`, you can see the details including the new subclass `calc_val_error`, to which this error object belongs.
 
 ```{r}
-## 
+## define an error handler to return the error object
 modified_cnd <- tryCatch(error = function(cnd) cnd, calc_val())
 
-## inspect modified_cnd
 str(modified_cnd, max.level = 1)
 ```
 
