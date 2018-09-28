@@ -142,7 +142,7 @@ In both cases, we have the same error message and we have no info about the valu
 **So is there a way to see more info about the error, like the exact value of `val`?, or could we write more detailed messages?**
 
 
-## `rlang` functions
+## conditions with `rlang` functions
 
 In principle, it is possible to create custom condition objects to pass more meta-data about the error. But in `base R`, it is kind of confusing compared to what `rlang` provides. I had to look up the `base R` way and check some examples every time I wanted to hanldle such cases!
 
@@ -194,6 +194,7 @@ get_val <- function(){
 ```
 
 To inspect the custom error object returned by `get_val()`, you can use `tryCatch()` and assign the value to `custom_cnd`. 
+
 ```{r}
 ## define an error handler to return the custom error object 
 custom_cnd <- tryCatch(error = function(cnd) cnd, get_val())
@@ -209,24 +210,24 @@ str(custom_cnd, max.level = 1)
 ```
 
 
-**So now we have more meta-data about the error and specific subclassws. How can we use this with chained functions?**
+**So now we have more meta-data about the error and specific subclasses. How can we use this with chained functions?**
+
+### Condition handling with subclasses
+
+Let's say, we want to get a more precise message when we call `calc_val()` that calls `get_val()`. For instance, a message like:
+
+***"Can't calculate value because `get_val()` raised an error as `val` was negative (-1.5648)"***
 
 
-Let's say, we want to get a more precise message when we call `calc_val()` that calls `get_val()`, something like:
+We can define an error handler `get_val_handler()` to access the values returned in the custom error object thrown by `get_val()` then return a message based on these values. 
 
-*"Can't calculate value because `get_val()` raised an error as `val` was negative (-1.5648)"*
+What `get_val_handler()` basically does is to:
 
-</n>
-
-
-We can define an error handler `get_val_handler()` that accesses the values returned in the custom error object thrown by `get_val()` and returns a message based on these values. 
-
-What `get_val_handler()` basically does is:
-
-- it defines a basic error message *"Can't calculate value"*, that will be shown anyways.
-- it checks the class of the error object returned by `get_val()`. If the class belongs to a specific subclass `get_val_error`, it modifies the message and includes the value of `val`.
-- it exits and returns an error object with the final message and a subclass `calc_val_error`.
+- define a basic error message *"Can't calculate value"*, that will be shown anyways.
+- check the class of the error object returned by `get_val()`. If the class belongs to a specific subclass `get_val_error`, it modifies the message and includes the value of `val`.
+- return an error object with the final message and a subclass `calc_val_error`.
     
+
 
 ```{r}
 ## define an error handler to modify the message
@@ -243,7 +244,7 @@ get_val_handler <- function(cnd) {
 
 So now if you use `get_val_handler` with `get_val()` inside `calc_val()`, you basicaly say:
 
-**If you catch an error from `get_val()`, get the value of `val` that caused the error and add it to the error message that will be returned by `calc_val()`**
+***"If you catch an error from `get_val()`, get the value of `val` that caused the error and add it to the error message that will be returned by `calc_val()`"***
 
 
 ```{r}
