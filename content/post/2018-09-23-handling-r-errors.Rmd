@@ -1,5 +1,5 @@
 ---
-title:  'Handling R errors: base R versus rlang' 
+title:  'Handling R errors: the rlang way' 
 subtitle: 'Custom conditions, subclasses and more! '
 date: '2018-09-28'
 slug: handling-r-errors
