@@ -4,9 +4,7 @@ subtitle: 'Custom conditions, subclasses and more! '
 date: '2018-09-28'
 slug: handling-r-errors
 tags: [R, rlang, tidyverse]
-output: 
-  html_document: 
-    toc: yes
+output: html_document
 ---
 
 ```{r setup, include=FALSE }
