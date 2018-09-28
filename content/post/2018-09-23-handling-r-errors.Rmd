@@ -17,7 +17,9 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "", error
 
 Every day we deal with `errors`, `warnings` and `messages` while writing, debugging or reviewing code. The three types belong to `conditions` in `R`. You might hope to see as few of them as possible, but actually they are so helpful when they describe the problem concisely and refer to its source. So if you write functions or code for yourself or others, it is a good practice to spend more time in writing descriptive conditions. I, persoanlly, was not following this advice all the time, but as I am getting into this habit, I learnt more about the condition handling system in `R` and also about the improvements `rlang` provides.
 
-In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`.  
+In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`. By the end, we will be able to understand the differences compared to `base R` and throw erros with more details as shown in the following example.
+
+![](/post/2018-09-23-handling-r-errors/get_val_image.png)
 
 ## Conditions in base R
 
@@ -275,5 +277,16 @@ modified_cnd <- tryCatch(error = function(cnd) cnd, calc_val())
 str(modified_cnd, max.level = 1)
 ```
 
+## Conclusion
 
-![](/post/2018-09-23-handling-r-errors/get_val_image.png)
+
+
+
+
+
+## Notes:
+
+- The functions used in the examples are not perfect since they are not pure, they don't don't perform a single clear task and their names do not reflect their purpose. However, they were just used for demo purposes. 
+
+
+
