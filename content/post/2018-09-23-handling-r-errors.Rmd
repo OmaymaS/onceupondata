@@ -19,7 +19,7 @@ Every day we deal with `errors`, `warnings` and `messages` while writing, debugg
 
 In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`. By the end, we will be able to understand the differences compared to `base R` and throw errors with more details as shown in the following example.
 
-![](/post/2018-09-23-handling-r-errors/get_val_image.png)
+![](/post/2018-09-23-handling-r-errors/my_sqrt_image.png)
 
 ## Conditions in base R
 
@@ -54,9 +54,9 @@ my_sqrt(-1)
 
 ## Condition handling
 
-`tryCatch` is one of the ways to inspect condition objects and control what happens when a condition is signaled.
+`tryCatch` is one of the ways to inspect condition objects and control what happens when a condition is signaled. For instance, we can define an error handler to decide what happens when `my_sqrt()` fails. Here,  `function(cnd) cnd`, the error handler passed to the `error` argument inside `tryCatch()`  says ***"catch the error object and return it"***. 
 
-For instance, we can define an error handler to decide what happens when `my_sqrt()` fails. So here  `function(cnd) cnd` says ***"catch the error object and return it"***. If you inspect the returned value `sqrt_cnd` you can see a list with:
+If you inspect the returned value `sqrt_cnd` you can see a list with:
 
 - `message`: the error message you defined in `my_sqrt`.
 - `call`: the function call that raised this error.
@@ -78,7 +78,7 @@ sqrt_cnd <- tryCatch(error = function(x) 0, my_sqrt(-1))
 str(sqrt_cnd)
 ```
 
-**But What if we had a chain of functions, where a function calls another one, and errors can be raised by either of them?**
+**But What if we had a chain of functions, where a function calls another one?**
 
 
 ## Conditions with a chain of functions
@@ -105,12 +105,12 @@ get_val <- function(){
 - `double_value()`: which calls `get_val()` and multiplies the returned value by 2.
 
 ```{r}
-## Note that `calc_val()` it is not a very practical example,
+## Note that `mult_val()` it is not a very practical example,
 ## because the function doesn't do a single task related to its name, 
 ## but I am just using it for demo purposes
-calc_val <- function(){
+mult_val <- function(mult_by = 2){
   x <- get_val()
-  x*2
+  x*mult_by
 }
 ```
 
@@ -134,11 +134,11 @@ In case `val` is negative in `get_val()`, an error will be thrown as follows:
 get_val()
 ```
 
-Similarly, when we call `calc_val()`, the error will jump and and we will see an error message.
+Similarly, when we call `mult_val()`, the error will jump and and we will see an error message.
 
 ```{r}
 ## in case val negative 
-calc_val()
+mult_val()
 ```
 
 In both cases, we have the same error message and we have no info about the value of `val` that caused the error.
@@ -220,7 +220,7 @@ str(custom_cnd, max.level = 1)
 
 #### Error messages (Catch, modify, rethrow)
 
-Let's say, we want to get a more precise message when we call `calc_val()` that calls `get_val()`. For instance, a message like:
+Let's say, we want to get a more precise message when we call `mult_val()` that calls `get_val()`. For instance, a message like:
 
 ***"Can't calculate value because `get_val()` raised an error as `val` was negative (-1.5648)"***
 
@@ -231,7 +231,7 @@ What `get_val_handler()` basically does is to:
 
 - define a basic error message *"Can't calculate value"*, that will be shown anyways.
 - check the class of the error object returned by `get_val()`. If the class belongs to a specific subclass `get_val_error`, the message gets modified to include the value of `val`.
-- return an error object with the final message and a subclass `calc_val_error`.
+- return an error object with the final message and a subclass `mult_val_error`.
     
 
 
@@ -244,38 +244,40 @@ get_val_handler <- function(cnd) {
     msg <- paste0(msg, " as `val` passed to `get_val()` equals (", cnd$val,")")
   }
   
-  rlang::abort(msg, "calc_val_error")
+  rlang::abort(msg, "mult_val_error")
 }
 ```
 
-So now if you use `get_val_handler` with `get_val()` inside `calc_val()`, you basically say:
+So now if you use `get_val_handler` with `get_val()` inside `mult_val()`, you basically say:
 
-***"If you catch an error from `get_val()`, get the value of `val` that caused the error and add it to the error message that will be returned by `calc_val()`"***
+***"If you catch an error from `get_val()`, get the value of `val` that caused the error and add it to the error message that will be returned by `mult_val()`"***
 
 
 ```{r}
-## use get_val_handler() with calc_val()
-calc_val <- function(){
+## use get_val_handler() with mult_val()
+mult_val <- function(mult_by = 2){
   x <- tryCatch(error = get_val_handler, get_val())
-  x*2
+  x*mult_by
 }
 ```
 
 And here you can see an example of the modified error message including the value of `val` that caused the error, which you couldn't have access to earlier with the default `stop()` function.
 
 ```{r}
-calc_val()
+mult_val()
 ```
 
 
-If you want to inspect the error object returned by `calc_val()`, you can see the details including the new subclass `calc_val_error`, to which this error object belongs.
+If you want to inspect the error object returned by `mult_val()`, you can see the details including the new subclass `mult_val_error`, to which this error object belongs.
 
 ```{r}
 ## define an error handler to return the error object
-modified_cnd <- tryCatch(error = function(cnd) cnd, calc_val())
+modified_cnd <- tryCatch(error = function(cnd) cnd, mult_val())
 
 str(modified_cnd, max.level = 1)
 ```
+
+![](/post/2018-09-23-handling-r-errors/get_val_image.png)
 
 ## Conclusion
 
