@@ -215,6 +215,9 @@ Notice that:
 str(custom_cnd, max.level = 1)
 ```
 
+So here's a quick comparison between the error object returned by `rlang::abort()` in this example and the one returned by `stop()` in the previous section.
+
+![](/post/2018-09-23-handling-r-errors/get_val_image.png)
 
 **So now we have more meta-data about the error and a specific subclasse. How can we use this with chained functions?**
 
@@ -277,7 +280,7 @@ modified_cnd <- tryCatch(error = function(cnd) cnd, mult_val())
 str(modified_cnd, max.level = 1)
 ```
 
-![](/post/2018-09-23-handling-r-errors/get_val_image.png)
+
 
 ## Conclusion
 
