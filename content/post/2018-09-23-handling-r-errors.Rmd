@@ -15,9 +15,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment = "", error = TRUE)
 ```
 
-Every day we deal with `errors`, `warnings` and `messages` while writing, debugging or reviewing code. The three types belong to `conditions` in `R`. You might hope to see as few of them as possible, but actually they are so helpful when they describe the problem concisely and refer to its source. So if you write functions or code for yourself or others, it is a good practice to spend more time in writing descriptive conditions. I, persoanlly, was not following this advice all the time, but as I am getting into this habit, I learnt more about the condition handling system in `R` and also about the improvements `rlang` provides.
+Every day we deal with `errors`, `warnings` and `messages` while writing, debugging or reviewing code. The three types belong to `conditions` in `R`. You might hope to see as few of them as possible, but actually they are so helpful when they describe the problem concisely and refer to its source. So if you write functions or code for yourself or others, it is a good practice to spend more time in writing descriptive conditions. I, personally, was not following this advice all the time, but as I am getting into this habit, I learnt more about the condition handling system in `R` and also about the improvements `rlang` provides.
 
-In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`. By the end, we will be able to understand the differences compared to `base R` and throw erros with more details as shown in the following example.
+In this post I will highlight the basics of condition handling. Then we'll see the benefits of custom conditions provided by `rlang`. By the end, we will be able to understand the differences compared to `base R` and throw errors with more details as shown in the following example.
 
 ![](/post/2018-09-23-handling-r-errors/get_val_image.png)
 
@@ -54,7 +54,7 @@ my_sqrt(-1)
 
 ## Condition handling
 
-`tryCatch` is one of the ways to inspect condition objects and control what happens when a condition is signalled.
+`tryCatch` is one of the ways to inspect condition objects and control what happens when a condition is signaled.
 
 For instance, we can define an error handler to decide what happens when `my_sqrt()` fails. So here  `function(cnd) cnd` says ***"catch the error object and return it"***. If you inspect the returned value `sqrt_cnd` you can see a list with:
 
@@ -148,7 +148,7 @@ In both cases, we have the same error message and we have no info about the valu
 
 ## Conditions in `rlang`
 
-In principle, it is possible to create custom condition objects to pass more meta-data about the error. But in `base R`, it is kind of confusing compared to what `rlang` provides. I had to look up the `base R` way and check some examples every time I wanted to hanldle such cases!
+In principle, it is possible to create custom condition objects to pass more meta-data about the error. But in `base R`, it is kind of confusing compared to what `rlang` provides. I had to look up the `base R` way and check some examples every time I wanted to handle such cases!
 
 So `rlang` provides functions that correspond to `base R` ones as follows: 
 
@@ -248,7 +248,7 @@ get_val_handler <- function(cnd) {
 }
 ```
 
-So now if you use `get_val_handler` with `get_val()` inside `calc_val()`, you basicaly say:
+So now if you use `get_val_handler` with `get_val()` inside `calc_val()`, you basically say:
 
 ***"If you catch an error from `get_val()`, get the value of `val` that caused the error and add it to the error message that will be returned by `calc_val()`"***
 
@@ -261,7 +261,7 @@ calc_val <- function(){
 }
 ```
 
-And here you can see an example of the modifed error message including the value of `val` that caused the error, which you couldn't have access to earlier with the default `stop()` function.
+And here you can see an example of the modified error message including the value of `val` that caused the error, which you couldn't have access to earlier with the default `stop()` function.
 
 ```{r}
 calc_val()
@@ -279,14 +279,21 @@ str(modified_cnd, max.level = 1)
 
 ## Conclusion
 
+Conditions can be our friends and guides through debugging and code review processes. How useful they are depends on how clear and concise the info they give. `rlang` provides an easy way to deal with custom conditions. It allows us to pass meta-data about the conditions, which helps in better reporting and handling. The previous examples showed the differences between `rlang` and `base r` conditions. They also demonstrated how to deal with custom conditions. Most importantly, we saw how to catch, modify and rethrow an error in chained functions. So what remains is to make use of this flexibility to handle conditions and write more informative messages.
 
 
+## Extra Resources 
+
+- [The tidyverse style guide: Error messages](http://style.tidyverse.org/error-messages.html), by [Hadley Wickham](http://github.com/hadley)
+- [Advanced R - Exceptions and debugging](http://adv-r.had.co.nz/Exceptions-Debugging.html), by [Hadley Wickham](http://github.com/hadley)
+- [Reducing bewilderment by improving errors](https://www.dropbox.com/s/fi5fswytwatw1kk/condition-erum.pdf), by [Lionel Henry](https://github.com/lionel-)
 
 
+**Notes**
 
-## Notes:
+- The version of `rlang` used here is `rlang_0.2.2.9001`. I am not sure if everything works in the same way in earlier versions.
 
-- The functions used in the examples are not perfect since they are not pure, they don't don't perform a single clear task and their names do not reflect their purpose. However, they were just used for demo purposes. 
+- The functions used in the examples are not perfect since they are not pure, they  don't perform a single clear task and their names do not reflect their purpose. However, they were just used for demo purposes. 
 
 
 
