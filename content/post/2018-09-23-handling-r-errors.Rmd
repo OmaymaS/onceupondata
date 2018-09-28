@@ -205,7 +205,7 @@ custom_cnd <- tryCatch(error = function(cnd) cnd, get_val())
 ```
 Notice that:
 
-- the error object has the main class in addition to the defined subclass `get_val_error`.
+- the error object has the main classes in addition to the defined subclass `get_val_error`.
 - the value `val` which caused the error is available and you can access it using `custom_cnd$val`.
 
 ```{r}
@@ -214,7 +214,7 @@ str(custom_cnd, max.level = 1)
 ```
 
 
-**So now we have more meta-data about the error and specific subclasses. How can we use this with chained functions?**
+**So now we have more meta-data about the error and a specific subclasse. How can we use this with chained functions?**
 
 #### Error messages (Catch, modify, rethrow)
 
@@ -276,8 +276,4 @@ str(modified_cnd, max.level = 1)
 ```
 
 
-
-
-
-
-
+![](/post/2018-09-23-handling-r-errors/get_val_image.png)
