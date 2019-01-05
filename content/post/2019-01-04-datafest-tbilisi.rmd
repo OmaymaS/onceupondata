@@ -1,33 +1,11 @@
 ---
-title: #R-Ladies at DataFest Tbilisi
-author: ~
+title: R-Ladies at DataFest Tbilisi
 date: '2019-01-04'
 slug: datafest-tbilisi
 tags: [rladies, R, teaching]
 subtitle: ''
 ---
 
-<style>
-div.image-gallery {
-  display: block;
-  background-color: #ffffff;
-}
-
-div.image-gallery img {
-  display: block;
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
-}
-
-.clear {
-  clear: both;
-  height: 0;
-  width: 0;
-  font-size: 1px;
-  line-height: 0;
-}
-</style>
 
 
 In November 2018, I attended [DataFest Tbilisi 2018](https://datafest.ge/) as I was invited by [R-Ladies Tbilisi](https://twitter.com/RLadiesTbilisi) to give a talk, a workshop and mentor participants in a Datathon. It was a great opportunity and I would particularly highlight the second and third day were we had [**R-Ladies Room for R lovers**](https://datafest.ge/agenda-day2.html) with a series of workshops and a Datathon organized and led by R-Ladies who were the main representatives of the R community there.
@@ -90,3 +68,24 @@ After all, I enjoyed the event and I'd like to give more hands-on workshops in t
 *In the next post I will write about the teaching experience and designing the workshops in more details.*
 
 
+<style>
+div.image-gallery {
+  display: block;
+  background-color: #ffffff;
+}
+
+div.image-gallery img {
+  display: block;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
+.clear {
+  clear: both;
+  height: 0;
+  width: 0;
+  font-size: 1px;
+  line-height: 0;
+}
+</style>
