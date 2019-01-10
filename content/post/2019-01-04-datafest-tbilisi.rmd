@@ -13,10 +13,10 @@ In November 2018, I attended [DataFest Tbilisi 2018](https://datafest.ge/) as I 
 
 
 <center>
-<div class="image-gallery">
+<div>
   <img src="/post/2019-01-04_datafest-tbilisi/df_b4.jpg" style="width:45%"/>
+  
   <img src="/post/2019-01-04_datafest-tbilisi/df_b5.jpg" style="width:45%"/>
-  <div class="clear"></div>
   <sub>Source: [DataFest Tbilisi FB Page](https://www.facebook.com/pg/DataFestTbilisi/photos)</sub>
 </div>
 </center>
@@ -26,12 +26,14 @@ In November 2018, I attended [DataFest Tbilisi 2018](https://datafest.ge/) as I 
 [Isabella Gollini](https://twitter.com/IsabellaGollini), [Nato Khaladze] and I gave workshops along the day addressing different levels. I was glad to see how many people from different backgrounds were interested to come to the workshops. before the workshops, we met many guys who asked whether they could attend or if was just for "Ladies"! And we definilty told them this was for anyone interested in R. The most important thing that whoever joined us, came out with a positive experience as we designed our workshops to be flexible to adapt to the participants pace and backgrounds.
 
 <center>
-<div class="image-gallery">
-<figure>
-  <img src="/post/2019-01-04_datafest-tbilisi/df_b3.jpg"  style="width:30%">
-  <img src="/post/2019-01-04_datafest-tbilisi/df_b2.jpg"  style="width:30%">
-  <img src="/post/2019-01-04_datafest-tbilisi/df_b1.jpg"  style="width:30%">
-  <div class="clear"></div>
+<div>
+
+  <img src="/post/2019-01-04_datafest-tbilisi/df_b3.jpg"  style="width:45%">
+  
+  <img src="/post/2019-01-04_datafest-tbilisi/df_b2.jpg"  style="width:45%">
+  
+  <img src="/post/2019-01-04_datafest-tbilisi/df_b1.jpg"  style="width:45%">
+
   <sub>Source: Tamuna Margievi (R-Ladies Tbilisi)</sub>
 </div>
 </center>
@@ -66,26 +68,3 @@ After all, I enjoyed the event and I'd like to give more hands-on workshops in t
 
 
 *In the next post I will write about the teaching experience and designing the workshops in more details.*
-
-
-<style>
-div.image-gallery {
-  display: block;
-  background-color: #ffffff;
-}
-
-div.image-gallery img {
-  display: block;
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
-}
-
-.clear {
-  clear: both;
-  height: 0;
-  width: 0;
-  font-size: 1px;
-  line-height: 0;
-}
-</style>
