@@ -27,10 +27,10 @@ dat_r &lt;- tribble(
   mutate(tags_count = map_int(Tags_terms, length))</code></pre>
 <pre><code># A tibble: 3 x 2
   Tags_terms tags_count
-      &lt;list&gt;      &lt;int&gt;
-1  &lt;chr [3]&gt;          3
-2  &lt;chr [1]&gt;          1
-3  &lt;chr [2]&gt;          2</code></pre>
+  &lt;list&gt;          &lt;int&gt;
+1 &lt;chr [3]&gt;           3
+2 &lt;chr [1]&gt;           1
+3 &lt;chr [2]&gt;           2</code></pre>
 </div>
 <div id="which-limitations-i-faced" class="section level3">
 <h3>Which Limitations I Faced</h3>
@@ -40,10 +40,10 @@ dat_r %&gt;%
   mutate(tags_count = map_int(cname, length))</code></pre>
 <pre><code># A tibble: 3 x 2
   Tags_terms tags_count
-      &lt;list&gt;      &lt;int&gt;
-1  &lt;chr [3]&gt;          1
-2  &lt;chr [1]&gt;          1
-3  &lt;chr [2]&gt;          1</code></pre>
+  &lt;list&gt;          &lt;int&gt;
+1 &lt;chr [3]&gt;           1
+2 &lt;chr [1]&gt;           1
+3 &lt;chr [2]&gt;           1</code></pre>
 </div>
 <div id="how-tidy-eval-helped-me" class="section level3">
 <h3>How Tidy eval Helped Me</h3>
@@ -51,16 +51,17 @@ dat_r %&gt;%
 <p>As we can see, <code>cname</code> quotes the input <code>Tags_terms</code> and returns a <code>quosure</code> <em>(a special type of formula)</em>. Then it gets unquoted using <code>!!</code>, and that’s how we get the desired result.</p>
 <pre class="r"><code>cname &lt;- quo(Tags_terms)
 print(cname)</code></pre>
-<pre><code>&lt;quosure: global&gt;
-~Tags_terms</code></pre>
+<pre><code>&lt;quosure&gt;
+expr: ^Tags_terms
+env:  global</code></pre>
 <pre class="r"><code>dat_r %&gt;% 
   mutate(tags_count = map_int(!!cname, length))</code></pre>
 <pre><code># A tibble: 3 x 2
   Tags_terms tags_count
-      &lt;list&gt;      &lt;int&gt;
-1  &lt;chr [3]&gt;          3
-2  &lt;chr [1]&gt;          1
-3  &lt;chr [2]&gt;          2</code></pre>
+  &lt;list&gt;          &lt;int&gt;
+1 &lt;chr [3]&gt;           3
+2 &lt;chr [1]&gt;           1
+3 &lt;chr [2]&gt;           2</code></pre>
 <div id="turning-the-code-into-a-function" class="section level4">
 <h4>Turning the code into a function</h4>
 <p>Having this kind of flexibility, we can create general functions like <code>add_tag_count</code> to reuse for the same purpose. But inside a function, we use <strong><code>enquo</code></strong> which <em>“sees what the user typed, and returns that value as a quosure”</em>.</p>
@@ -81,8 +82,8 @@ print(cname)</code></pre>
 
 add_tag_count(dat_books, genre)</code></pre>
 <pre><code># A tibble: 3 x 2
-      genre tags_count
-     &lt;list&gt;      &lt;int&gt;
+  genre     tags_count
+  &lt;list&gt;         &lt;int&gt;
 1 &lt;chr [2]&gt;          2
 2 &lt;chr [3]&gt;          3
 3 &lt;chr [2]&gt;          2</code></pre>
@@ -108,8 +109,8 @@ add_tag_count(dat_books, genre)</code></pre>
 <p>And now we can pass both the list column name <code>genre</code>, and the desired output name <code>genre_count</code>.</p>
 <pre class="r"><code>add_tag_count(dat_books, genre, genre_count)</code></pre>
 <pre><code># A tibble: 3 x 2
-      genre genre_count
-     &lt;list&gt;       &lt;int&gt;
+  genre     genre_count
+  &lt;list&gt;          &lt;int&gt;
 1 &lt;chr [2]&gt;           2
 2 &lt;chr [3]&gt;           3
 3 &lt;chr [2]&gt;           2</code></pre>
@@ -131,7 +132,7 @@ add_tag_count(dat_books, genre)</code></pre>
 <li><p>use <strong><code>quos()x</code></strong> to capture all the … as a list of formulas.</p></li>
 <li><p>use <strong><code>!!!</code></strong> to splice the arguments into <strong><code>group_by()</code></strong></p></li>
 </ul>
-<pre class="r"><code>freq_tbl &lt;- function(df, ..., percent = TRUE, freq){
+<pre class="r"><code>freq_tbl &lt;- function(df, ..., percent = TRUE){
   group &lt;- quos(...)
   
   out &lt;- df %&gt;% 
@@ -154,26 +155,26 @@ add_tag_count(dat_books, genre)</code></pre>
 head(starwars_gp2)</code></pre>
 <pre><code># A tibble: 6 x 3
   homeworld species  freq
-      &lt;chr&gt;   &lt;chr&gt; &lt;int&gt;
-1  Tatooine   Human     8
-2     Naboo   Human     5
-3      &lt;NA&gt;   Human     5
-4  Alderaan   Human     3
-5     Naboo  Gungan     3
-6  Corellia   Human     2</code></pre>
+  &lt;chr&gt;     &lt;chr&gt;   &lt;int&gt;
+1 Tatooine  Human       8
+2 Naboo     Human       5
+3 &lt;NA&gt;      Human       5
+4 Alderaan  Human       3
+5 Naboo     Gungan      3
+6 Corellia  Human       2</code></pre>
 <p>Similarly, we can simply add <code>gender</code> or any other column.</p>
 <pre class="r"><code>starwars_gp3 &lt;- starwars %&gt;% 
   freq_tbl(homeworld, species, gender) 
 head(starwars_gp3)</code></pre>
 <pre><code># A tibble: 6 x 5
   homeworld species gender  freq percentage
-      &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt; &lt;int&gt;      &lt;dbl&gt;
-1  Tatooine   Human   male     6   6.896552
-2      &lt;NA&gt;   Human   male     4   4.597701
-3     Naboo  Gungan   male     3   3.448276
-4     Naboo   Human female     3   3.448276
-5  Alderaan   Human   male     2   2.298851
-6  Corellia   Human   male     2   2.298851</code></pre>
+  &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;  &lt;int&gt;      &lt;dbl&gt;
+1 Tatooine  Human   male       6       6.90
+2 &lt;NA&gt;      Human   male       4       4.60
+3 Naboo     Gungan  male       3       3.45
+4 Naboo     Human   female     3       3.45
+5 Alderaan  Human   male       2       2.30
+6 Corellia  Human   male       2       2.30</code></pre>
 </div>
 <div id="example-2-ngrams-table" class="section level3">
 <h3>Example 2: Ngrams Table</h3>
@@ -236,33 +237,33 @@ trigram &lt;- data_frame(txt = prideprejudice) %&gt;%
 <pre class="r"><code>create_gram_table(prideprejudice, 1, unigram, unigram_freq) %&gt;% head</code></pre>
 <pre><code># A tibble: 6 x 2
   unigram unigram_freq
-    &lt;chr&gt;        &lt;int&gt;
-1     the         4331
-2      to         4162
-3      of         3610
-4     and         3585
-5     her         2203
-6       i         2065</code></pre>
+  &lt;chr&gt;          &lt;int&gt;
+1 the             4331
+2 to              4162
+3 of              3610
+4 and             3585
+5 her             2203
+6 i               2065</code></pre>
 <pre class="r"><code>create_gram_table(prideprejudice, 2, bigram, bigram_freq) %&gt;% head</code></pre>
 <pre><code># A tibble: 6 x 2
   bigram bigram_freq
-   &lt;chr&gt;       &lt;int&gt;
+  &lt;chr&gt;        &lt;int&gt;
 1 of the         464
-2  to be         443
+2 to be          443
 3 in the         382
-4   i am         302
+4 i am           302
 5 of her         260
 6 to the         252</code></pre>
 <pre class="r"><code>create_gram_table(prideprejudice, 3, trigram, trigram_freq) %&gt;% head</code></pre>
 <pre><code># A tibble: 6 x 2
-        trigram trigram_freq
-          &lt;chr&gt;        &lt;int&gt;
-1     i am sure           62
-2      i do not           59
-3    as soon as           55
+  trigram       trigram_freq
+  &lt;chr&gt;                &lt;int&gt;
+1 i am sure               62
+2 i do not                59
+3 as soon as              55
 4 she could not           50
-5   that he had           37
-6  in the world           34</code></pre>
+5 that he had             37
+6 in the world            34</code></pre>
 </div>
 </div>
 <div id="tidy-eval-ggplot2" class="section level2">

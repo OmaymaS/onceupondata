@@ -149,7 +149,7 @@ So to capture multiple variables, we can:
 
 
 ```{r}
-freq_tbl <- function(df, ..., percent = TRUE, freq){
+freq_tbl <- function(df, ..., percent = TRUE){
   group <- quos(...)
   
   out <- df %>% 
