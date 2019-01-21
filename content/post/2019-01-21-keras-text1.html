@@ -3,8 +3,7 @@ title: Intro to text pre-processing, embeddings, and classification in Keras (Pa
 author: ~
 date: '2019-01-21'
 slug: keras-text-part1
-categories: []
-tags: []
+tags: [R, Keras, NLP]
 subtitle: ''
 ---
 
@@ -13,7 +12,7 @@ subtitle: ''
 <p><a href="https://keras.rstudio.com/index.html">Keras</a> provides a simple and flexible API to build and experiment with neural networks. I used it in both python and R, but I decided to write this post in R since there are less examples and tutorials. This series of posts will focus on text classification using keras.</p>
 <p>The introductory post will show a minimal example to explain:</p>
 <ul>
-<li><p>text preprocessing in keras.</p></li>
+<li><p>text pre-processing in keras.</p></li>
 <li><p>how and why to use embeddings.</p></li>
 <li><p>how to build a keras model.</p></li>
 </ul>
@@ -179,14 +178,14 @@ model %&gt;%
 <p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
 <pre class="r"><code>model$get_weights()</code></pre>
 <pre><code>## [[1]]
-##              [,1]        [,2]        [,3]         [,4]
-## [1,] -0.012934603  0.04859595  0.04194174  0.006613065
-## [2,] -0.029196441  0.02470005  0.03954272 -0.022541463
-## [3,] -0.040936254  0.04438839 -0.04164181 -0.001461912
-## [4,] -0.027584791 -0.03714516  0.03739682 -0.011982918
-## [5,]  0.018590037  0.04596230  0.04982051 -0.034971964
-## [6,] -0.041000366 -0.02311633  0.04612095  0.003298603
-## [7,]  0.001911759  0.02555019  0.01718177  0.034871768</code></pre>
+##             [,1]          [,2]         [,3]          [,4]
+## [1,] -0.03118211  0.0429056026  0.026867200  0.0055851825
+## [2,]  0.03917683  0.0051788464 -0.034511469 -0.0129695050
+## [3,]  0.03786795 -0.0089223981  0.010174204 -0.0003710762
+## [4,]  0.01385767 -0.0187973268 -0.048318446  0.0491738655
+## [5,] -0.03306668  0.0008712634  0.007664859  0.0154559501
+## [6,]  0.04055617  0.0201214291 -0.004920375  0.0294359587
+## [7,]  0.03695813 -0.0237087496  0.021795604  0.0298743509</code></pre>
 <p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
 <p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
 <p>For instance, if we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
@@ -231,6 +230,6 @@ summary(model)</code></pre>
 ## Trainable params: 125
 ## Non-trainable params: 0
 ## ___________________________________________________________________________</code></pre>
-<p>The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset.</p>
+<p><strong>The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset.</strong></p>
 </div>
 </div>

@@ -3,8 +3,7 @@ title: Intro to text pre-processing, embeddings, and classification in Keras (Pa
 author: ~
 date: '2019-01-21'
 slug: keras-text-part1
-categories: []
-tags: []
+tags: [R, Keras, NLP]
 subtitle: ''
 ---
 
@@ -17,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FAL
 
 The introductory post will show a minimal example to explain:
 
-- text preprocessing in keras.
+- text pre-processing in keras.
 
 - how and why to use embeddings.
 
@@ -221,7 +220,7 @@ summary(model)
 ```
 
 
-The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset. 
+**The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset.**
 
 
 
