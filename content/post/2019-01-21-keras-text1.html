@@ -157,7 +157,7 @@ model &lt;- keras_model_sequential()</code></pre>
 <p>To add an embedding layer, we need to specify:</p>
 <ul>
 <li><code>input_dim</code> which is the number of words/features in our sequences.</li>
-<li><code>output_dim</code> which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 7 to 4, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.</li>
+<li><code>output_dim</code> which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 12 words to 4 dimensions, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.</li>
 </ul>
 <pre class="r"><code>## add embedding layer
 model %&gt;% 
@@ -179,14 +179,14 @@ summary(model)</code></pre>
 <p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
 <pre class="r"><code>model$get_weights()</code></pre>
 <pre><code>## [[1]]
-##              [,1]        [,2]        [,3]         [,4]
-## [1,]  0.033299033  0.04291303  0.02359188  0.048744466
-## [2,] -0.029652465  0.03610978  0.02950514  0.006575860
-## [3,] -0.005068552 -0.01617391 -0.04744531 -0.010677624
-## [4,] -0.041169990  0.03395540  0.04299342  0.001818955
-## [5,]  0.035398353 -0.02218065 -0.03737589  0.005743694
-## [6,] -0.040899646  0.02197332  0.03252270  0.006526314
-## [7,]  0.041881625 -0.03529413  0.03765870 -0.005503319</code></pre>
+##              [,1]         [,2]         [,3]        [,4]
+## [1,]  0.016609598 -0.007230021 -0.028170003 -0.01013267
+## [2,] -0.001657676 -0.027975453 -0.009505332 -0.01246632
+## [3,] -0.036462389  0.034101401 -0.011096895  0.01776550
+## [4,] -0.043922793  0.032738078  0.017914165 -0.04672777
+## [5,] -0.011275183 -0.015688337  0.047571842 -0.02957890
+## [6,]  0.004669584 -0.023535764 -0.010938190 -0.02921933
+## [7,]  0.004284631  0.027402017  0.009028483  0.03792107</code></pre>
 <p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
 <p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
 <p>For instance, if we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>

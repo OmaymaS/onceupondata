@@ -163,7 +163,7 @@ model <- keras_model_sequential()
 To add an embedding layer, we need to specify:
 
 - `input_dim` which is the number of words/features in our sequences.
-- `output_dim` which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 7 to 4, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.
+- `output_dim` which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 12 words to 4 dimensions, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.
 
 ```{r}
 ## add embedding layer
