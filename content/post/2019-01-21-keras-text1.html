@@ -1,0 +1,233 @@
+---
+title: Text Classification in Keras (Part 1)
+author: ~
+date: '2019-01-21'
+slug: keras-text1
+categories: []
+tags: []
+subtitle: 'Intro to text pre-processing, embeddings and keras layers'
+---
+
+
+
+<p><a href="https://keras.rstudio.com/index.html">Keras</a> provides a simple and flexible API to build and experiment with neural networks. I used it in both python and R, but I decided to write this post in R since there are less examples and tutorials. This series of posts will focus on text classification using keras.</p>
+<p>The introductory post will show a minimal example to explain:</p>
+<ul>
+<li><p>text preprocessing in keras.</p></li>
+<li><p>how and why to use embeddings.</p></li>
+<li><p>how to build a keras model.</p></li>
+</ul>
+<p>It the next posts, we will use a real dataset from the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> on Kaggle which solves a <strong>multi-label classification</strong> problem.</p>
+<div id="loading-libraries" class="section level2">
+<h2>Loading Libraries</h2>
+<p>To use keras in R, you can simply load <code>keras</code> library, and it will deal with python in the background.</p>
+<pre class="r"><code>## load libraries
+library(dplyr)
+library(keras)</code></pre>
+</div>
+<div id="minimal-dataset" class="section level2">
+<h2>Minimal dataset</h2>
+<p>Here we have three <em>(edited)</em> titles from StackOverflow questions, with corresponding random labels.</p>
+<pre class="r"><code>## training data
+sov_questions &lt;- c(&quot;RMarkdown with parameters&quot;,
+                   &quot;How to Render Rmarkdown embedded in Rmarkdown&quot;,
+                   &quot;YAML header argument in knitr&quot;)
+
+## training data labels
+sov_labels &lt;- c(1, 1, 0)</code></pre>
+</div>
+<div id="text-pre-rocessing" class="section level2">
+<h2>Text Pre-rocessing</h2>
+<p>If you already familiar with NLP and worked with text before, you probably know that we usually need to process text in different ways like tokenization, stemming, etc. However, in deep learning applications there are differences in pre-processing and sometimes we even need to preserve certain structure <em>(keeping captilization, referring to it with a certain token, discarding stemming, etc.)</em>.</p>
+<p>To feed text to any algorithm, we need a way to represent it in numbers. So before starting with the large dataset we have, let’s look at a minimal example to display the results at each step with few words and understand what we will get when we scale this to a dataset with more vocabulary.</p>
+<div id="keras-tokenizer" class="section level3">
+<h3>Keras tokenizer</h3>
+<p>We can use <code>keras</code> function <code>text_tokenizer()</code> to initialize a tokenizer. This has the default settings or the ones you specify like:</p>
+<ul>
+<li><p>the characters to remove, called the <code>filters</code> and the default are “!&quot;#$%&amp;()*+,-./:;&lt;=&gt;?@[\]^_`{|}~&quot;</p></li>
+<li><p>whether to convert all the characters to lower case or not.</p></li>
+<li><p>and other attributes.</p></li>
+</ul>
+<p><em>We will keep the default values for simplicity.</em></p>
+<p>Then when you pass the list of questions to <code>fit_text_tokenizer()</code>, it will tokenize the text and fill other lists with the results.</p>
+<pre class="r"><code>## initialize tokenizer and fit
+tokenizer &lt;- text_tokenizer() %&gt;% 
+  fit_text_tokenizer(sov_questions)</code></pre>
+<p>For instance:</p>
+<ul>
+<li><p><code>tokenizer$word_index</code> holds the value corresponding to each word in the given text. There’s also <code>index_word</code> which holds the data the other way around.</p></li>
+<li><p><code>tokenizer$word_counts</code> gives the count of each word in the given list of questions.</p></li>
+<li><p>plus other useful values.</p></li>
+</ul>
+<pre class="r"><code>## inspect word_index 
+tokenizer$word_index </code></pre>
+<pre><code>## $rmarkdown
+## [1] 1
+## 
+## $`in`
+## [1] 2
+## 
+## $with
+## [1] 3
+## 
+## $parameters
+## [1] 4
+## 
+## $how
+## [1] 5
+## 
+## $to
+## [1] 6
+## 
+## $render
+## [1] 7
+## 
+## $embedded
+## [1] 8
+## 
+## $yaml
+## [1] 9
+## 
+## $header
+## [1] 10
+## 
+## $argument
+## [1] 11
+## 
+## $knitr
+## [1] 12</code></pre>
+</div>
+<div id="from-text-to-numbers" class="section level3">
+<h3>From text to numbers</h3>
+<p>Now with all this info, we can consider the 12 words as 12 features. So we need a way to give a value to each feature per question. One of the easiest ways is to say whether each word/feature exists or not in each question.</p>
+<p>In <code>keras</code>, you can use the function <code>texts_to_matrix()</code> to achieve this and the result will be as follows.</p>
+<pre class="r"><code>## binary mode
+texts_to_matrix(tokenizer, sov_questions, mode = &quot;binary&quot;)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+## [1,]    0    1    0    1    1    0    0    0    0     0     0     0     0
+## [2,]    0    1    1    0    0    1    1    1    1     0     0     0     0
+## [3,]    0    0    1    0    0    0    0    0    0     1     1     1     1</code></pre>
+<p>Notice that we specified the <code>mode = &quot;binary&quot;</code>, but there are other ways modes like <code>&quot;count&quot;</code>, <code>&quot;tfidf</code> and <code>freq</code>.</p>
+<p>For example, the second question <strong>How to Render Rmarkdown embedded in Rmarkdown</strong>, had the word “Rmarkdown” twice. So if you use <code>mode = &quot;count</code>, its count (2) appears in the 2nd position.</p>
+<pre class="r"><code>## count mode
+texts_to_matrix(tokenizer, sov_questions, mode = &quot;count&quot;)</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+## [1,]    0    1    0    1    1    0    0    0    0     0     0     0     0
+## [2,]    0    2    1    0    0    1    1    1    1     0     0     0     0
+## [3,]    0    0    1    0    0    0    0    0    0     1     1     1     1</code></pre>
+<p>So all these are valid way to represent text, but <strong>imagine that you had a dataset with thousands of unique words, how wide <em>(or as we call it sparse)</em> would be the previous matrix?</strong>. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.</p>
+</div>
+</div>
+<div id="embeddings" class="section level2">
+<h2>Embeddings</h2>
+<p>The idea of embeddings in a nutshell is to have a compact representation of words <em>(and sometimes categorical variables)</em> that is learned from the context while training the network. I will not get into more details here but it is good to know that you can:</p>
+<ul>
+<li>train your network to learn this representation of words <em>(better to have large dataset)</em>.</li>
+<li>use existing pre-trained embeddings <em>(e.g. GloVe, Word2vec)</em>.</li>
+</ul>
+<p>So let’s see how this works with our minimal example.</p>
+<p>First, we can convert each question we have to a sequence of numbers based on the <code>tokenizer$word_index</code>.</p>
+<pre class="r"><code>## create sequence
+sov_seq &lt;- texts_to_sequences(tokenizer, sov_questions)
+sov_seq</code></pre>
+<pre><code>## [[1]]
+## [1] 1 3 4
+## 
+## [[2]]
+## [1] 5 6 7 1 8 2 1
+## 
+## [[3]]
+## [1]  9 10 11  2 12</code></pre>
+<p>Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length, which is called <strong>padding</strong>. Here we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with long sequences, we can truncate the text and take part of it.</p>
+<pre class="r"><code>## pad sequence
+sov_seq_pad &lt;- pad_sequences(sov_seq, maxlen = 7, padding = &quot;post&quot;)
+sov_seq_pad</code></pre>
+<pre><code>##      [,1] [,2] [,3] [,4] [,5] [,6] [,7]
+## [1,]    1    3    4    0    0    0    0
+## [2,]    5    6    7    1    8    2    1
+## [3,]    9   10   11    2   12    0    0</code></pre>
+<div id="demo-model" class="section level3">
+<h3>Demo model</h3>
+<p>Now we will build a model for demo purposes to see what we can expect when we convert from sequences to embedding vectors.</p>
+<p><strong>How to initialize a <code>keras</code> model?</strong></p>
+<p>Here we will initialize <code>keras</code> model using <code>keras_model_sequential()</code> as we are working with sequential models.</p>
+<pre class="r"><code>## initialize model
+model &lt;- keras_model_sequential()</code></pre>
+<p><strong>How to add an embedding layer?</strong></p>
+<p>To add an embedding layer, we need to specify:</p>
+<ul>
+<li><code>input_dim</code> which is the number of words/features in our sequences.</li>
+<li><code>output_dim</code> which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 7 to 4, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.</li>
+</ul>
+<pre class="r"><code>## add embedding layer
+model %&gt;% 
+  layer_embedding(input_dim = 7, output_dim = 4) </code></pre>
+<p><strong>How does this embedding layer look like?</strong></p>
+<p>At any stage, you can see the architecture of the model using <code>summary(model)</code>. For instance, here you can see that the embedding layer has 28 parameters which we expect given the input and output dimensions <strong>(7x4)</strong>.</p>
+<pre class="r"><code>summary(model)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_1 (Embedding)          (None, None, 4)               28          
+## ===========================================================================
+## Total params: 28
+## Trainable params: 28
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>Till now the model hasn’t been trained, so it hasn’t learned anything and actually this is a minimal example for demo purposes which we wouldn’t train in the first place. But we can see what we’ll get from the embedding layer by looking at the initialized weights.</p>
+<p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
+<pre class="r"><code>model$get_weights()</code></pre>
+<pre><code>## [[1]]
+##               [,1]         [,2]         [,3]         [,4]
+## [1,]  0.0221643113 -0.016377233  0.043013934  0.011803199
+## [2,]  0.0007215515  0.003546488  0.026399102  0.017380361
+## [3,] -0.0025181770  0.031287160  0.028204236 -0.010632873
+## [4,] -0.0479559191 -0.012999080 -0.005475067  0.041890372
+## [5,]  0.0197921060 -0.005078457  0.002525676  0.025132444
+## [6,]  0.0462359898  0.030795302 -0.047740508  0.008177269
+## [7,] -0.0195850730  0.040480223 -0.031724475  0.035178129</code></pre>
+<p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
+<p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
+<p>If we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
+<pre class="r"><code>## add pooling layer 
+model %&gt;% 
+  layer_global_average_pooling_1d()
+
+summary(model)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_1 (Embedding)          (None, None, 4)               28          
+## ___________________________________________________________________________
+## global_average_pooling1d_1 (Glob (None, 4)                     0           
+## ===========================================================================
+## Total params: 28
+## Trainable params: 28
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p><strong>How to add more layers?</strong></p>
+<p>Now we are be ready to add more layers, and the simplest is a fully connected <em>(or a dense layer)</em>. We will finally add another layer with one unit to give the output value since we have a single label classification problem here. We will go over more details in the next posts.</p>
+<pre class="r"><code>## add dense layer
+model %&gt;% 
+  layer_dense(units = 16, activation = &quot;relu&quot;) %&gt;% 
+  layer_dense(units = 1, activation = &quot;sigmoid&quot;) ## single label classification</code></pre>
+<p>Now we can see the final architecture of the model.</p>
+<pre class="r"><code>summary(model)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_1 (Embedding)          (None, None, 4)               28          
+## ___________________________________________________________________________
+## global_average_pooling1d_1 (Glob (None, 4)                     0           
+## ___________________________________________________________________________
+## dense_1 (Dense)                  (None, 16)                    80          
+## ___________________________________________________________________________
+## dense_2 (Dense)                  (None, 1)                     17          
+## ===========================================================================
+## Total params: 125
+## Trainable params: 125
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post!</p>
+</div>
+</div>

@@ -1,0 +1,225 @@
+---
+title: Text Classification in Keras (Part 1)
+author: ~
+date: '2019-01-21'
+slug: keras-text1
+categories: []
+tags: []
+subtitle: 'Intro to text pre-processing, embeddings and keras layers'
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+```
+
+[Keras](https://keras.rstudio.com/index.html) provides a simple and flexible API to build and experiment with neural networks. I used it in both python and R, but I decided to write this post in R since there are less examples and tutorials. This series of posts will focus on text classification using keras. 
+
+The introductory post will show a minimal example to explain:
+
+- text preprocessing in keras.
+
+- how and why to use embeddings.
+
+- how to build a keras model.
+
+It the next posts, we will use a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle which solves a **multi-label classification** problem.
+
+## Loading Libraries
+
+To use keras in R, you can simply load `keras` library, and it will deal with python in the background.
+
+```{r load libraries}
+## load libraries
+library(dplyr)
+library(keras)
+```
+
+## Minimal dataset
+
+Here we have three *(edited)* titles from StackOverflow questions, with corresponding random labels.
+
+```{r}
+## training data
+sov_questions <- c("RMarkdown with parameters",
+                   "How to Render Rmarkdown embedded in Rmarkdown",
+                   "YAML header argument in knitr")
+
+## training data labels
+sov_labels <- c(1, 1, 0)
+```
+
+## Text Pre-rocessing
+
+If you already familiar with NLP and worked with text before, you probably know that we usually need to process text in different ways like tokenization, stemming, etc. However, in deep learning applications there are differences in pre-processing and sometimes we even need to preserve certain structure *(keeping captilization, referring to it with a certain token, discarding stemming, etc.)*.
+
+To feed text to any algorithm, we need a way to represent it in numbers. So before starting with the large dataset we have, let's look at a minimal example to display the results at each step with few words and understand what we will get when we scale this to a dataset with more vocabulary.
+
+
+
+### Keras tokenizer
+
+We can use `keras` function `text_tokenizer()` to initialize a tokenizer. This has the default settings or the ones you specify like:
+
+- the characters to remove, called the `filters` and the default are "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n"
+
+- whether to convert all the characters to lower case or not.
+
+- and other attributes.
+
+*We will keep the default values for simplicity.*
+
+Then when you pass the list of questions to `fit_text_tokenizer()`, it will tokenize the text and fill other lists with the results.
+
+
+```{r tokenize}
+## initialize tokenizer and fit
+tokenizer <- text_tokenizer() %>% 
+  fit_text_tokenizer(sov_questions)
+```
+
+For instance:
+
+- `tokenizer$word_index` holds the value corresponding to each word in the given text. There's also `index_word` which holds the data the other way around.
+
+- `tokenizer$word_counts` gives the count of each word in the given list of questions.
+
+-  plus other useful values.
+
+```{r}
+## inspect word_index 
+tokenizer$word_index 
+```
+
+### From text to numbers 
+
+Now with all this info, we can consider the 12 words as 12 features. So we need a way to give a value to each feature per question. One of the easiest ways is to say whether each word/feature exists or not in each question. 
+
+In `keras`, you can use the function `texts_to_matrix()` to achieve this and the result will be as follows.
+
+
+```{r}
+## binary mode
+texts_to_matrix(tokenizer, sov_questions, mode = "binary")
+```
+
+Notice that we specified the `mode = "binary"`, but there are other ways modes like `"count"`, `"tfidf` and `freq`.
+
+For example, the second question **`r sov_questions[2]`**, had the word "Rmarkdown" twice. So if you use `mode = "count`, its count (2) appears in the 2nd position. 
+
+```{r}
+## count mode
+texts_to_matrix(tokenizer, sov_questions, mode = "count")
+```
+
+So all these are valid way to represent text, but **imagine that you had a dataset with thousands of unique words, how wide *(or as we call it sparse)* would be the previous matrix?**. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.
+
+## Embeddings
+
+The idea of embeddings in a nutshell is to have a compact representation of words *(and sometimes categorical variables)* that is learned from the context while training the network. I will not get into more details here but it is good to know that you can:
+
+- train your network to learn this representation of words *(better to have large dataset)*.
+- use existing pre-trained embeddings *(e.g. GloVe, Word2vec)*.
+
+
+So let's see how this works with our minimal example. 
+
+First, we can convert each question we have to a sequence of numbers based on the `tokenizer$word_index`.
+
+
+```{r}
+## create sequence
+sov_seq <- texts_to_sequences(tokenizer, sov_questions)
+sov_seq
+```
+```{r, eval = FALSE, echo = FALSE}
+sov_seq[[1]] %>% map_chr(~tokenizer$index_word[[.x]]) %>% paste(collapse = " ")
+```
+
+Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length, which is called **padding**. Here we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with long sequences, we can truncate the text and take part of it.
+
+```{r}
+## pad sequence
+sov_seq_pad <- pad_sequences(sov_seq, maxlen = 7, padding = "post")
+sov_seq_pad
+```
+
+### Demo model
+
+Now we will build a model for demo purposes to see what we can expect when we convert from sequences to embedding vectors.
+
+**How to initialize a `keras` model?**
+
+Here we will initialize `keras` model using `keras_model_sequential()` as we are working with sequential models.
+
+```{r}
+## initialize model
+model <- keras_model_sequential()
+```
+
+**How to add an embedding layer?**
+
+To add an embedding layer, we need to specify:
+
+- `input_dim` which is the number of words/features in our sequences.
+- `output_dim` which is the number of dimensions to use to represent each word. Note that in this example, we are going down from 7 to 4, but in real cases you can see the value when you embed 20000 words in 100 dimensions, which is a significant dimentionality reduction.
+
+```{r}
+## add embedding layer
+model %>% 
+  layer_embedding(input_dim = 7, output_dim = 4) 
+```
+
+**How does this embedding layer look like?**
+
+At any stage, you can see the architecture of the model using `summary(model)`. For instance, here you can see that the embedding layer has 28 parameters which we expect given the input and output dimensions **(7x4)**.  
+
+```{r}
+summary(model)
+```
+
+Till now the model hasn't been trained, so it hasn't learned anything and actually this is a minimal example for demo purposes which we wouldn't train in the first place. But we can see what we'll get from the embedding layer by looking at the initialized weights.  
+
+You can see that each of the seven words got represented in 4 dimensions as we specified.
+
+```{r}
+model$get_weights()
+```
+
+**Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?**
+
+One way to do this is **pooling**, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .
+
+If we add the `layer_global_average_pooling_1d()` and look again at the model, we can see its length as expected **(4)**.
+
+```{r}
+## add pooling layer 
+model %>% 
+  layer_global_average_pooling_1d()
+
+summary(model)
+```
+
+**How to add more layers?**
+
+Now we are be ready to add more layers, and the simplest is a fully connected *(or a dense layer)*. We will finally add another layer with one unit to give the output value since we have a single label classification problem here. We will go over more details in the next posts. 
+
+```{r}
+## add dense layer
+model %>% 
+  layer_dense(units = 16, activation = "relu") %>% 
+  layer_dense(units = 1, activation = "sigmoid") ## single label classification
+```
+
+Now we can see the final architecture of the model. 
+```{r}
+summary(model)
+```
+
+
+The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post!
+
+
+
+
+
