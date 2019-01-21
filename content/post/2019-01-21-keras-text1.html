@@ -1,11 +1,11 @@
 ---
-title: Text Classification in Keras (Part 1)
+title: Intro to text pre-processing, embeddings, and classification in Keras (Part 1)
 author: ~
 date: '2019-01-21'
 slug: keras-text-part1
 categories: []
 tags: []
-subtitle: 'Intro to text pre-processing, embeddings and keras layers'
+subtitle: ''
 ---
 
 
@@ -115,7 +115,7 @@ texts_to_matrix(tokenizer, sov_questions, mode = &quot;count&quot;)</code></pre>
 ## [1,]    0    1    0    1    1    0    0    0    0     0     0     0     0
 ## [2,]    0    2    1    0    0    1    1    1    1     0     0     0     0
 ## [3,]    0    0    1    0    0    0    0    0    0     1     1     1     1</code></pre>
-<p>So all these are valid way to represent text, but <strong>imagine that you had a dataset with thousands of unique words, how wide <em>(or as we call it sparse)</em> would be the previous matrix?</strong>. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.</p>
+<p>So all these are valid ways to represent text, but <strong>imagine you had a dataset with thousands of unique words, how wide <em>(or as we call it sparse)</em> would be the previous matrix?</strong>. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.</p>
 </div>
 </div>
 <div id="embeddings" class="section level2">
@@ -138,7 +138,8 @@ sov_seq</code></pre>
 ## 
 ## [[3]]
 ## [1]  9 10 11  2 12</code></pre>
-<p>Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length, which is called <strong>padding</strong>. Here we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with long sequences, we can truncate the text and take part of it.</p>
+<p>Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length. This is called <strong>padding</strong>.</p>
+<p>As we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with very long sequences, we can truncate the text and take part of it as a sort of tradeoff.</p>
 <pre class="r"><code>## pad sequence
 sov_seq_pad &lt;- pad_sequences(sov_seq, maxlen = 7, padding = &quot;post&quot;)
 sov_seq_pad</code></pre>
@@ -150,7 +151,7 @@ sov_seq_pad</code></pre>
 <h3>Demo model</h3>
 <p>Now we will build a model for demo purposes to see what we can expect when we convert from sequences to embedding vectors.</p>
 <p><strong>How to initialize a <code>keras</code> model?</strong></p>
-<p>Here we will initialize <code>keras</code> model using <code>keras_model_sequential()</code> as we are working with sequential models.</p>
+<p>Here we will initialize <code>keras</code> model using <code>keras_model_sequential()</code> as we are working with sequential models. <em>Note that there is another type, which is custom, but it is out of our scope here</em>.</p>
 <pre class="r"><code>## initialize model
 model &lt;- keras_model_sequential()</code></pre>
 <p><strong>How to add an embedding layer?</strong></p>
@@ -178,21 +179,22 @@ model %&gt;%
 <p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
 <pre class="r"><code>model$get_weights()</code></pre>
 <pre><code>## [[1]]
-##             [,1]          [,2]         [,3]         [,4]
-## [1,]  0.04313064  0.0282729156 -0.022464765 -0.039374422
-## [2,]  0.04171732 -0.0466616862  0.013823006 -0.023873521
-## [3,]  0.03572360  0.0194433443 -0.020361507 -0.002708364
-## [4,] -0.01644511 -0.0120036379  0.000648044 -0.034813594
-## [5,]  0.02423525  0.0170771815 -0.001649082 -0.043521550
-## [6,] -0.03391091 -0.0003164038 -0.004197143 -0.009123407
-## [7,]  0.03214748  0.0418048166  0.021643165  0.025880579</code></pre>
+##              [,1]        [,2]        [,3]         [,4]
+## [1,] -0.012934603  0.04859595  0.04194174  0.006613065
+## [2,] -0.029196441  0.02470005  0.03954272 -0.022541463
+## [3,] -0.040936254  0.04438839 -0.04164181 -0.001461912
+## [4,] -0.027584791 -0.03714516  0.03739682 -0.011982918
+## [5,]  0.018590037  0.04596230  0.04982051 -0.034971964
+## [6,] -0.041000366 -0.02311633  0.04612095  0.003298603
+## [7,]  0.001911759  0.02555019  0.01718177  0.034871768</code></pre>
 <p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
 <p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
-<p>If we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
+<p>For instance, if we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
 <pre class="r"><code>## add pooling layer 
 model %&gt;% 
   layer_global_average_pooling_1d()
 
+## inspect model
 summary(model)</code></pre>
 <pre><code>## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
@@ -212,7 +214,8 @@ model %&gt;%
   layer_dense(units = 16, activation = &quot;relu&quot;) %&gt;% 
   layer_dense(units = 1, activation = &quot;sigmoid&quot;) ## single label classification</code></pre>
 <p>Now we can see the final architecture of the model.</p>
-<pre class="r"><code>summary(model)</code></pre>
+<pre class="r"><code>## inspect model
+summary(model)</code></pre>
 <pre><code>## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
 ## ===========================================================================
@@ -228,6 +231,6 @@ model %&gt;%
 ## Trainable params: 125
 ## Non-trainable params: 0
 ## ___________________________________________________________________________</code></pre>
-<p>The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post!</p>
+<p>The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset.</p>
 </div>
 </div>

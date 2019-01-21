@@ -1,11 +1,11 @@
 ---
-title: Text Classification in Keras (Part 1)
+title: Intro to text pre-processing, embeddings, and classification in Keras (Part 1)
 author: ~
 date: '2019-01-21'
 slug: keras-text-part1
 categories: []
 tags: []
-subtitle: 'Intro to text pre-processing, embeddings and keras layers'
+subtitle: ''
 ---
 
 
@@ -112,7 +112,7 @@ For example, the second question **`r sov_questions[2]`**, had the word "Rmarkdo
 texts_to_matrix(tokenizer, sov_questions, mode = "count")
 ```
 
-So all these are valid way to represent text, but **imagine that you had a dataset with thousands of unique words, how wide *(or as we call it sparse)* would be the previous matrix?**. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.
+So all these are valid ways to represent text, but **imagine you had a dataset with thousands of unique words, how wide *(or as we call it sparse)* would be the previous matrix?**. It would be HUGE in terms of fitting into memory or computation. So we go for a different type of representation which is embeddings.
 
 ## Embeddings
 
@@ -136,7 +136,9 @@ sov_seq
 sov_seq[[1]] %>% map_chr(~tokenizer$index_word[[.x]]) %>% paste(collapse = " ")
 ```
 
-Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length, which is called **padding**. Here we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with long sequences, we can truncate the text and take part of it.
+Since we have variable-length vectors in the resulting list, we will add zeros at the end to unify the length. This is called **padding**. 
+
+As we have short sequences, so we can take the length of the longest question to be the maximum length. But in some cases, with very long sequences, we can truncate the text and take part of it as a sort of tradeoff. 
 
 ```{r}
 ## pad sequence
@@ -146,11 +148,11 @@ sov_seq_pad
 
 ### Demo model
 
-Now we will build a model for demo purposes to see what we can expect when we convert from sequences to embedding vectors.
+Now we will build a model for demo purposes to see what we can expect when we convert from sequences to embedding vectors. 
 
 **How to initialize a `keras` model?**
 
-Here we will initialize `keras` model using `keras_model_sequential()` as we are working with sequential models.
+Here we will initialize `keras` model using `keras_model_sequential()` as we are working with sequential models. *Note that there is another type, which is custom, but it is out of our scope here*.
 
 ```{r}
 ## initialize model
@@ -190,13 +192,14 @@ model$get_weights()
 
 One way to do this is **pooling**, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .
 
-If we add the `layer_global_average_pooling_1d()` and look again at the model, we can see its length as expected **(4)**.
+For instance, if we add the `layer_global_average_pooling_1d()` and look again at the model, we can see its length as expected **(4)**.
 
 ```{r}
 ## add pooling layer 
 model %>% 
   layer_global_average_pooling_1d()
 
+## inspect model
 summary(model)
 ```
 
@@ -213,11 +216,12 @@ model %>%
 
 Now we can see the final architecture of the model. 
 ```{r}
+## inspect model
 summary(model)
 ```
 
 
-The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post!
+The next steps would be compiling and training the model, but it would be better to explain it with a real dataset, which we will do in the next post. After all the main objective of this post is to understand how different functions work and view the output with at each step. This would make you more comfortable using them and debugging your code with a larger dataset. 
 
 
 
