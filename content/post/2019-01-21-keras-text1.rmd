@@ -44,7 +44,7 @@ sov_questions <- c("RMarkdown with parameters",
                    "How to Render Rmarkdown embedded in Rmarkdown",
                    "YAML header argument in knitr")
 
-## training data labels
+## training data labels (randomly assigned for demo purposes)
 sov_labels <- c(1, 1, 0)
 ```
 
@@ -176,6 +176,7 @@ model %>%
 At any stage, you can see the architecture of the model using `summary(model)`. For instance, here you can see that the embedding layer has 28 parameters which we expect given the input and output dimensions **(7x4)**.  
 
 ```{r}
+## inspect model
 summary(model)
 ```
 

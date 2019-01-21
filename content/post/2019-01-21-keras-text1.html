@@ -32,7 +32,7 @@ sov_questions &lt;- c(&quot;RMarkdown with parameters&quot;,
                    &quot;How to Render Rmarkdown embedded in Rmarkdown&quot;,
                    &quot;YAML header argument in knitr&quot;)
 
-## training data labels
+## training data labels (randomly assigned for demo purposes)
 sov_labels &lt;- c(1, 1, 0)</code></pre>
 </div>
 <div id="text-pre-rocessing" class="section level2">
@@ -164,7 +164,8 @@ model %&gt;%
   layer_embedding(input_dim = 7, output_dim = 4) </code></pre>
 <p><strong>How does this embedding layer look like?</strong></p>
 <p>At any stage, you can see the architecture of the model using <code>summary(model)</code>. For instance, here you can see that the embedding layer has 28 parameters which we expect given the input and output dimensions <strong>(7x4)</strong>.</p>
-<pre class="r"><code>summary(model)</code></pre>
+<pre class="r"><code>## inspect model
+summary(model)</code></pre>
 <pre><code>## ___________________________________________________________________________
 ## Layer (type)                     Output Shape                  Param #     
 ## ===========================================================================
@@ -178,14 +179,14 @@ model %&gt;%
 <p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
 <pre class="r"><code>model$get_weights()</code></pre>
 <pre><code>## [[1]]
-##             [,1]          [,2]         [,3]          [,4]
-## [1,] -0.03118211  0.0429056026  0.026867200  0.0055851825
-## [2,]  0.03917683  0.0051788464 -0.034511469 -0.0129695050
-## [3,]  0.03786795 -0.0089223981  0.010174204 -0.0003710762
-## [4,]  0.01385767 -0.0187973268 -0.048318446  0.0491738655
-## [5,] -0.03306668  0.0008712634  0.007664859  0.0154559501
-## [6,]  0.04055617  0.0201214291 -0.004920375  0.0294359587
-## [7,]  0.03695813 -0.0237087496  0.021795604  0.0298743509</code></pre>
+##              [,1]        [,2]        [,3]         [,4]
+## [1,]  0.033299033  0.04291303  0.02359188  0.048744466
+## [2,] -0.029652465  0.03610978  0.02950514  0.006575860
+## [3,] -0.005068552 -0.01617391 -0.04744531 -0.010677624
+## [4,] -0.041169990  0.03395540  0.04299342  0.001818955
+## [5,]  0.035398353 -0.02218065 -0.03737589  0.005743694
+## [6,] -0.040899646  0.02197332  0.03252270  0.006526314
+## [7,]  0.041881625 -0.03529413  0.03765870 -0.005503319</code></pre>
 <p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
 <p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
 <p>For instance, if we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
