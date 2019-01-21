@@ -2,7 +2,7 @@
 title: Text Classification in Keras (Part 1)
 author: ~
 date: '2019-01-21'
-slug: keras-text1
+slug: keras-text-part1
 categories: []
 tags: []
 subtitle: 'Intro to text pre-processing, embeddings and keras layers'

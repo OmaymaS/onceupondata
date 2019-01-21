@@ -2,7 +2,7 @@
 title: Text Classification in Keras (Part 1)
 author: ~
 date: '2019-01-21'
-slug: keras-text1
+slug: keras-text-part1
 categories: []
 tags: []
 subtitle: 'Intro to text pre-processing, embeddings and keras layers'
@@ -178,14 +178,14 @@ model %&gt;%
 <p>You can see that each of the seven words got represented in 4 dimensions as we specified.</p>
 <pre class="r"><code>model$get_weights()</code></pre>
 <pre><code>## [[1]]
-##               [,1]         [,2]         [,3]         [,4]
-## [1,]  0.0221643113 -0.016377233  0.043013934  0.011803199
-## [2,]  0.0007215515  0.003546488  0.026399102  0.017380361
-## [3,] -0.0025181770  0.031287160  0.028204236 -0.010632873
-## [4,] -0.0479559191 -0.012999080 -0.005475067  0.041890372
-## [5,]  0.0197921060 -0.005078457  0.002525676  0.025132444
-## [6,]  0.0462359898  0.030795302 -0.047740508  0.008177269
-## [7,] -0.0195850730  0.040480223 -0.031724475  0.035178129</code></pre>
+##             [,1]          [,2]         [,3]         [,4]
+## [1,]  0.04313064  0.0282729156 -0.022464765 -0.039374422
+## [2,]  0.04171732 -0.0466616862  0.013823006 -0.023873521
+## [3,]  0.03572360  0.0194433443 -0.020361507 -0.002708364
+## [4,] -0.01644511 -0.0120036379  0.000648044 -0.034813594
+## [5,]  0.02423525  0.0170771815 -0.001649082 -0.043521550
+## [6,] -0.03391091 -0.0003164038 -0.004197143 -0.009123407
+## [7,]  0.03214748  0.0418048166  0.021643165  0.025880579</code></pre>
 <p><strong>Now we converted from sequences (1D) to a matrix (2D), how can we go back to (1D)?</strong></p>
 <p>One way to do this is <strong>pooling</strong>, which will take the average or maximum over one dimension and return a vector which length equals the embedding size .</p>
 <p>If we add the <code>layer_global_average_pooling_1d()</code> and look again at the model, we can see its length as expected <strong>(4)</strong>.</p>
