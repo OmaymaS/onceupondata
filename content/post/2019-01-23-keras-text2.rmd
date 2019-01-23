@@ -73,16 +73,77 @@ train_data %>%
   summary()
 ```
 
-## Text Preprocessing
+## Data Processing
 
-Now as we understood the structure of our data, we can start to prepare the text which we will feed to our network. As we learned in In the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/)
+Now as we understood the structure of our data, we can start to put the text in the proper format to feed to our network. As we learned in the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
 
+**Note** that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. 
 
-**Comments length**
+### Tokenize comments text 
+
+Given that the text we have includes tens or hunderds of thousands of unique words, we need to limit this number. So we will initialize a tokenizer and use `vocab_size` to keep the most frequent 20000 words.
+
+**Note** that you should only use the `comment_text` from the train data because ideally you won't have the test data till the end.
 
 ```{r}
-comment_length <- train_data$comment_text[1:5] %>% 
+## define vocab size (this is parameter to play with)
+vocab_size = 20000
+
+tokenizer <- text_tokenizer(num_words = vocab_size) %>% 
+  fit_text_tokenizer(train_data$comment_text)
+```
+
+### Create sequences from tokens
+
+Now we can use the tokenizer to create sequences from both the train and test data.
+
+```{r}
+## create sequances
+train_seq <- texts_to_sequences(tokenizer, train_data$comment_text)
+test_seq <- texts_to_sequences(tokenizer, test_data$comment_text)
+```
+
+## Pad sequences to unify the length
+
+As we know the length of the comments are not equal, so we need to pad them with zeros unify their length. We can decide the maximum length based on the data we have. 
+
+So let's look at a histogram of the comments lengths after using the tokenizer.
+
+**Training data comments length**
+
+```{r}
+## calculate training comments lengths
+comment_length <- train_seq %>% 
   map(~ str_split(.x, pattern = " ", simplify = TRUE)) %>% 
   map_int(length)
+
+## plot comments length distribution
+data_frame(comment_length = comment_length)%>% 
+  ggplot(aes(comment_length))+
+  geom_histogram(binwidth = 20)+
+  theme_minimal()+
+  ggtitle("Training data comments length distribution")
 ```
+
+For this experiment, I will pick 200 as maximum length, but this is a parameter to play with.
+
+```{r}
+## define max_len
+max_len = 200
+
+## pad sequence
+x_train <- pad_sequences(train_seq, maxlen = max_len, padding = "post")
+x_test <- pad_sequences(test_seq, maxlen = max_len, padding = "post")
+```
+
+
+```{r}
+## extract targets columns and convert to matrix
+y_train <- train_data %>% 
+  select(toxic:identity_hate) %>% 
+  as.matrix()
+```
+
+## keras model
+
 
