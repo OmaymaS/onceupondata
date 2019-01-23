@@ -1,0 +1,88 @@
+---
+title: keras_text2
+author: ~
+date: '2019-01-23'
+slug: keras-text2
+categories: []
+tags: []
+subtitle: ''
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+```
+
+In the [previous post](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we had an overview about text pre-processing in `keras`. In the post we will use a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle which solves a **multi-label classification** problem.
+
+In this competition, it was required to build a model that’s *"capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate"*. The dataset includes comments from **Wikipedia’s talk page edits**.
+
+
+## Dataset Exploration 
+
+First of all let's load our train and test data.
+
+```{r}
+## load libraries
+library(keras)
+library(tidyverse)
+library(here)
+library(DT)
+```
+
+```{r, cache = TRUE}
+## read train and test data
+train_data <- read_csv(here("static/data/", "toxic_comments/train.csv"))
+test_data <- read_csv(here("static/data/", "toxic_comments/test.csv"))
+```
+
+**Training data columns**
+
+We can see a sample of the training data fields as follows with the comment id, text then six target tags.
+
+```{r}
+DT::datatable(train_data[1:3,])
+```
+
+**Target labels distribution**
+
+Notice that:
+
+- the way the target labels are given *(six columns with binary values)* is good because that's what we need to give to our network
+
+- it is possible to have multiple tags = 1 for the same comment, since a comment can be tagged, for instance, as toxic and threat at the same time.
+
+If we look at the percentage of comments tagged with each tag, we can see the following distribution:
+
+```{r, echo=FALSE}
+## calculate the percentage of each label
+tags_summary <- train_data %>% 
+  select(toxic:identity_hate) %>% 
+  summarize_all(sum) %>% 
+  mutate_all(funs(./nrow(train_data))) %>% 
+  mutate_all(funs(scales::percent(.)))
+
+knitr::kable(tags_summary)
+```
+
+**Target labels values**
+
+We can see that the tags columns don't have any values other than 0/1, so they are ready to use.
+
+```{r echo=FALSE}
+train_data %>% 
+  select(toxic:identity_hate) %>% 
+  summary()
+```
+
+## Text Preprocessing
+
+Now as we understood the structure of our data, we can start to prepare the text which we will feed to our network. As we learned in In the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/)
+
+
+**Comments length**
+
+```{r}
+comment_length <- train_data$comment_text[1:5] %>% 
+  map(~ str_split(.x, pattern = " ", simplify = TRUE)) %>% 
+  map_int(length)
+```
+
