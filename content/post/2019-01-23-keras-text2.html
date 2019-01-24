@@ -1,7 +1,7 @@
 ---
 title: Intro to Text Classification with Keras (Part 2 - Multi-Label Classification)
 date: '2019-01-24'
-slug: keras-text2
+slug: keras-text2-multilabel-classification
 tags: [R, Keras, NLP]
 subtitle: ''
 ---
@@ -54,20 +54,6 @@ test_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/tes
 </tr>
 </tbody>
 </table>
-<pre><code>##      toxic          severe_toxic         obscene            threat        
-##  Min.   :0.00000   Min.   :0.000000   Min.   :0.00000   Min.   :0.000000  
-##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000  
-##  Median :0.00000   Median :0.000000   Median :0.00000   Median :0.000000  
-##  Mean   :0.09584   Mean   :0.009996   Mean   :0.05295   Mean   :0.002995  
-##  3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.000000  
-##  Max.   :1.00000   Max.   :1.000000   Max.   :1.00000   Max.   :1.000000  
-##      insult        identity_hate     
-##  Min.   :0.00000   Min.   :0.000000  
-##  1st Qu.:0.00000   1st Qu.:0.000000  
-##  Median :0.00000   Median :0.000000  
-##  Mean   :0.04936   Mean   :0.008805  
-##  3rd Qu.:0.00000   3rd Qu.:0.000000  
-##  Max.   :1.00000   Max.   :1.000000</code></pre>
 </div>
 <div id="data-processing" class="section level2">
 <h2>Data Processing</h2>

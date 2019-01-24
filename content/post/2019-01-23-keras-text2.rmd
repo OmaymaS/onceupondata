@@ -1,7 +1,7 @@
 ---
 title: Intro to Text Classification with Keras (Part 2 - Multi-Label Classification)
 date: '2019-01-24'
-slug: keras-text2
+slug: keras-text2-multilabel-classification
 tags: [R, Keras, NLP]
 subtitle: ''
 ---
@@ -66,9 +66,9 @@ knitr::kable(tags_summary)
 # 
 # We can also see that the tags columns don't have any values other than 0/1, so they are ready to use.
 
-train_data %>% 
-  select(toxic:identity_hate) %>% 
-  summary()
+# train_data %>% 
+#   select(toxic:identity_hate) %>% 
+#   summary()
 ```
 
 ## Data Processing
