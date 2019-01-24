@@ -1,0 +1,237 @@
+---
+title: Intro to Text Classification with Keras (Part 2 - Multi-Label Classification)
+date: '2019-01-24'
+slug: keras-text2
+tags: [R, Keras, NLP]
+subtitle: ''
+---
+
+
+
+<p>In the <a href="https://www.onceupondata.com/2019/01/21/keras-text-part1/">previous post</a>, we had an overview about text pre-processing in <code>keras</code>. In this post we will use a real dataset from the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> on Kaggle which solves a <strong>multi-label classification</strong> problem.</p>
+<p>In this competition, it was required to build a model that’s <em>“capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate”</em>. The dataset includes thousands of comments from <strong>Wikipedia’s talk page edits</strong> and each comment can have more than one tag.</p>
+<div id="dataset-exploration" class="section level2">
+<h2>Dataset Exploration</h2>
+<p>First of all let’s load our train and test data.</p>
+<pre class="r"><code>## load libraries
+library(keras)
+library(tidyverse)
+library(here)</code></pre>
+<pre class="r"><code>## read train and test data
+train_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/train.csv&quot;))
+test_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/test.csv&quot;))</code></pre>
+<p><strong>Training data columns</strong></p>
+<p>We can see that the training dataframe includes columns with the comment id, text then six target tags.</p>
+<pre class="r"><code>names(train_data)</code></pre>
+<pre><code>## [1] &quot;id&quot;            &quot;comment_text&quot;  &quot;toxic&quot;         &quot;severe_toxic&quot; 
+## [5] &quot;obscene&quot;       &quot;threat&quot;        &quot;insult&quot;        &quot;identity_hate&quot;</code></pre>
+<p><strong>Target labels distribution</strong></p>
+<p>Notice that:</p>
+<ul>
+<li><p>the way the target labels are given <em>(six columns with binary values)</em> is good because that’s what we need to give to our network.</p></li>
+<li><p>it is possible to have multiple tags = 1 for the same comment, since a comment can be tagged, for instance, as toxic and threat at the same time.</p></li>
+</ul>
+<p>If we look at the percentage of comments under each tag, we can see the following distribution:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">toxic</th>
+<th align="left">severe_toxic</th>
+<th align="left">obscene</th>
+<th align="left">threat</th>
+<th align="left">insult</th>
+<th align="left">identity_hate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">9.58%</td>
+<td align="left">1.000%</td>
+<td align="left">5.29%</td>
+<td align="left">0.300%</td>
+<td align="left">4.94%</td>
+<td align="left">0.880%</td>
+</tr>
+</tbody>
+</table>
+<pre><code>##      toxic          severe_toxic         obscene            threat        
+##  Min.   :0.00000   Min.   :0.000000   Min.   :0.00000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.000000   Median :0.00000   Median :0.000000  
+##  Mean   :0.09584   Mean   :0.009996   Mean   :0.05295   Mean   :0.002995  
+##  3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:0.00000   3rd Qu.:0.000000  
+##  Max.   :1.00000   Max.   :1.000000   Max.   :1.00000   Max.   :1.000000  
+##      insult        identity_hate     
+##  Min.   :0.00000   Min.   :0.000000  
+##  1st Qu.:0.00000   1st Qu.:0.000000  
+##  Median :0.00000   Median :0.000000  
+##  Mean   :0.04936   Mean   :0.008805  
+##  3rd Qu.:0.00000   3rd Qu.:0.000000  
+##  Max.   :1.00000   Max.   :1.000000</code></pre>
+</div>
+<div id="data-processing" class="section level2">
+<h2>Data Processing</h2>
+<p>Before defining our model, we need to prepare the text and targets in the proper format.</p>
+<div id="process-comments-text" class="section level3">
+<h3>process comments text</h3>
+<p>As we understood the structure of our data, we can start to process the text. We learned in <a href="https://www.onceupondata.com/2019/01/21/keras-text-part1/">part one</a> that we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences.</p>
+<p><strong>Note</strong> that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. <em>This is part of experimentation while trying to improve the acccuracy of the model</em>.</p>
+<div id="tokenize-comments-text" class="section level4">
+<h4>Tokenize comments text</h4>
+<p>Given that the text we have includes tens or hundreds of thousands of unique words, we need to limit this number. So we will initialize a tokenizer and use <code>vocab_size</code> to keep the most frequent 20000 words.</p>
+<p><strong>Note</strong> that you should only use the <code>comment_text</code> from the train data because ideally you won’t have the test data till the end. And you shouldn’t learn anything from it anyways.</p>
+<pre class="r"><code>## define vocab size (this is parameter to play with)
+vocab_size = 20000
+
+tokenizer &lt;- text_tokenizer(num_words = vocab_size) %&gt;% 
+  fit_text_tokenizer(train_data$comment_text)</code></pre>
+</div>
+<div id="create-sequences-from-tokens" class="section level4">
+<h4>Create sequences from tokens</h4>
+<p>Now we can use the tokenizer to create sequences from both the train and test data.</p>
+<pre class="r"><code>## create sequances
+train_seq &lt;- texts_to_sequences(tokenizer, train_data$comment_text)
+test_seq &lt;- texts_to_sequences(tokenizer, test_data$comment_text)</code></pre>
+<p>You can see how the comments turned into sequences as shown in the following example:</p>
+<pre class="r"><code>train_data$comment_text[1]</code></pre>
+<pre><code>## [1] &quot;Explanation\nWhy the edits made under my username Hardcore Metallica Fan were reverted? They weren&#39;t vandalisms, just closure on some GAs after I voted at New York Dolls FAC. And please don&#39;t remove the template from the talk page since I&#39;m retired now.89.205.38.27&quot;</code></pre>
+<p>turned into:</p>
+<pre class="r"><code>train_seq[1]</code></pre>
+<pre><code>## [[1]]
+##  [1]   688    75     1   126   130   177    29   672  4511 12052  1116
+## [12]    86   331    51  2278 11448    50  6864    15    60  2756   148
+## [23]     7  2937    34   117  1221 15190  2825     4    45    59   244
+## [34]     1   365    31     1    38    27   143    73  3462    89  3085
+## [45]  4583  2273   985</code></pre>
+</div>
+<div id="pad-sequences-to-unify-the-length" class="section level4">
+<h4>Pad sequences to unify the length</h4>
+<p>As we know the lengths of the comments are not equal, we need to pad them with zeros to unify their length. We can decide the maximum length based on the data we have.</p>
+<p>So let’s look at a histogram of the comments lengths after using the tokenizer.</p>
+<p><strong>Training data comments length</strong></p>
+<pre class="r"><code>## calculate training comments lengths
+comment_length &lt;- train_seq %&gt;% 
+  map(~ str_split(.x, pattern = &quot; &quot;, simplify = TRUE)) %&gt;% 
+  map_int(length)
+
+## plot comments length distribution
+data_frame(comment_length = comment_length)%&gt;% 
+  ggplot(aes(comment_length))+
+  geom_histogram(binwidth = 20)+
+  theme_minimal()+
+  ggtitle(&quot;Training data comments length distribution&quot;)</code></pre>
+<p><img src="/post/2019-01-23-keras-text2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><strong>Padding</strong></p>
+<p>For this experiment, I will pick 200 as maximum length. This is one of the values you can experiment with.</p>
+<pre class="r"><code>## define max_len
+max_len = 200
+
+## pad sequence
+x_train &lt;- pad_sequences(train_seq, maxlen = max_len, padding = &quot;post&quot;)
+x_test &lt;- pad_sequences(test_seq, maxlen = max_len, padding = &quot;post&quot;)</code></pre>
+</div>
+</div>
+<div id="prepare-targets-columns" class="section level3">
+<h3>prepare targets columns</h3>
+<p>since <code>keras</code> models take matrices, we will select the target columns and convert to a matrix as follows:</p>
+<pre class="r"><code>## extract targets columns and convert to matrix
+y_train &lt;- train_data %&gt;% 
+  select(toxic:identity_hate) %&gt;% 
+  as.matrix()</code></pre>
+</div>
+</div>
+<div id="keras-model" class="section level2">
+<h2>keras model</h2>
+<p>Now let’s define a simple sequential model and test is.</p>
+<div id="define-the-model" class="section level3">
+<h3>Define the model</h3>
+<p>Note that in the following model:</p>
+<ul>
+<li><p>the embedding layer come first. It takes the <code>input_dim</code> which is the number of words/features (here <code>vocab_size</code>) and the <code>output_dim</code> which is the embedding vector size. It is common to take the embeddings size as 50, 100 or more but the bigger the value the more trainable parameters. So it will take more time.</p></li>
+<li><p>a global average pooling layer is used to convert the 2D output from the embedding layer to 1D that could be fed to the subsequent layers. you can also try global max pooling.</p></li>
+<li><p>the output should have six units because we have six tags.</p></li>
+<li><p>the <code>sigmoid</code> activation suits the problem here because it allows two or more tags with high probabilities simultaneously, which suits our problem.</p></li>
+<li><p>in between the pooling layer and the output we have a dense layer for simplicity, and we can experiment with the number of units.</p></li>
+</ul>
+<pre class="r"><code>## define embedding size
+emd_size = 64
+
+## define model
+model &lt;- keras_model_sequential() %&gt;% 
+  layer_embedding(input_dim = vocab_size, output_dim = emd_size) %&gt;%
+  layer_global_average_pooling_1d() %&gt;%
+  layer_dense(units = 32, activation = &quot;relu&quot;) %&gt;%
+  layer_dense(units = 6, activation = &quot;sigmoid&quot;)</code></pre>
+<p>Now you can see a summary of the model as follows:</p>
+<pre class="r"><code>summary(model)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_1 (Embedding)          (None, None, 64)              1280000     
+## ___________________________________________________________________________
+## global_average_pooling1d_1 (Glob (None, 64)                    0           
+## ___________________________________________________________________________
+## dense_1 (Dense)                  (None, 32)                    2080        
+## ___________________________________________________________________________
+## dense_2 (Dense)                  (None, 6)                     198         
+## ===========================================================================
+## Total params: 1,282,278
+## Trainable params: 1,282,278
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+</div>
+<div id="compile-the-model" class="section level3">
+<h3>Compile the model</h3>
+<p>After that, you can compile the model. Note that:</p>
+<ul>
+<li><p>the <code>optimizer</code> <code>adam</code> is picked as it is known to work well in such problems.</p></li>
+<li><p>the <code>loss</code> is <code>binary_crossentropy</code> because with multi-label classification, it is as if you have a binary classification problem but on six labels.</p></li>
+</ul>
+<pre class="r"><code>## specify model optimizer, loss and metrics
+model %&gt;% compile(
+  optimizer = &#39;adam&#39;,
+  loss = &#39;binary_crossentropy&#39;,
+  metrics = &#39;accuracy&#39;
+)</code></pre>
+</div>
+<div id="fit-the-model" class="section level3">
+<h3>Fit the model</h3>
+<p>After compiling the model, we are ready to fit it. We can save the model results in a list (<code>history</code> here).</p>
+<p>Note that:</p>
+<ul>
+<li><p>We can specify a portion of the data for validation using the <code>validation_split</code> parameter.</p></li>
+<li><p>We can start with less <code>epochs</code>, however I picked 16 for demo purposes.</p></li>
+</ul>
+<pre class="r"><code>history &lt;- model %&gt;% 
+  fit(x_train,
+      y_train,
+      epochs = 16,
+      batch_size = 64,
+      validation_split = 0.05,
+      verbose = 0)
+
+# saveRDS(history, here(&quot;static/data/&quot;, &quot;toxic_comments/history_seq.rds&quot;))</code></pre>
+<p>If we plot the history, we can see the loss and accuracy over the 16 epochs. Note that:</p>
+<ul>
+<li><p>the two curves diverge and the validation accuracy plateaus after 4 or 5 epochs. So the best model might be obtained around the epoch #5.</p></li>
+<li><p>the accuracy is not bad given the simple model we built. So there could be a room for higher accuracy with more sophisticated models.</p></li>
+</ul>
+<p>You can try and train the model from scratch for 4 or 5 epochs. Another option is to save the best model while training for 16 epochs <em>(we will talk about this in another post)</em>.</p>
+<pre class="r"><code>plot(history)+
+  theme_minimal()+
+  ggtitle(&quot;Loss and Accurace Curves&quot;)</code></pre>
+<p><img src="/post/2019-01-23-keras-text2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+</div>
+<div id="predict-test-labels" class="section level3">
+<h3>Predict test labels</h3>
+<p>Once you have the final model, you can predict the test labels.</p>
+<pre class="r"><code>## predict on test data
+predicted_prob &lt;- predict_proba(model, x_test)</code></pre>
+<p>If you want to submit the result to Kaggle, you need to create a dataframe with ids and predictions.</p>
+<pre class="r"><code>## join ids and predictions
+y_test &lt;- as_data_frame(predicted_prob)
+names(y_test) &lt;- names(train_data)[3:8] ## labels names
+y_test &lt;- add_column(y_test, id = test_data$id, .before = 1) ## add id column</code></pre>
+<p>This simple model could get around <strong>0.96 on the Private Score</strong>, which is not bad but still far from the mid-level submissions. It is just a good start, but there are other models that would perform better. In the next post we will try different types of architectures and play with other options in <code>keras</code>.</p>
+</div>
+</div>

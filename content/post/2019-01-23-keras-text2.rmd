@@ -1,10 +1,8 @@
 ---
-title: keras_text2
-author: ~
-date: '2019-01-23'
+title: Intro to Text Classification with Keras (Part 2 - Multi-Label Classification)
+date: '2019-01-24'
 slug: keras-text2
-categories: []
-tags: []
+tags: [R, Keras, NLP]
 subtitle: ''
 ---
 ```{r setup, include=FALSE}
@@ -13,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FAL
 
 In the [previous post](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we had an overview about text pre-processing in `keras`. In this post we will use a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle which solves a **multi-label classification** problem.
 
-In this competition, it was required to build a model that’s *"capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate"*. The dataset includes thousands of comments from **Wikipedia’s talk page edits** and each comment can more than one tag.
+In this competition, it was required to build a model that’s *"capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate"*. The dataset includes thousands of comments from **Wikipedia’s talk page edits** and each comment can have more than one tag.
 
 
 ## Dataset Exploration 
@@ -25,7 +23,6 @@ First of all let's load our train and test data.
 library(keras)
 library(tidyverse)
 library(here)
-library(DT)
 ```
 
 ```{r, cache = TRUE}
@@ -36,14 +33,10 @@ test_data <- read_csv(here("static/data/", "toxic_comments/test.csv"))
 
 **Training data columns**
 
-We can see a sample of the training data fields as follows with the comment id, text then six target tags.
+We can see that the training dataframe includes columns with the comment id, text then six target tags.
 
 ```{r}
-DT::datatable(train_data[1:3,])
-```
-
-```{r}
-knitr::kable(train_data[1:3,])
+names(train_data)
 ```
 
 **Target labels distribution**
@@ -67,11 +60,12 @@ tags_summary <- train_data %>%
 knitr::kable(tags_summary)
 ```
 
-**Target labels values**
-
-We can also see that the tags columns don't have any values other than 0/1, so they are ready to use.
-
 ```{r echo=FALSE}
+
+# **Target labels values**
+# 
+# We can also see that the tags columns don't have any values other than 0/1, so they are ready to use.
+
 train_data %>% 
   select(toxic:identity_hate) %>% 
   summary()
@@ -126,7 +120,7 @@ train_seq[1]
 
 #### Pad sequences to unify the length
 
-As we know the lengths of the comments are not equal, so we need to pad them with zeros to unify their length. We can decide the maximum length based on the data we have. 
+As we know the lengths of the comments are not equal, we need to pad them with zeros to unify their length. We can decide the maximum length based on the data we have. 
 
 So let's look at a histogram of the comments lengths after using the tokenizer.
 
@@ -161,7 +155,7 @@ x_test <- pad_sequences(test_seq, maxlen = max_len, padding = "post")
 
 ### prepare targets columns
 
-since `keras` models take matrices, we will select the target columns and convert to matrix as follows:
+since `keras` models take matrices, we will select the target columns and convert to a matrix as follows:
 
 ```{r}
 ## extract targets columns and convert to matrix
@@ -209,7 +203,7 @@ summary(model)
 
 ### Compile the model
 
-Now you can compile the model, and note that:
+After that, you can compile the model. Note that:
 
 - the `optimizer` `adam` is picked as it is known to work well in such problems.
 
@@ -255,7 +249,7 @@ If we plot the history, we can see the loss and accuracy over the 16 epochs. Not
 
 - the two curves diverge and the validation accuracy plateaus after 4 or 5 epochs. So the best model might be obtained around the epoch #5.
 
-- the accuracy is not bad given the simple model we built. So there' could be 's a room for higher accuracy with more sophisticated models.
+- the accuracy is not bad given the simple model we built. So there could be a room for higher accuracy with more sophisticated models.
 
 You can try and train the model from scratch for 4 or 5 epochs. Another option is to save the best model while training for 16 epochs *(we will talk about this in another post)*.
 
@@ -278,10 +272,10 @@ predicted_prob <- predict_proba(model, x_test)
 If you want to submit the result to Kaggle, you need to create a dataframe with ids and predictions.
 
 ```{r}
-## join ids and predictions -------------------------------------------
+## join ids and predictions
 y_test <- as_data_frame(predicted_prob)
 names(y_test) <- names(train_data)[3:8] ## labels names
 y_test <- add_column(y_test, id = test_data$id, .before = 1) ## add id column
 ```
 
-This simple model could get around **0.96 on the Private Score**, which is not bad but still far from the top competitors. It is just a good start, but there are other models that would perform better. In the next post we will see  types of networks.
+This simple model could get around **0.96 on the Private Score**, which is not bad but still far from the mid-level submissions. It is just a good start, but there are other models that would perform better. In the next post we will try different types of architectures and play with other options in `keras`.
