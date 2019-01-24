@@ -126,7 +126,7 @@ So let's look at a histogram of the comments lengths after using the tokenizer.
 
 **Training data comments length**
 
-```{r}
+```{r comment_length}
 ## calculate training comments lengths
 comment_length <- train_seq %>% 
   map(~ str_split(.x, pattern = " ", simplify = TRUE)) %>% 
@@ -254,7 +254,7 @@ If we plot the history, we can see the loss and accuracy over the 16 epochs. Not
 You can try and train the model from scratch for 4 or 5 epochs. Another option is to save the best model while training for 16 epochs *(we will talk about this in another post)*.
 
 
-```{r}
+```{r history_plot}
 plot(history)+
   theme_minimal()+
   ggtitle("Loss and Accurace Curves")

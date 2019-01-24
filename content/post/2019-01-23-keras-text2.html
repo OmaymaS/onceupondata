@@ -106,7 +106,7 @@ data_frame(comment_length = comment_length)%&gt;%
   geom_histogram(binwidth = 20)+
   theme_minimal()+
   ggtitle(&quot;Training data comments length distribution&quot;)</code></pre>
-<p><img src="/post/2019-01-23-keras-text2_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="/post/2019-01-23-keras-text2_files/figure-html/comment_length-1.png" width="672" /></p>
 <p><strong>Padding</strong></p>
 <p>For this experiment, I will pick 200 as maximum length. This is one of the values you can experiment with.</p>
 <pre class="r"><code>## define max_len
@@ -206,7 +206,7 @@ model %&gt;% compile(
 <pre class="r"><code>plot(history)+
   theme_minimal()+
   ggtitle(&quot;Loss and Accurace Curves&quot;)</code></pre>
-<p><img src="/post/2019-01-23-keras-text2_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="/post/2019-01-23-keras-text2_files/figure-html/history_plot-1.png" width="672" /></p>
 </div>
 <div id="predict-test-labels" class="section level3">
 <h3>Predict test labels</h3>
