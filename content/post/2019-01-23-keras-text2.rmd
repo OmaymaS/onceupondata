@@ -257,7 +257,7 @@ You can try and train the model from scratch for 4 or 5 epochs. Another option i
 ```{r history_plot}
 plot(history)+
   theme_minimal()+
-  ggtitle("Loss and Accurace Curves")
+  ggtitle("Loss and Accuracy Curves")
 ```
 
 ### Predict test labels
