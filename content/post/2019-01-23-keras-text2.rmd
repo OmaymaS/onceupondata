@@ -75,11 +75,15 @@ train_data %>%
 
 ## Data Processing
 
-Now as we understood the structure of our data, we can start to put the text in the proper format to feed to our network. As we learned in the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
+Before defining our model, we need to prepare the text and targets in the proper format.
+
+### process comments text
+
+Now as we understood the structure of our data, we can start to process the text. As we learned in the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
 
 **Note** that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. 
 
-### Tokenize comments text 
+#### Tokenize comments text 
 
 Given that the text we have includes tens or hunderds of thousands of unique words, we need to limit this number. So we will initialize a tokenizer and use `vocab_size` to keep the most frequent 20000 words.
 
@@ -93,7 +97,7 @@ tokenizer <- text_tokenizer(num_words = vocab_size) %>%
   fit_text_tokenizer(train_data$comment_text)
 ```
 
-### Create sequences from tokens
+#### Create sequences from tokens
 
 Now we can use the tokenizer to create sequences from both the train and test data.
 
@@ -103,7 +107,20 @@ train_seq <- texts_to_sequences(tokenizer, train_data$comment_text)
 test_seq <- texts_to_sequences(tokenizer, test_data$comment_text)
 ```
 
-## Pad sequences to unify the length
+You can see how the comments turned into sequences as shown in the following example:
+
+```{r}
+train_data$comment_text[1]
+```
+
+turned into:
+
+```{r}
+train_seq[1]
+```
+
+
+#### Pad sequences to unify the length
 
 As we know the length of the comments are not equal, so we need to pad them with zeros unify their length. We can decide the maximum length based on the data we have. 
 
@@ -125,6 +142,8 @@ data_frame(comment_length = comment_length)%>%
   ggtitle("Training data comments length distribution")
 ```
 
+**Padding**
+
 For this experiment, I will pick 200 as maximum length, but this is a parameter to play with.
 
 ```{r}
@@ -136,6 +155,9 @@ x_train <- pad_sequences(train_seq, maxlen = max_len, padding = "post")
 x_test <- pad_sequences(test_seq, maxlen = max_len, padding = "post")
 ```
 
+### prepare targets columns
+
+since `keras` models take a matrix, we will select the target columns and convert to matrix as follows:
 
 ```{r}
 ## extract targets columns and convert to matrix
@@ -146,4 +168,67 @@ y_train <- train_data %>%
 
 ## keras model
 
+Now let's define a simple sequential model and test is.
+
+### Define the model
+
+Note that in the following model:
+
+- the embedding layer come first. It takes the `input_dim` which is the number of words/features (here `vocab_size`) and the `output_dim` which is the embedding vector size. It is common to take the embeddind size as 50, 100 or more but the bigger te value the more trainable parameters. So it will take more time.
+
+- a global average pooling layer is used to convert the 2D output from the embedding layer to 1D that could be fed to the subsequent layers. you can also try global max pooling.
+
+- the output should have six units because we have six tags.
+
+- the `sigmoid` activation suits the problem here because it allows two or more tags with high probabilities simultaneously, which suits our problem.
+
+- in between the pooling layer and the output we have a dense layer for simplicity, and we can experiment with the number of units.
+
+```{r}
+## define embedding size
+emd_size = 64
+
+## define model
+model <- keras_model_sequential() %>% 
+  layer_embedding(input_dim = vocab_size, output_dim = emd_size) %>%
+  layer_global_average_pooling_1d() %>%
+  layer_dense(units = 32, activation = "relu") %>%
+  layer_dense(units = 6, activation = "sigmoid")
+```
+
+Now you can see a summary of the model as follows:
+
+```{r}
+summary(model)
+```
+
+
+### Compile the model
+
+Now you can compile the model, and note that:
+
+- the `optimizer` `adam` is picked as it is known to work well in such problems.
+
+- the `loss` is `binary_crossentropy` because with multi-label classification, it is as if you have a binary classification poblem but on six labels.
+
+```{r}
+## specify model optimizer, loss and metrics
+model %>% compile(
+  optimizer = 'adam',
+  loss = 'binary_crossentropy',
+  metrics = 'accuracy'
+)
+```
+
+### Fit the model
+
+```{r}
+history <- model %>% 
+  fit( x_train,
+       y_train,
+       epochs = 16,
+       batch_size = 64,
+       validation_split = 0.05,
+       verbose = 1)
+```
 
