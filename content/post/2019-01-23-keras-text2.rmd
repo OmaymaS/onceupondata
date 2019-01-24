@@ -11,9 +11,9 @@ subtitle: ''
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
 ```
 
-In the [previous post](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we had an overview about text pre-processing in `keras`. In the post we will use a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle which solves a **multi-label classification** problem.
+In the [previous post](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we had an overview about text pre-processing in `keras`. In this post we will use a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle which solves a **multi-label classification** problem.
 
-In this competition, it was required to build a model that’s *"capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate"*. The dataset includes comments from **Wikipedia’s talk page edits**.
+In this competition, it was required to build a model that’s *"capable of detecting different types of toxicity like threats, obscenity, insults, and identity-based hate"*. The dataset includes thousands of comments from **Wikipedia’s talk page edits** and each comment can more than one tag.
 
 
 ## Dataset Exploration 
@@ -42,15 +42,19 @@ We can see a sample of the training data fields as follows with the comment id, 
 DT::datatable(train_data[1:3,])
 ```
 
+```{r}
+knitr::kable(train_data[1:3,])
+```
+
 **Target labels distribution**
 
 Notice that:
 
-- the way the target labels are given *(six columns with binary values)* is good because that's what we need to give to our network
+- the way the target labels are given *(six columns with binary values)* is good because that's what we need to give to our network.
 
 - it is possible to have multiple tags = 1 for the same comment, since a comment can be tagged, for instance, as toxic and threat at the same time.
 
-If we look at the percentage of comments tagged with each tag, we can see the following distribution:
+If we look at the percentage of comments under each tag, we can see the following distribution:
 
 ```{r, echo=FALSE}
 ## calculate the percentage of each label
@@ -65,7 +69,7 @@ knitr::kable(tags_summary)
 
 **Target labels values**
 
-We can see that the tags columns don't have any values other than 0/1, so they are ready to use.
+We can also see that the tags columns don't have any values other than 0/1, so they are ready to use.
 
 ```{r echo=FALSE}
 train_data %>% 
@@ -79,17 +83,17 @@ Before defining our model, we need to prepare the text and targets in the proper
 
 ### process comments text
 
-Now as we understood the structure of our data, we can start to process the text. As we learned in the [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/), we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
+As we understood the structure of our data, we can start to process the text. We learned in [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/) that we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
 
-**Note** that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. 
+**Note** that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. *This is part of experimentation while trying to improve the acccuracy of the model*.
 
 #### Tokenize comments text 
 
-Given that the text we have includes tens or hunderds of thousands of unique words, we need to limit this number. So we will initialize a tokenizer and use `vocab_size` to keep the most frequent 20000 words.
+Given that the text we have includes tens or hundreds of thousands of unique words, we need to limit this number. So we will initialize a tokenizer and use `vocab_size` to keep the most frequent 20000 words.
 
-**Note** that you should only use the `comment_text` from the train data because ideally you won't have the test data till the end.
+**Note** that you should only use the `comment_text` from the train data because ideally you won't have the test data till the end. And you shouldn't learn anything from it anyways.
 
-```{r}
+```{r, cache = TRUE}
 ## define vocab size (this is parameter to play with)
 vocab_size = 20000
 
@@ -101,7 +105,7 @@ tokenizer <- text_tokenizer(num_words = vocab_size) %>%
 
 Now we can use the tokenizer to create sequences from both the train and test data.
 
-```{r}
+```{r, cache = TRUE}
 ## create sequances
 train_seq <- texts_to_sequences(tokenizer, train_data$comment_text)
 test_seq <- texts_to_sequences(tokenizer, test_data$comment_text)
@@ -122,7 +126,7 @@ train_seq[1]
 
 #### Pad sequences to unify the length
 
-As we know the length of the comments are not equal, so we need to pad them with zeros unify their length. We can decide the maximum length based on the data we have. 
+As we know the lengths of the comments are not equal, so we need to pad them with zeros to unify their length. We can decide the maximum length based on the data we have. 
 
 So let's look at a histogram of the comments lengths after using the tokenizer.
 
@@ -144,9 +148,9 @@ data_frame(comment_length = comment_length)%>%
 
 **Padding**
 
-For this experiment, I will pick 200 as maximum length, but this is a parameter to play with.
+For this experiment, I will pick 200 as maximum length. This is one of the values you can experiment with.
 
-```{r}
+```{r, cache = TRUE}
 ## define max_len
 max_len = 200
 
@@ -157,7 +161,7 @@ x_test <- pad_sequences(test_seq, maxlen = max_len, padding = "post")
 
 ### prepare targets columns
 
-since `keras` models take a matrix, we will select the target columns and convert to matrix as follows:
+since `keras` models take matrices, we will select the target columns and convert to matrix as follows:
 
 ```{r}
 ## extract targets columns and convert to matrix
@@ -174,7 +178,7 @@ Now let's define a simple sequential model and test is.
 
 Note that in the following model:
 
-- the embedding layer come first. It takes the `input_dim` which is the number of words/features (here `vocab_size`) and the `output_dim` which is the embedding vector size. It is common to take the embeddind size as 50, 100 or more but the bigger te value the more trainable parameters. So it will take more time.
+- the embedding layer come first. It takes the `input_dim` which is the number of words/features (here `vocab_size`) and the `output_dim` which is the embedding vector size. It is common to take the embeddings size as 50, 100 or more but the bigger the value the more trainable parameters. So it will take more time.
 
 - a global average pooling layer is used to convert the 2D output from the embedding layer to 1D that could be fed to the subsequent layers. you can also try global max pooling.
 
@@ -209,7 +213,7 @@ Now you can compile the model, and note that:
 
 - the `optimizer` `adam` is picked as it is known to work well in such problems.
 
-- the `loss` is `binary_crossentropy` because with multi-label classification, it is as if you have a binary classification poblem but on six labels.
+- the `loss` is `binary_crossentropy` because with multi-label classification, it is as if you have a binary classification problem but on six labels.
 
 ```{r}
 ## specify model optimizer, loss and metrics
@@ -222,13 +226,62 @@ model %>% compile(
 
 ### Fit the model
 
-```{r}
+After compiling the model, we are ready to fit it. We can save the model results in a list (`history` here).
+
+Note that:
+
+- We can specify a portion of the data for validation using the `validation_split` parameter.
+
+- We can start with less `epochs`, however I picked 16 for demo purposes.
+
+
+```{r eval = FALSE}
 history <- model %>% 
-  fit( x_train,
-       y_train,
-       epochs = 16,
-       batch_size = 64,
-       validation_split = 0.05,
-       verbose = 1)
+  fit(x_train,
+      y_train,
+      epochs = 16,
+      batch_size = 64,
+      validation_split = 0.05,
+      verbose = 0)
+
+# saveRDS(history, here("static/data/", "toxic_comments/history_seq.rds"))
 ```
 
+```{r, echo = FALSE}
+history <- readRDS(here("static/data/", "toxic_comments/history_seq.rds"))
+```
+
+If we plot the history, we can see the loss and accuracy over the 16 epochs. Note that:
+
+- the two curves diverge and the validation accuracy plateaus after 4 or 5 epochs. So the best model might be obtained around the epoch #5.
+
+- the accuracy is not bad given the simple model we built. So there' could be 's a room for higher accuracy with more sophisticated models.
+
+You can try and train the model from scratch for 4 or 5 epochs. Another option is to save the best model while training for 16 epochs *(we will talk about this in another post)*.
+
+
+```{r}
+plot(history)+
+  theme_minimal()+
+  ggtitle("Loss and Accurace Curves")
+```
+
+### Predict test labels
+
+Once you have the final model, you can predict the test labels.
+
+```{r}
+## predict on test data
+predicted_prob <- predict_proba(model, x_test)
+```
+
+If you want to submit the result to Kaggle, you need to create a dataframe with ids and predictions.
+
+```{r}
+## join ids and predictions -------------------------------------------
+y_test <- as_data_frame(predicted_prob)
+names(y_test) <- names(train_data)[3:8] ## labels names
+y_test <- add_column(y_test, id = test_data$id, .before = 1) ## add id column
+```
+
+This simple model could get around **0.96 on the Private Score**, which is not bad but still far from the top competitors. It is just a good start, but there are other models that would perform better. In the next post we will see  types of networks.

@@ -1,10 +1,10 @@
 ---
-title: Intro to text pre-processing, embeddings, and classification in Keras (Part 1)
+title: Intro to Text Classification with Keras (Part 1)
 author: ~
 date: '2019-01-21'
 slug: keras-text-part1
 tags: [R, Keras, NLP]
-subtitle: ''
+subtitle: 'pre-processing, embeddings and more'
 ---
 
 
