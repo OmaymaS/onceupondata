@@ -23,7 +23,7 @@ In this post, I will give 2 step-by-step examples:
 
 ## Example 1
 
-## Data Preparation
+## Dataset
 
 
 ```{r}
@@ -50,29 +50,7 @@ gapminder_subset <- gapminder %>%
 gapminder_subset
 ```
 
-If you already have your summarized data in the desired format, you can use it directly. But since we are using the `gapminder` dataset, we'll start with this summarization using `dplyr` and `tidyr` functions as follows:
-
-1- use `filter()` to extract the entries corresponding to the Americas `continent` in the two years of interest 1997 and 2007.
-
-2- use `select()` to extract the columns of interest `country, year, gdpPercap`.
-
-3- use `spread()` from `tidyr` package to put the data in a wide format *(i.e. one row per country)*.
-
-4 - finally, add a column with the percentage change in `gdpPercap` between the two given years.
-
-You can go step by step and see the intermediate results, but at the end you will get the following dataframe.
-
-```{r}
-## create summarized data
-gapminder_subset <- gapminder %>% 
-  filter(year %in% c(1997, 2007),
-         continent == "Americas") %>% 
-  select(country, year, gdpPercap) %>% 
-  spread(year, gdpPercap, sep = "_") %>% 
-  mutate(gdp_change = 100*(year_2007-year_1997)/year_1997)
-
-gapminder_subset
-```
+I will not explain the data manipulation steps and I will assume you have your data in this format.
 
 ## Data Visualization
 
@@ -83,6 +61,7 @@ To give an answer to the question **"What is the percentage change in GDP per ca
 Now you will have a couple of issues:
 
 1- the countries names are overlapped.
+
 2- the bars are ordered according to the `country` name, instead of the value of the `gdp_change` 
 
 
@@ -102,7 +81,7 @@ ggplot(data = gapminder_subset,
   coord_flip()
 ```
 
-**For the second issue**, you can use `reorder()` to reorder the bars based on a variable; `gdp_change` here.
+**For the second issue**, you can use `reorder()` to sort the bars based on a certain variable; which is `gdp_change` here.
 
 ```{r bar_reorder}
 ggplot(data = gapminder_subset,
