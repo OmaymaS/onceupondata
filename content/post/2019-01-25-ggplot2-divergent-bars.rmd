@@ -1,0 +1,173 @@
+---
+title: ggplot2-divergent-bars
+author: ~
+date: '2019-01-25'
+slug: ggplot2-divergent-bars
+categories: []
+tags: []
+subtitle: ''
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+```
+
+
+A couple of days ago I was asked by one of the participants I met at the workshop I gave in DataFest Tbilisi about a simple tutorial on plotting divergent bars in ggplot2 and other bar chart stuff. I was going to write a gist with explanation but I decided to write this post instead to share with others whenever they ask during/after a workshop or in other occasions.
+
+In this post, I will give 2 step-by-step examples:
+
+1st: normal bar chart *(with a diverging aspect)* using the `gapminder` dataset.
+
+2nd: divergent bars using the `starwars` dataset from `dplyr` package.
+
+## Example 1
+
+## Data Preparation
+
+
+```{r}
+## load libraries
+library(gapminder)
+library(tidyverse)
+```
+
+Given the `gapminder` dataset which includes the the GDP per Capita for `r  n_distinct(gapminder$country)` countries, let's say we are interested in creating a plot to answers the question: **"What is the percentage change in GDP per capita between 1997 and 2007?"** . 
+
+We need to have a dataframe with each country and the corresponding change, something like this:
+
+
+```{r, echo = FALSE}
+## create summarized data
+gapminder_subset <- gapminder %>% 
+  filter(year %in% c(1997, 2007),
+         continent == "Americas") %>% 
+  select(country, year, gdpPercap) %>% 
+  spread(year, gdpPercap, sep = "_") %>% 
+  mutate(gdp_change = 100*(year_2007-year_1997)/year_1997)
+
+## display data
+gapminder_subset
+```
+
+If you already have your summarized data in the desired format, you can use it directly. But since we are using the `gapminder` dataset, we'll start with this summarization using `dplyr` and `tidyr` functions as follows:
+
+1- use `filter()` to extract the entries corresponding to the Americas `continent` in the two years of interest 1997 and 2007.
+
+2- use `select()` to extract the columns of interest `country, year, gdpPercap`.
+
+3- use `spread()` from `tidyr` package to put the data in a wide format *(i.e. one row per country)*.
+
+4 - finally, add a column with the percentage change in `gdpPercap` between the two given years.
+
+You can go step by step and see the intermediate results, but at the end you will get the following dataframe.
+
+```{r}
+## create summarized data
+gapminder_subset <- gapminder %>% 
+  filter(year %in% c(1997, 2007),
+         continent == "Americas") %>% 
+  select(country, year, gdpPercap) %>% 
+  spread(year, gdpPercap, sep = "_") %>% 
+  mutate(gdp_change = 100*(year_2007-year_1997)/year_1997)
+
+gapminder_subset
+```
+
+## Data Visualization
+
+Now you can use the `gapminder_subset` to create your plot, which is simply a bar plot with some settings.
+
+To give an answer to the question **"What is the percentage change in GDP per capita between 1997 and 2007?"**, you'd Probably start with putting the `country` on the x-axis and the `gdp_change` on the y_axis. 
+
+Now you will have a couple of issues:
+
+1- the countries names are overlapped.
+2- the bars are ordered according to the `country` name, instead of the value of the `gdp_change` 
+
+
+```{r bar_basic}
+ggplot(data = gapminder_subset,
+       aes(x = country, y = gdp_change))+
+  geom_bar(stat = "identity")
+```
+
+**For the first issue**, you could either rotate the country names or flip the whole chart to put the `country` on the y axis. We will go with the second solution, which could be achived by one line `coord_flip()`.
+
+
+```{r bar_flip}
+ggplot(data = gapminder_subset,
+       aes(x = country, y = gdp_change))+
+  geom_bar(stat = "identity")+
+  coord_flip()
+```
+
+**For the second issue**, you can use `reorder()` to reorder the bars based on a variable; `gdp_change` here.
+
+```{r bar_reorder}
+ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change))+
+  geom_bar(stat = "identity")+
+  coord_flip()
+```
+
+So with these few lines you have divergent bars. But you might want to color the bars based on whether the `gdp_change` is positive or negative. There is more than one way to do this.
+
+**One fast way** is to pass an expression `gdp_change > 0` to the `fill` attribute. It is as if you say *"check whether the change is positive or negative and color the bars based on the result"*.
+
+```{r bar_color}
+ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change,
+           fill = gdp_change > 0))+
+  geom_bar(stat = "identity")+
+  coord_flip()
+```
+
+**Another way** is to add a new column `gdp_change_positive` to `gapminder_subset` datfarame to hold this value. 
+
+```{r}
+gapminder_subset <- gapminder_subset %>%
+  mutate(gdp_change_positive = gdp_change > 0)
+
+head(gapminder_subset)  
+```
+
+Then you you can pass it to the `fill` attribute. This approch would be useful if you need to resuse the values in this column for other purposes like filtering or anything else. 
+
+```{r bar_color2}
+ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change,
+           fill = gdp_change_positive))+
+  geom_bar(stat = "identity")+
+  coord_flip()
+```
+Now you almost have what you need, so 
+
+
+```{r}
+# starwars_chars <- starwars %>% 
+#   filter(gender %in% (c("male", "female"))) %>% 
+#   filter(!is.na(homeworld)) %>% 
+#   group_by(homeworld, gender) %>% 
+#   summarise(average_height = median(height, na.rm = TRUE)) %>% 
+#   group_by(homeworld) %>%
+#   mutate(n = n()) %>% 
+#   filter(n == 2) %>% 
+#   ungroup() 
+#   
+# 
+# starwars_chars <- starwars_chars %>% 
+#   mutate(average_height = ifelse(gender == "female", average_height, -1*average_height)) 
+# 
+# starwars_chars %>% 
+#   ggplot(aes(x = homeworld, y = average_height, fill = gender))+
+#   geom_bar(stat = "identity")+
+#   coord_flip()+
+#   scale_y_continuous(breaks = pretty(starwars_chars$average_height),
+#                      labels = abs(pretty(starwars_chars$average_height)))
+#   
+# 
+# 
+
+```
+
