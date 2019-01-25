@@ -140,7 +140,7 @@ Now you can make some modifications to customize your figure. For instance:
 
 #### Polish the final figure
 
-```{r}
+```{r bar_color3}
 ggplot(data = gapminder_subset,
        aes(x = reorder(country, gdp_change), y = gdp_change,
            fill = gdp_change_positive))+
