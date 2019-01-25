@@ -54,7 +54,7 @@ I will not explain the data manipulation steps and I will assume you have your d
 
 ### Data Visualization
 
-#### Basic bar plot
+#### Create basic bar plot
 
 To give an answer to the question **"What is the percentage change in GDP per capita between 1997 and 2007?"**, you'd Probably start with putting the `country` on the x-axis and the `gdp_change` on the y_axis. 
 
