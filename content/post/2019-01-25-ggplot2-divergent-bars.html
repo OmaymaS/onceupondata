@@ -1,0 +1,212 @@
+---
+title: Divergent Bars with ggplot2
+author: ~
+date: '2019-01-25'
+slug: ggplot2-divergent-bars
+categories: []
+tags: [R, ggplot2]
+subtitle: 'A step by step guide'
+---
+
+
+
+<p>A couple of days ago I was asked by one of the participants I met at the <a href="https://www.onceupondata.com/2019/01/04/datafest-tbilisi/">workshop</a> I gave in DataFest Tbilisi about a simple tutorial on plotting divergent bars in ggplot2 and other bar chart stuff. I was going to write a gist with explanation but I decided to write this post instead to share with others whenever they ask during/after a workshop or in other occasions.</p>
+<p>In this post, I will give 2 step-by-step examples:</p>
+<p>1st- normal bar chart <em>(with a diverging aspect)</em> using the <code>gapminder</code> dataset.</p>
+<p>2nd- divergent bars using the <code>starwars</code> dataset from <code>dplyr</code> package.</p>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
+<div id="dataset-gapminder" class="section level3">
+<h3>Dataset (gapminder)</h3>
+<pre class="r"><code>## load libraries
+library(gapminder)
+library(tidyverse)</code></pre>
+<p>Given the <code>gapminder</code> dataset which includes the the GDP per Capita for 142 countries, let’s say we are interested in creating a plot to answers the question: <strong>“What is the percentage change in GDP per capita between 1997 and 2007?”</strong> .</p>
+<p>We need to have a dataframe with each country and the corresponding change, something like this:</p>
+<pre><code>## # A tibble: 25 x 4
+##    country            year_1997 year_2007 gdp_change
+##    &lt;fct&gt;                  &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Argentina             10967.    12779.      16.5 
+##  2 Bolivia                3326.     3822.      14.9 
+##  3 Brazil                 7958.     9066.      13.9 
+##  4 Canada                28955.    36319.      25.4 
+##  5 Chile                 10118.    13172.      30.2 
+##  6 Colombia               6117.     7007.      14.5 
+##  7 Costa Rica             6677.     9645.      44.5 
+##  8 Cuba                   5432.     8948.      64.7 
+##  9 Dominican Republic     3614.     6025.      66.7 
+## 10 Ecuador                7429.     6873.      -7.49
+## # ... with 15 more rows</code></pre>
+<p>I will not explain the data manipulation steps and I will assume you have your data in this format.</p>
+</div>
+<div id="data-visualization" class="section level3">
+<h3>Data Visualization</h3>
+<div id="basic-bar-plot" class="section level4">
+<h4>Basic bar plot</h4>
+<p>To give an answer to the question <strong>“What is the percentage change in GDP per capita between 1997 and 2007?”</strong>, you’d Probably start with putting the <code>country</code> on the x-axis and the <code>gdp_change</code> on the y_axis.</p>
+<p>Now you will have a couple of issues:</p>
+<p>1- the countries names are overlapped.</p>
+<p>2- the bars are ordered according to the <code>country</code> name, instead of the value of the <code>gdp_change</code></p>
+<pre class="r"><code>## plot gdp change versus country
+ggplot(data = gapminder_subset,
+       aes(x = country, y = gdp_change))+
+  geom_bar(stat = &quot;identity&quot;)</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/bar_basic-1.png" width="672" /></p>
+</div>
+<div id="flip-axes" class="section level4">
+<h4>Flip axes</h4>
+<p><strong>For the first issue</strong>, you could either rotate the country names or flip the whole chart to put the <code>country</code> on the y axis. We will go with the second solution, which could be achieved by one line <code>coord_flip()</code>.</p>
+<pre class="r"><code>## flip axes
+ggplot(data = gapminder_subset,
+       aes(x = country, y = gdp_change))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/bar_flip-1.png" width="672" /></p>
+</div>
+<div id="order-countries-by-gdp_change" class="section level4">
+<h4>Order countries by gdp_change</h4>
+<p><strong>For the second issue</strong>, you can use <code>reorder()</code> to sort the bars based on a certain variable; which is <code>gdp_change</code> here.</p>
+<pre class="r"><code>## order by value
+ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/bar_reorder-1.png" width="672" /></p>
+</div>
+<div id="color-bars-based-on-gdp_change-value" class="section level4">
+<h4>Color bars based on <code>gdp_change</code> value</h4>
+<p>So with these few lines you have your basic bar chart. But you might want to color the bars based on whether the <code>gdp_change</code> is positive or negative. There is more than one way to do this.</p>
+<p><strong>One fast way</strong> is to pass an expression <code>gdp_change &gt; 0</code> to the <code>fill</code> attribute. It is as if you say <em>“check whether the change is positive or negative and color the bars based on the result”</em>.</p>
+<pre class="r"><code>ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change,
+           fill = gdp_change &gt; 0))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/bar_color-1.png" width="672" /></p>
+<p><strong>Another way</strong> is to add a new column <code>gdp_change_positive</code> to <code>gapminder_subset</code> datfarame to hold this value.</p>
+<pre class="r"><code>gapminder_subset &lt;- gapminder_subset %&gt;%
+  mutate(gdp_change_positive = gdp_change &gt; 0)
+
+head(gapminder_subset)  </code></pre>
+<pre><code>## # A tibble: 6 x 5
+##   country   year_1997 year_2007 gdp_change gdp_change_positive
+##   &lt;fct&gt;         &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt; &lt;lgl&gt;              
+## 1 Argentina    10967.    12779.       16.5 TRUE               
+## 2 Bolivia       3326.     3822.       14.9 TRUE               
+## 3 Brazil        7958.     9066.       13.9 TRUE               
+## 4 Canada       28955.    36319.       25.4 TRUE               
+## 5 Chile        10118.    13172.       30.2 TRUE               
+## 6 Colombia      6117.     7007.       14.5 TRUE</code></pre>
+<p>Then you you can pass it to the <code>fill</code> attribute. This approach would be useful if you need to reuse the values in this column for other purposes like filtering or anything else.</p>
+<pre class="r"><code>ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change,
+           fill = gdp_change_positive))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p>Now you can make some modifications to customize your figure. For instance:</p>
+<ul>
+<li><p>use <code>labs()</code> to define the axes labels and figure title.</p></li>
+<li><p>remove the guides about the fill colors by setting <code>fill == FALSE</code> in <code>guides()</code></p></li>
+<li><p>and pick the theme you want to use.</p></li>
+</ul>
+</div>
+<div id="polish-the-final-figure" class="section level4">
+<h4>Polish the final figure</h4>
+<pre class="r"><code>ggplot(data = gapminder_subset,
+       aes(x = reorder(country, gdp_change), y = gdp_change,
+           fill = gdp_change_positive))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()+
+  labs(x = &quot;Country&quot;, y = &quot;GDP per Capita Change %&quot;,
+       title = &quot;Percentage chage in GDP per Capita&quot;,
+       subtitles = &quot;Americas (1997 to 2007)&quot;)+
+  theme_minimal()+
+  guides(fill = FALSE)</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>So this is a normal horizontal plot, but sometimes people consider a divergence aspect since the values can be higher or lower than base line <em>(here zero)</em>. But the real divergent bars usually have one more variable as shown in example 2.</p>
+</div>
+</div>
+</div>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
+<div id="dataset-starwars" class="section level3">
+<h3>Dataset (starwars)</h3>
+<p>Let’s say we have a summarized dataframe from the <code>starwars</code> dataset including the average height of the characters in each <code>homeworld</code> grouped by <code>gender</code>. You can visualize this in different ways according to what you want to emphasize. here we will focus on the divergent bars version.</p>
+<pre class="r"><code>## summarize data
+starwars_chars &lt;- starwars %&gt;%
+  filter(gender %in% (c(&quot;male&quot;, &quot;female&quot;))) %&gt;%
+  filter(!is.na(homeworld)) %&gt;%
+  group_by(homeworld, gender) %&gt;%
+  summarise(average_height = median(height, na.rm = TRUE)) %&gt;%
+  group_by(homeworld) %&gt;%
+  # mutate(n = n()) %&gt;%
+  filter(n() == 2) %&gt;%
+  ungroup()
+
+## display data
+starwars_chars</code></pre>
+<pre><code>## # A tibble: 12 x 3
+##    homeworld gender average_height
+##    &lt;chr&gt;     &lt;chr&gt;           &lt;dbl&gt;
+##  1 Alderaan  female           150 
+##  2 Alderaan  male             190.
+##  3 Coruscant female           176.
+##  4 Coruscant male             170 
+##  5 Kamino    female           213 
+##  6 Kamino    male             206 
+##  7 Naboo     female           165 
+##  8 Naboo     male             185 
+##  9 Ryloth    female           178 
+## 10 Ryloth    male             180 
+## 11 Tatooine  female           164 
+## 12 Tatooine  male             183</code></pre>
+</div>
+<div id="data-visualization-1" class="section level3">
+<h3>Data Visualization</h3>
+<p>If you want to have divergent bars, you need to have the values of one group as negatives. You can use <code>ifelse()</code> to multiply the values for the males by -1.</p>
+<pre class="r"><code>starwars_chars &lt;- starwars_chars %&gt;%
+  mutate(average_height = ifelse(gender == &quot;female&quot;,
+                                 average_height,
+                                 -1*average_height))</code></pre>
+<p>Now you can simply plot a normal bar plot and use the fill color as the gender</p>
+<pre class="r"><code>## plot divergent bars
+starwars_chars %&gt;%
+  ggplot(aes(x = homeworld, y = average_height, fill = gender))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/starwars1-1.png" width="672" /></p>
+<p>You can notice one issue here in the x-axis values. you have negative heights which is not reasonable so you need to set these values manually to reflect the absolute values.</p>
+<p>For this, you can use <code>scale_y_continuous()</code>. Notice that it is <code>scale_y_continuous()</code> not <code>scale_x_continuous()</code> because we deal with the original aesthetics we passed before flipping the coordinates.</p>
+<p><strong>But how to set the breaks and labels values?</strong></p>
+<p>You have more than one option. For instance:</p>
+<ul>
+<li><p>you can pass a vector with the exact values.</p></li>
+<li><p>or you can use a more generic way that creates breaks based on the range of <code>average_height</code> in your data using <code>pretty()</code>. For example <code>pretty(starwars_chars$average_height)</code> will give the following values:</p></li>
+</ul>
+<pre><code>## [1] -300 -200 -100    0  100  200  300</code></pre>
+<p>We will use this to specify the <code>breaks</code>. And to make sure the displayed values are positive, we can pass the absolute values to the <code>labels</code> attribute.</p>
+<pre class="r"><code>## calculate breaks values
+breaks_values &lt;- pretty(starwars_chars$average_height)
+
+## create plot
+starwars_chars %&gt;%
+  ggplot(aes(x = homeworld, y = average_height, fill = gender))+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()+
+  scale_y_continuous(breaks = breaks_values,
+                     labels = abs(breaks_values))+
+  theme_minimal()</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/starwars2-1.png" width="672" /> Now you can change the colors, add a vertical line at zero and customize your figure as you want.</p>
+<pre class="r"><code>## create plot
+starwars_chars %&gt;%
+  ggplot(aes(x = homeworld, y = average_height, fill = gender))+
+  geom_hline(yintercept = 0)+
+  geom_bar(stat = &quot;identity&quot;)+
+  coord_flip()+
+  scale_y_continuous(breaks = breaks_values,
+                     labels = abs(breaks_values))+
+  theme_minimal()+
+  scale_fill_manual(values = c(&quot;#bf812d&quot;, &quot;#35978f&quot;))</code></pre>
+<p><img src="/post/2019-01-25-ggplot2-divergent-bars_files/figure-html/starwars3-1.png" width="672" /></p>
+</div>
+</div>
