@@ -85,7 +85,7 @@ ggplot(data = gapminder_subset,
   coord_flip()
 ```
 
-#### Order countries by gdp_change
+#### Order countries by `gdp_change`
 
 **For the second issue**, you can use `reorder()` to sort the bars based on a certain variable; which is `gdp_change` here.
 
