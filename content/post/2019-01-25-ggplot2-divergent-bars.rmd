@@ -1,11 +1,11 @@
 ---
-title: A beginner's guide to divergent Bars in ggplot2
+title: Divergent Bars in ggplot2
 author: ~
 date: '2019-01-25'
 slug: ggplot2-divergent-bars
 categories: []
 tags: [R, ggplot2]
-subtitle: 'Step by step examples'
+subtitle: 'Step by step guide'
 ---
 
 ```{r setup, include=FALSE}
@@ -246,3 +246,4 @@ starwars_chars %>%
   scale_fill_manual(values = c("#bf812d", "#35978f"))
 ```
 
+So these were simple examples with bar plots triggered by a question I received. But at the end picking a specific type of charts depends on the question in mind and the message one wants to deliver. And the good thing about `ggplot2` that it gives the cotrol over your plot to do whatever you want.
