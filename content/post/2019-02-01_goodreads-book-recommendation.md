@@ -15,11 +15,11 @@ Here will use the [goodbooks-10k](https://github.com/zygmuntz/goodbooks-10k) dat
 -  Matrix factorization method
 -  Tabular data method 
 
-**Note that the examples are for demo purposes and they are not intended to provide the best mode. Also I am not aware of a benchmark for this dataset, so the comparison with other models is out of this posts' scope**
+**Note that the examples are for demo purposes and they are not intended to provide the best model. Also I am not aware of a benchmark for this dataset, so the comparison with other models is out of this post's scope**
 
 ## Matrix Factorization, Latent Factors and Embeddings
 
-In a platform like goodreads, we see book recommendations based on the history of the user, similarities with other users or other signals collected about the user behavior. In practice, different signals and algorithms are usually merged to get better results. But let's focus on one approach; **item-based collaborative filtering**. Using this approach, we learn about the similarities between the books using the ratings we already have. Starting with tabular data, the first step is to convert our table to a matrix with one row per user as shown in the following figure. 
+In a platform like goodreads, we see book recommendations based on the history of the user, similarities with other users or other signals collected about the user behavior. In practice, different signals and algorithms are usually merged to get better results. But let's focus on one approach; **item-based collaborative filtering**. Using this approach, we learn about the similarities between the books from the ratings we already have. Starting with tabular data, the first step is to convert our table to a matrix with one row per user as shown in the following figure. 
 
 ![alt text](https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/table_to_matrix.png?raw=true)
 
@@ -163,10 +163,6 @@ If we look at the distribution of ratings, We can notice that:
 - the values are discrete (1 to 5), but we will deal with them as continuous as we are ok with predicting intermediate values.
 
 - the data is unbalanced, and most of the ratings are from 3 to 5. (*Ideally we should consier the impact of such imbalance on the model*)
-
-
-
-![png](2019-02-01_goodreads-book-recommendation_files/2019-02-01_goodreads-book-recommendation_19_0.png)
 
 
  ![](https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/ratings_dist.png?raw=true)
@@ -405,6 +401,7 @@ Then we will extract the book embedding weights, and we can see it has the expec
 
 
 ```
+## get weights of the books embedding matrix
 book_embedding_weights = model_mf.layers[2].get_weights()[0]
 book_embedding_weights.shape
 ```
@@ -416,7 +413,7 @@ book_embedding_weights.shape
 
 
 
-To compress these these vectors into less dimensions, we can use **Principal Component Analysis(PCA)**, to reduce the `dim_embedddings` to three components.
+To compress these these vectors into fewer dimensions, we can use **Principal Component Analysis(PCA)** to reduce the `dim_embedddings` to three components.
 
 
 ```
@@ -453,7 +450,7 @@ book_pca.explained_variance_ratio_
 
 
 
-If the variance explained is very low, we might not be able to see a good interpretation. However, for demo purposes, we will just extract the first component/factor that explains the highest percentage of the variance. The array we get can be mapped to the books list.
+If the variance explained is very low, we might not be able to see a good interpretation. However, for demo purposes, we will just extract the first component/factor that explains the highest percentage of the variance. The array we get can be mapped to the books names as follows.
 
 
 ```
@@ -740,10 +737,10 @@ learn.recorder.plot()
 data = CollabDataBunch.from_df(train, seed=42)
 
 ## specify the sigmoid limits
-y_range = [0, 5.5] ## 
+y_range = [0, 5.5]
 
 ## define learner
-learn = collab_learner(data, n_factors=50, y_range=y_range)
+learn = collab_learner(data, n_factors = 50, y_range = y_range)
 
 ## fit the model and monitor mse
 learn.fit_one_cycle(3, 0.01)
@@ -751,7 +748,7 @@ learn.fit_one_cycle(3, 0.01)
 
 ## Conclusion
 
-In this post we had an overview about the use of embeddings for matrix factorization and feature creation. We trained preliminary models in Keras to understand the possible architectures for the two mentioned methods. We also had a glimpse of the implementation in fast.ai library. It is worth mentioning that in practice I would take more time to inspect the dataset  and might modify it unless it is one with a benchmark. I could also look into other metrics or specific groups which were less represented. But the main purpose of the post was to go over the main ideas and see code examples as a first step of experimentation. 
+In this post we had an overview about the use of embeddings for matrix factorization and feature creation. We trained preliminary models in Keras to understand the possible architectures for the two mentioned methods. We also had an overview about the implementation in fast.ai library. It is worth mentioning that in practice I would take more time to inspect the dataset  and might modify it unless it is one with a benchmark. I could also look into other metrics or specific groups which were less represented. But the main purpose of the post was to go over the main ideas and see code examples as a first step of experimentation. 
 
 ## References and Readings
 
