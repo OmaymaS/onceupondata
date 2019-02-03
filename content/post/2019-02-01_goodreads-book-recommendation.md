@@ -3,7 +3,7 @@ title: Collaborative Filtering Using Embeddings
 date: '2019-02-01'
 slug: nn-collaborative-filtering
 tags: [python, Keras, fastai]
-subtitle: 'goodreads book recommender'
+subtitle: 'goodreads recommendations'
 ---
 
 Everyday we deal with online platforms that use recommendation systems. There are different approaches to implement such systems and it depends on the product, the available data and more.
