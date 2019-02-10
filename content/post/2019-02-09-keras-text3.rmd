@@ -1,0 +1,194 @@
+---
+title: Intro to Text Classification with Keras (Part 3 - CNN and RNN Layers)
+author: ~
+date: '2019-02-09'
+slug: keras-text3-cnn-rnn
+categories: []
+tags: []
+subtitle: ''
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+```
+
+In [part 1](https://www.onceupondata.com/2019/01/21/keras-text-part1/) and [part 2](https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/) of this series of posts on **Text Classification in Keras** we got a step by step intro about:
+
+- processing text in Keras.
+- embedding vectors as a way of representing words. 
+- defining a sequential models from scratch.
+
+Since we are working with a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle, we can always see how our models would score on the leaderboard if we competed with the final submissions. For instance, the fully connected model we used in [part 2](https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/) gave good results but it would put us at the bottom of the leaderboard. One of the main problems of such a model with text data that it just looks at a sequence of single words without capturing the meaning of longer chunks *(n-grams)*.
+
+In this post we will go over some more advanced arcitectures including **Convolutional and Recurrent Neural Networks (CNNs and RNNs)** that perform better with text as they capture more info about about the structure of the language. Thanks to the Keras layers design, we will just add/remove few lines to achive this.
+
+
+## Data Processing
+
+In the previous posts, the data processing part was covered in details. Here we will follow the same steps of tokenization, creating sequences and padding. *You can get back to the previous parts for more details.*
+
+```{r load libraries and data}
+## load libraries ---------------------------
+library(keras)
+library(tidyverse)
+library(here)
+```
+
+```{r, cache = TRUE}
+## read train and test data
+train_data <- read_csv(here("static/data/", "toxic_comments/train.csv"))
+test_data <- read_csv(here("static/data/", "toxic_comments/test.csv"))
+```
+
+```{r, cache= TRUE}
+vocab_size <- 25000
+max_len <- 250
+
+## use keras tokenizer
+tokenizer <- text_tokenizer(num_words = vocab_size) %>% 
+  fit_text_tokenizer(train_data$comment_text)
+
+## create sequances
+train_seq <- texts_to_sequences(tokenizer, train_data$comment_text)
+test_seq <- texts_to_sequences(tokenizer, test_data$comment_text)
+
+## pad sequence
+x_train <- pad_sequences(train_seq, maxlen = max_len, padding = "post")
+x_test <- pad_sequences(test_seq, maxlen = max_len, padding = "post")
+```
+
+```{r}
+## extract targets columns and convert to matrix
+y_train <- train_data %>% 
+  select(toxic:identity_hate) %>% 
+  as.matrix()
+```
+
+Now we have the training data and labels `x_train` and `y_train`. **Note that**, it is good keep a portion of the data for validation, in order not to touch the real test before the final submission. But we will just use the whole data here our examples.
+
+
+## Keras Models
+
+### CNN
+
+This model will include the following:
+
+- `layer_embedding()` layer to represent each word with a vector of length `emd_size`. This always come after the inputs.
+
+- `layer_dropout()` which serves as a method of regularization, as it drops some inputs 
+
+- a convolutional layer `layer_conv_1d` since text data is represented in 1D *(unlike images where each channel comes in 2D)*, In this layer, you can see new hyper-parameters like:
+
++ `filters`: is the length of the output from this layer.
++ `kernel_size`: which is the size  of thesliding window used over the sequence. So if it is 3, we can consider that the window looks at consequentive trigrams. 
+
+- `layer_global_max_pooling_1d()` layer to get the maximum of each filter output. The intuition behind this is that with a good model, each filter can capture something from  the n-grams. And the maximum value would be representative of when a neuron would be activated based on a certain input.
+
+- `layer_dense()` which is a fully connected layer. You can  try and add multiple ones. Then add the output with 6 outputs and `sigmoid` activation.
+
+```{r}
+## define hyper parameters
+emd_size <- 50
+filters <- 250
+kernel_size <- 3
+hidden_dims <- 256
+```
+
+```{r}
+## define model
+model_cnn <- keras_model_sequential() %>% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %>%
+  layer_dropout(0.2) %>%
+  # add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = "valid", activation = "relu", strides = 1) %>%
+  # apply max pooling
+  layer_global_max_pooling_1d() %>%
+  # add fully connected layer:
+  layer_dense(hidden_dims) %>%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %>%
+  layer_activation("relu") %>%
+  # output layer then sigmoid
+  layer_dense(6) %>%
+  layer_activation("sigmoid") 
+
+## display model summary
+summary(model_cnn)
+```
+
+```{r, eval = FALSE}
+## specify model optimizer, loss and metrics
+model_cnn %>% compile(
+  loss = "binary_crossentropy",
+  optimizer = "adam",
+  metrics = "accuracy")
+
+## fir model
+history <- model_cnn %>% 
+  fit(x_train, y_train,
+      epochs = 4,
+      batch_size = 64,
+      validation_split = 0.05,
+      verbose = 1)
+```
+```{r}
+## predict on test data
+predicted_prob <- predict_proba(model_cnn, x_test)
+```
+
+If you fit this model for few epochs and predict the test labels,  it can get you around **`0.973` in the private score**. This is an improvement compared to the pure fully connected model.
+
+
+### CNN +LSTM
+
+One of the other possible architectures combines **convolutional** with **Long Term Short Term (LSTM)** layers, which is a special type of **Recurrent Neural Networks**. The promise of **LSTM** that it handles long sequences in a way that the network learns what to keep and what to forget. 
+
+We can modify the previous model by adding a `layer_lstm()` after the `layer_conv_1d()` and the pooling layer. 
+
+Notice that, this model is computationally heavier than the previous one. It is preferrable to use a GPU while training if available. For this, you can use `layer_cudnn_lstm()` which runs only on GPU with the `TensorFlow` backend.
+
+```{r}
+## define hyper parameters
+emd_size <- 50
+filters <- 250
+kernel_size <- 3
+hidden_dims <- 256
+pool_size = 4
+lstm_op_size = 64
+```
+
+```{r}
+model_cnn_lstm <- keras_model_sequential() %>% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %>%
+  layer_dropout(0.2) %>%
+  # add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = "valid", activation = "relu", strides = 1) %>%
+  ## add pooling layer
+  layer_max_pooling_1d(pool_size = pool_size) %>% 
+  ## add lstm layer
+  layer_lstm(units = lstm_op_size) %>% 
+  # add fully connected layer:
+  layer_dense(hidden_dims) %>%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %>%
+  layer_activation("relu") %>%
+  # output layer then sigmoid
+  layer_dense(6) %>%
+  layer_activation("sigmoid") 
+
+## display model summary
+summary(model_cnn_lstm)
+```
+
+
+
