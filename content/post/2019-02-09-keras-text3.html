@@ -1,0 +1,279 @@
+---
+title: Intro to Text Classification with Keras (Part 3 - CNN and RNN Layers)
+author: ~
+date: '2019-02-10'
+slug: keras-text3-cnn-rnn
+categories: []
+tags: [R, Keras, NLP]
+subtitle: ''
+---
+
+
+
+<p>In <a href="https://www.onceupondata.com/2019/01/21/keras-text-part1/">part 1</a> and <a href="https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/">part 2</a> of this series of posts on <strong>Text Classification in Keras</strong> we got a step by step intro about:</p>
+<ul>
+<li>processing text in Keras.</li>
+<li>embedding vectors as a way of representing words.</li>
+<li>defining a sequential models from scratch.</li>
+</ul>
+<p>Since we are working with a real dataset from the <a href="https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge">Toxic Comment Classification Challenge</a> on Kaggle, we can always see how our models would score on the leaderboard if we competed with the final submissions. For instance, the fully connected model we used in <a href="https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/">part 2</a> gave good results but it would put us at the bottom of the leaderboard. One of the main problems of such a model with text data that it just looks at a sequence of single words without capturing the meaning of longer chunks <em>(n-grams)</em>.</p>
+<p>In this post we will go over some more advanced architectures including <strong>Convolutional and Recurrent Neural Networks (CNNs and RNNs)</strong> that perform better with text as they capture more info about about the structure of the language. Thanks to the Keras layers design, we will just add/remove few lines to achieve this. The following sections will discuss three models:</p>
+<ul>
+<li>CNN</li>
+<li>CNN+LSTM</li>
+<li>GRU+CNN</li>
+</ul>
+<div id="data-processing" class="section level2">
+<h2>Data Processing</h2>
+<p>In the previous posts, the data processing part was covered in details. Here we will follow the same steps of tokenization, creating sequences and padding. <em>You can get back to the previous parts for more details.</em></p>
+<pre class="r"><code>## load libraries ---------------------------
+library(keras)
+library(tidyverse)
+library(here)</code></pre>
+<pre class="r"><code>## read train and test data
+train_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/train.csv&quot;))
+test_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/test.csv&quot;))</code></pre>
+<pre class="r"><code>vocab_size &lt;- 25000
+max_len &lt;- 250
+
+## use keras tokenizer
+tokenizer &lt;- text_tokenizer(num_words = vocab_size) %&gt;% 
+  fit_text_tokenizer(train_data$comment_text)
+
+## create sequances
+train_seq &lt;- texts_to_sequences(tokenizer, train_data$comment_text)
+test_seq &lt;- texts_to_sequences(tokenizer, test_data$comment_text)
+
+## pad sequence
+x_train &lt;- pad_sequences(train_seq, maxlen = max_len, padding = &quot;post&quot;)
+x_test &lt;- pad_sequences(test_seq, maxlen = max_len, padding = &quot;post&quot;)</code></pre>
+<pre class="r"><code>## extract targets columns and convert to matrix
+y_train &lt;- train_data %&gt;% 
+  select(toxic:identity_hate) %&gt;% 
+  as.matrix()</code></pre>
+<p>Now we have the training data and labels <code>x_train</code> and <code>y_train</code>. <strong>Note that</strong>, it is good keep a portion of the data for validation, in order not to touch the real test before the final submission. But we will just use the whole data here our examples.</p>
+</div>
+<div id="keras-models" class="section level2">
+<h2>Keras Models</h2>
+<div id="cnn" class="section level3">
+<h3>CNN</h3>
+<p>This model will include the following:</p>
+<ul>
+<li><p><code>layer_embedding()</code> layer to represent each word with a vector of length <code>emd_size</code>. This always come after the inputs.</p></li>
+<li><p><code>layer_dropout()</code> which serves as a method of regularization, as it drops some inputs</p></li>
+<li><p>a convolutional layer <code>layer_conv_1d</code> since text data is represented in 1D <em>(unlike images where each channel comes in 2D)</em>, In this layer, you can see new hyper-parameters like:</p></li>
+<li><code>filters</code>: is the length of the output from this layer.</li>
+<li><p><code>kernel_size</code>: which is the size of the sliding window used over the sequence. So if it is 3, we can consider that the window looks at consecutive trigrams.</p></li>
+<li><p><code>layer_global_max_pooling_1d()</code> layer to get the maximum of each filter output. The intuition behind this is that with a good model, each filter can capture something from the n-grams. And the maximum value would be representative of when a neuron would be activated based on a certain input.</p></li>
+<li><p><code>layer_dense()</code> which is a fully connected layer. You can try and add multiple ones. Then add the output with 6 outputs and <code>sigmoid</code> activation.</p></li>
+</ul>
+<pre class="r"><code>## define hyper parameters
+emd_size &lt;- 50
+filters &lt;- 250
+kernel_size &lt;- 3
+hidden_dims &lt;- 256</code></pre>
+<pre class="r"><code>## define model
+model_cnn &lt;- keras_model_sequential() %&gt;% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %&gt;%
+  layer_dropout(0.2) %&gt;%
+  # add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = &quot;valid&quot;, activation = &quot;relu&quot;, strides = 1) %&gt;%
+  # apply max pooling
+  layer_global_max_pooling_1d() %&gt;%
+  # add fully connected layer:
+  layer_dense(hidden_dims) %&gt;%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %&gt;%
+  layer_activation(&quot;relu&quot;) %&gt;%
+  # output layer then sigmoid
+  layer_dense(6) %&gt;%
+  layer_activation(&quot;sigmoid&quot;) 
+
+## display model summary
+summary(model_cnn)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_1 (Embedding)          (None, 250, 50)               1250000     
+## ___________________________________________________________________________
+## dropout_1 (Dropout)              (None, 250, 50)               0           
+## ___________________________________________________________________________
+## conv1d_1 (Conv1D)                (None, 248, 250)              37750       
+## ___________________________________________________________________________
+## global_max_pooling1d_1 (GlobalMa (None, 250)                   0           
+## ___________________________________________________________________________
+## dense_1 (Dense)                  (None, 256)                   64256       
+## ___________________________________________________________________________
+## dropout_2 (Dropout)              (None, 256)                   0           
+## ___________________________________________________________________________
+## activation_1 (Activation)        (None, 256)                   0           
+## ___________________________________________________________________________
+## dense_2 (Dense)                  (None, 6)                     1542        
+## ___________________________________________________________________________
+## activation_2 (Activation)        (None, 6)                     0           
+## ===========================================================================
+## Total params: 1,353,548
+## Trainable params: 1,353,548
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<pre class="r"><code>## specify model optimizer, loss and metrics
+model_cnn %&gt;% compile(
+  loss = &quot;binary_crossentropy&quot;,
+  optimizer = &quot;adam&quot;,
+  metrics = &quot;accuracy&quot;)
+
+## fir model
+history &lt;- model_cnn %&gt;% 
+  fit(x_train, y_train,
+      epochs = 4,
+      batch_size = 64,
+      validation_split = 0.05,
+      verbose = 1)</code></pre>
+<pre class="r"><code>## predict on test data
+predicted_prob &lt;- predict_proba(model_cnn, x_test)</code></pre>
+<p>If you fit this model for few epochs and predict the test labels, it can get you around <strong><code>0.973</code> in the private score</strong>. This is an improvement compared to the pure fully connected model.</p>
+</div>
+<div id="cnn-lstm" class="section level3">
+<h3>CNN +LSTM</h3>
+<p>One of the other possible architectures combines <strong>convolutional</strong> with <strong>Long Term Short Term (LSTM)</strong> layers, which is a special type of <strong>Recurrent Neural Networks</strong>. The promise of <strong>LSTM</strong> that it handles long sequences in a way that the network learns what to keep and what to forget.</p>
+<p>We can modify the previous model by adding a <code>layer_lstm()</code> after the <code>layer_conv_1d()</code> and the pooling layer.</p>
+<p>Notice that, this model is computationally heavier than the previous one. It is preferable to use a GPU while training if available. For this, you can use <code>layer_cudnn_lstm()</code> which runs only on GPU with the <code>TensorFlow</code> backend.</p>
+<pre class="r"><code>## define hyper parameters
+emd_size &lt;- 50
+filters &lt;- 250
+kernel_size &lt;- 3
+hidden_dims &lt;- 256
+pool_size = 4
+lstm_op_size = 64</code></pre>
+<pre class="r"><code>model_cnn_lstm &lt;- keras_model_sequential() %&gt;% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %&gt;%
+  layer_dropout(0.2) %&gt;%
+  # add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = &quot;valid&quot;, activation = &quot;relu&quot;, strides = 1) %&gt;%
+  ## add pooling layer
+  layer_max_pooling_1d(pool_size = pool_size) %&gt;% 
+  ## add lstm layer
+  layer_lstm(units = lstm_op_size) %&gt;% 
+  # add fully connected layer:
+  layer_dense(hidden_dims) %&gt;%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %&gt;%
+  layer_activation(&quot;relu&quot;) %&gt;%
+  # output layer then sigmoid
+  layer_dense(6) %&gt;%
+  layer_activation(&quot;sigmoid&quot;) 
+
+## display model summary
+summary(model_cnn_lstm)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_2 (Embedding)          (None, 250, 50)               1250000     
+## ___________________________________________________________________________
+## dropout_3 (Dropout)              (None, 250, 50)               0           
+## ___________________________________________________________________________
+## conv1d_2 (Conv1D)                (None, 248, 250)              37750       
+## ___________________________________________________________________________
+## max_pooling1d_1 (MaxPooling1D)   (None, 62, 250)               0           
+## ___________________________________________________________________________
+## lstm_1 (LSTM)                    (None, 64)                    80640       
+## ___________________________________________________________________________
+## dense_3 (Dense)                  (None, 256)                   16640       
+## ___________________________________________________________________________
+## dropout_4 (Dropout)              (None, 256)                   0           
+## ___________________________________________________________________________
+## activation_3 (Activation)        (None, 256)                   0           
+## ___________________________________________________________________________
+## dense_4 (Dense)                  (None, 6)                     1542        
+## ___________________________________________________________________________
+## activation_4 (Activation)        (None, 6)                     0           
+## ===========================================================================
+## Total params: 1,386,572
+## Trainable params: 1,386,572
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+</div>
+<div id="grucnn" class="section level3">
+<h3>GRU+CNN</h3>
+<p>A simpler version of <strong>LSTM</strong> is the <strong>Gated Recurrent Unit(GRU)</strong>. It is supposed to be more computationally efficient. So we can also try it with CNN. But this time we will but the <strong>GRU</strong> layer before the <strong>CNN</strong> layer.</p>
+<p>Notice that, we added <code>bidirectional(layer_gru(units = gru_units))</code>, which does the following:</p>
+<ul>
+<li>add a <code>layer_gru()</code> with the defined units as the output.</li>
+<li>set the <code>return_sequences</code> argumemt as <code>TRUE</code> to return the full output sequence.</li>
+<li>wrap it in <code>bidirectional()</code> which helps the network learn about words from previous as well as future time steps. Other <strong>RNN</strong> layers like <code>layer_lstm()</code> can also be passed with <code>bidirectional()</code>.</li>
+</ul>
+<p>Similar to the <code>layer_cudnn_lstm()</code>, there is a <strong>GRU</strong> <code>layer_cudnn_gru()</code> layer that works with GPU.</p>
+<pre class="r"><code>## define hyper parameters
+emd_size &lt;- 50
+filters &lt;- 250
+kernel_size &lt;- 3
+hidden_dims &lt;- 256
+gru_units = 128</code></pre>
+<pre class="r"><code>## define model
+model_gru_cnn &lt;- keras_model_sequential() %&gt;% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %&gt;%
+  layer_dropout(0.2) %&gt;%
+  ## add bidirectional gru
+  bidirectional(layer_gru(units = gru_units, return_sequences = TRUE)) %&gt;% 
+  ## add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = &quot;valid&quot;, activation = &quot;relu&quot;, strides = 1) %&gt;%
+  ## add pooling layer
+  layer_global_max_pooling_1d() %&gt;% 
+  # add fully connected layer:
+  layer_dense(hidden_dims) %&gt;%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %&gt;%
+  layer_activation(&quot;relu&quot;) %&gt;%
+  # output layer then sigmoid
+  layer_dense(6) %&gt;%
+  layer_activation(&quot;sigmoid&quot;) 
+
+## display model summary
+summary(model_gru_cnn)</code></pre>
+<pre><code>## ___________________________________________________________________________
+## Layer (type)                     Output Shape                  Param #     
+## ===========================================================================
+## embedding_3 (Embedding)          (None, 250, 50)               1250000     
+## ___________________________________________________________________________
+## dropout_5 (Dropout)              (None, 250, 50)               0           
+## ___________________________________________________________________________
+## bidirectional_1 (Bidirectional)  (None, 250, 256)              137472      
+## ___________________________________________________________________________
+## conv1d_3 (Conv1D)                (None, 248, 250)              192250      
+## ___________________________________________________________________________
+## global_max_pooling1d_2 (GlobalMa (None, 250)                   0           
+## ___________________________________________________________________________
+## dense_5 (Dense)                  (None, 256)                   64256       
+## ___________________________________________________________________________
+## dropout_6 (Dropout)              (None, 256)                   0           
+## ___________________________________________________________________________
+## activation_5 (Activation)        (None, 256)                   0           
+## ___________________________________________________________________________
+## dense_6 (Dense)                  (None, 6)                     1542        
+## ___________________________________________________________________________
+## activation_6 (Activation)        (None, 6)                     0           
+## ===========================================================================
+## Total params: 1,645,520
+## Trainable params: 1,645,520
+## Non-trainable params: 0
+## ___________________________________________________________________________</code></pre>
+<p>With some tuning, this combination will boost your score compared to the model with just <strong>CNN</strong>.</p>
+<p><strong>In conclusion</strong></p>
+<p>There nature of text which carries smenatic relations and a meaning learned from long sequences requires more advanced models that simple fully connected layers. <strong>CNNs</strong> and <strong>RNNs</strong> can capture these features and provide good results. But there’s more to do with the data processing, pre-trained embedding and <code>Keras</code> layers to get even better results. We will see this in future posts!</p>
+</div>
+</div>

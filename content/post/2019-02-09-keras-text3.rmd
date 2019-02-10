@@ -9,7 +9,7 @@ subtitle: ''
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, message = FALSE, cache = TRUE)
 ```
 
 In [part 1](https://www.onceupondata.com/2019/01/21/keras-text-part1/) and [part 2](https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/) of this series of posts on **Text Classification in Keras** we got a step by step intro about:
@@ -201,7 +201,9 @@ A simpler version of **LSTM** is the **Gated Recurrent Unit(GRU)**. It is suppos
 Notice that, we added `bidirectional(layer_gru(units = gru_units))`, which does the following:
 
 - add a `layer_gru()` with the defined units as the output.
+- set the `return_sequences` argumemt as `TRUE` to return the full output sequence.
 - wrap it in `bidirectional()` which helps the network learn about words from previous as well as future time steps. Other **RNN** layers like `layer_lstm()` can also be passed with `bidirectional()`. 
+
 
 Similar to the `layer_cudnn_lstm()`, there is a **GRU** `layer_cudnn_gru()` layer that works with GPU. 
 
@@ -222,7 +224,7 @@ model_gru_cnn <- keras_model_sequential() %>%
                   input_length = max_len) %>%
   layer_dropout(0.2) %>%
   ## add bidirectional gru
-  bidirectional(layer_gru(units = gru_units)) %>% 
+  bidirectional(layer_gru(units = gru_units, return_sequences = TRUE)) %>% 
   ## add a Convolution1D
   layer_conv_1d(
     filters, kernel_size, 
