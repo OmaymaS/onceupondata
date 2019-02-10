@@ -1,10 +1,10 @@
 ---
 title: Intro to Text Classification with Keras (Part 3 - CNN and RNN Layers)
 author: ~
-date: '2019-02-09'
+date: '2019-02-10'
 slug: keras-text3-cnn-rnn
 categories: []
-tags: []
+tags: [R, Keras, NLP]
 subtitle: ''
 ---
 
@@ -20,8 +20,11 @@ In [part 1](https://www.onceupondata.com/2019/01/21/keras-text-part1/) and [part
 
 Since we are working with a real dataset from the [Toxic Comment Classification Challenge](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) on Kaggle, we can always see how our models would score on the leaderboard if we competed with the final submissions. For instance, the fully connected model we used in [part 2](https://www.onceupondata.com/2019/01/24/keras-text2-multilabel-classification/) gave good results but it would put us at the bottom of the leaderboard. One of the main problems of such a model with text data that it just looks at a sequence of single words without capturing the meaning of longer chunks *(n-grams)*.
 
-In this post we will go over some more advanced arcitectures including **Convolutional and Recurrent Neural Networks (CNNs and RNNs)** that perform better with text as they capture more info about about the structure of the language. Thanks to the Keras layers design, we will just add/remove few lines to achive this.
+In this post we will go over some more advanced architectures including **Convolutional and Recurrent Neural Networks (CNNs and RNNs)** that perform better with text as they capture more info about about the structure of the language. Thanks to the Keras layers design, we will just add/remove few lines to achieve this. The following sections will discuss three models:
 
+- CNN
+- CNN+LSTM
+- GRU+CNN
 
 ## Data Processing
 
@@ -80,7 +83,7 @@ This model will include the following:
 - a convolutional layer `layer_conv_1d` since text data is represented in 1D *(unlike images where each channel comes in 2D)*, In this layer, you can see new hyper-parameters like:
 
 + `filters`: is the length of the output from this layer.
-+ `kernel_size`: which is the size  of thesliding window used over the sequence. So if it is 3, we can consider that the window looks at consequentive trigrams. 
++ `kernel_size`: which is the size  of the sliding window used over the sequence. So if it is 3, we can consider that the window looks at consecutive trigrams. 
 
 - `layer_global_max_pooling_1d()` layer to get the maximum of each filter output. The intuition behind this is that with a good model, each filter can capture something from  the n-grams. And the maximum value would be representative of when a neuron would be activated based on a certain input.
 
@@ -150,7 +153,7 @@ One of the other possible architectures combines **convolutional** with **Long T
 
 We can modify the previous model by adding a `layer_lstm()` after the `layer_conv_1d()` and the pooling layer. 
 
-Notice that, this model is computationally heavier than the previous one. It is preferrable to use a GPU while training if available. For this, you can use `layer_cudnn_lstm()` which runs only on GPU with the `TensorFlow` backend.
+Notice that, this model is computationally heavier than the previous one. It is preferable to use a GPU while training if available. For this, you can use `layer_cudnn_lstm()` which runs only on GPU with the `TensorFlow` backend.
 
 ```{r}
 ## define hyper parameters
@@ -191,4 +194,58 @@ summary(model_cnn_lstm)
 ```
 
 
+### GRU+CNN
+
+A simpler version of **LSTM** is the **Gated Recurrent Unit(GRU)**. It is supposed to be more  computationally efficient. So we can also try it with CNN. But this time we will but the **GRU** layer before the **CNN** layer.
+
+Notice that, we added `bidirectional(layer_gru(units = gru_units))`, which does the following:
+
+- add a `layer_gru()` with the defined units as the output.
+- wrap it in `bidirectional()` which helps the network learn about words from previous as well as future time steps. Other **RNN** layers like `layer_lstm()` can also be passed with `bidirectional()`. 
+
+Similar to the `layer_cudnn_lstm()`, there is a **GRU** `layer_cudnn_gru()` layer that works with GPU. 
+
+```{r}
+## define hyper parameters
+emd_size <- 50
+filters <- 250
+kernel_size <- 3
+hidden_dims <- 256
+gru_units = 128
+```
+```{r}
+## define model
+model_gru_cnn <- keras_model_sequential() %>% 
+  # embedding layer
+  layer_embedding(input_dim = vocab_size,
+                  output_dim = emd_size,
+                  input_length = max_len) %>%
+  layer_dropout(0.2) %>%
+  ## add bidirectional gru
+  bidirectional(layer_gru(units = gru_units)) %>% 
+  ## add a Convolution1D
+  layer_conv_1d(
+    filters, kernel_size, 
+    padding = "valid", activation = "relu", strides = 1) %>%
+  ## add pooling layer
+  layer_global_max_pooling_1d() %>% 
+  # add fully connected layer:
+  layer_dense(hidden_dims) %>%
+  # apply 20% layer dropout
+  layer_dropout(0.2) %>%
+  layer_activation("relu") %>%
+  # output layer then sigmoid
+  layer_dense(6) %>%
+  layer_activation("sigmoid") 
+
+## display model summary
+summary(model_gru_cnn)
+```
+
+With some tuning, this combination will boost your score compared to the model with just **CNN**.
+
+
+**In conclusion**
+
+There nature of text which carries smenatic relations and a meaning learned from long sequences requires more advanced models that simple fully connected layers. **CNNs** and **RNNs** can capture these features and provide good results. But there's more to do with the data processing, pre-trained embedding and `Keras` layers to get even better results. We will see this in future posts!
 
