@@ -75,7 +75,7 @@ knitr::kable(tags_summary)
 
 Before defining our model, we need to prepare the text and targets in the proper format.
 
-### process comments text
+### Process comments text
 
 As we understood the structure of our data, we can start to process the text. We learned in [part one](https://www.onceupondata.com/2019/01/21/keras-text-part1/) that we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences. 
 

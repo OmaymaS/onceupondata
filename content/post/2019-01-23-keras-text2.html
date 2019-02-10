@@ -59,7 +59,7 @@ test_data &lt;- read_csv(here(&quot;static/data/&quot;, &quot;toxic_comments/tes
 <h2>Data Processing</h2>
 <p>Before defining our model, we need to prepare the text and targets in the proper format.</p>
 <div id="process-comments-text" class="section level3">
-<h3>process comments text</h3>
+<h3>Process comments text</h3>
 <p>As we understood the structure of our data, we can start to process the text. We learned in <a href="https://www.onceupondata.com/2019/01/21/keras-text-part1/">part one</a> that we can represent the words in our vocabulary in a compact form using word embeddings before adding any other layers. In the next sections we will do the tokenization and padding steps to create our sequences.</p>
 <p><strong>Note</strong> that it is possible to make extra pre-processing, by normalizing or cleaning the text, but in some cases the typos add a useful noise that helps in generalization. <em>This is part of experimentation while trying to improve the acccuracy of the model</em>.</p>
 <div id="tokenize-comments-text" class="section level4">
