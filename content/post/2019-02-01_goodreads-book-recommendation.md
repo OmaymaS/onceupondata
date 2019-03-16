@@ -1,6 +1,6 @@
 ---
 title: Collaborative Filtering Using Embeddings 
-date: '2019-02-01'
+date: '2019-02-10'
 slug: nn-collaborative-filtering
 tags: [python, Keras, fastai]
 subtitle: 'goodreads recommendations'

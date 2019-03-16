@@ -1,7 +1,7 @@
 ---
 title: Intro to Text Classification with Keras (Part 3 - CNN and RNN Layers)
 author: ~
-date: '2019-02-10'
+date: '2019-02-01'
 slug: keras-text3-cnn-rnn
 categories: []
 tags: [R, Keras, NLP]
