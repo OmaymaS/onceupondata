@@ -10,7 +10,17 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 ### Full-Length Talks (20-60 mins)
 
-#### Nov 2017- [EARL Boston](https://earlconf.com/2017/boston/)
+#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/)
+
+#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day1.html)
+
+- The Data Lorax: Planting the Seeds of Fairness in Data Products
+
+#### Sep 2018 - [EARL London](https://earlconf.com/2018/london/)
+
+- Beyond Prototypes: A Journey to The Production Land
+
+#### May 2018 - [eRum Budapest](https://2018.erum.io/)
 
 - Fitting Humans Stories in List Column: Cases from an Online Recruitment Platform
 
@@ -18,24 +28,20 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 - Once Upon a Data: Crunching Chaotic Numbers into Compelling Stories
 
-#### May 2018 - [eRum Budapest](https://2018.erum.io/)
+#### Nov 2017- [EARL Boston](https://earlconf.com/2017/boston/)
 
 - Fitting Humans Stories in List Column: Cases from an Online Recruitment Platform
 
-#### Sep 2018 - [EARL London](https://earlconf.com/2018/london/)
-
-- Beyond Prototypes: A Journey to The Production Land
-
-#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day1.html)
-
-- The Data Lorax: Planting the Seeds of Fairness in Data Products
 
 ### Lightning Talks
+
+#### Nov 2018 - Rladies Tbilisi Meetup
+
+- Machine Learning Interpretability: The LIME Way!
 
 #### May 2018 - Rladies Budapest Meetup 
 
 - Stringr Explorer: Tweet-Driven Development for a Shiny App
-
 
 ## Teaching 
 
@@ -47,11 +53,15 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 ### Workshops
 
-#### [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) - Nov 2018
+#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) 
 
 - Tidyverse for data manipulation and visualization.
 - Delving into the depths of ggplot.
 
+#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
+
+- Building web applications with Shiny.
+
 ## Other Activities 
 
-- Mentor: [NASA SPACE HACK](https://nasaspacehack.splashthat.com/)
+- Mentor: [NASA SPACE HACK - London](https://nasaspacehack.splashthat.com/)
