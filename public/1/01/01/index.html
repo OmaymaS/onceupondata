@@ -1,359 +1,985 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
   <head>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Hugo 0.23" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Once Upon Data</title>
+  <meta property="og:title" content="Once Upon Data" />
+  <meta name="twitter:title" content="Once Upon Data" />
+  <meta name="description" content="Everyday we deal with online platforms that use recommendation systems. There are different approaches to implement such systems and it depends on the product, the available data and more.
+This post will mainly focus on collaborative filtering using embeddings as a way to learn about latent factors. I learned about this approach months ago from fast.ai Practical Deep Learning for Coders lessons. I also found out that StichFix wrote about the same concept in a blog post last year Understanding Latent Style.">
+  <meta property="og:description" content="Everyday we deal with online platforms that use recommendation systems. There are different approaches to implement such systems and it depends on the product, the available data and more.
+This post will mainly focus on collaborative filtering using embeddings as a way to learn about latent factors. I learned about this approach months ago from fast.ai Practical Deep Learning for Coders lessons. I also found out that StichFix wrote about the same concept in a blog post last year Understanding Latent Style.">
+  <meta name="twitter:description" content="Everyday we deal with online platforms that use recommendation systems. There are different approaches to implement such systems and it depends on the product, the available data and more.
+This post …">
+  <meta name="author" content=""/>
+  <meta property="og:image" content="/img/logo.jpg" />
+  <meta name="twitter:image" content="/img/logo.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:url" content="/1/01/01/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Once Upon Data" />
+
+  <meta name="generator" content="Hugo 0.53" />
+  <link rel="canonical" href="/1/01/01/" />
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Once Upon Data">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="/css/pygment_highlights.css" />
+  <link rel="stylesheet" href="/css/highlight.min.css" />
 
 
-<title> - Once Upon Data</title>
-<meta property="og:title" content=" - Once Upon Data">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
 
 
 
-  
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
 
+<div class="pswp__bg"></div>
 
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-102384456-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
+</head>
 
-
-
-
-<link href='//cdn.bootcss.com/highlight.js/9.11.0/styles/github.min.css' rel='stylesheet' type='text/css' />
-
-
-
-<link rel="stylesheet" href="../../../css/fonts.css" media="all">
-<link rel="stylesheet" href="../../../css/main.css" media="all">
-
-
-
-  </head>
   <body>
-    <div class="wrapper">
-      <header class="header">
-        <nav class="nav">
-  <a href="../../../" class="nav-logo">
-    <img src="../../../images/logo.png"
-         width="50"
-         height="50"
-         alt="Logo">
-  </a>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Once Upon Data</a>
+    </div>
 
-  <ul class="nav-links">
-    
-    <li><a href="../../../about/">About</a></li>
-    
-    <li><a href="https://github.com/OmaymaS">GitHub</a></li>
-    
-  </ul>
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="About" href="/about/">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="GitHub" href="https://github.com/OmaymaS">GitHub</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Once Upon Data" href="/">
+            <img class="avatar-img" src="/img/logo.jpg" alt="Once Upon Data" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
 </nav>
 
-      </header>
 
 
-<main class="content" role="main">
-
-  <article class="article">
-    
-    <span class="article-duration">6 min read</span>
-    
-
-    <h1 class="article-title"></h1>
 
     
-    <span class="article-date">0001/01/01</span>
-    
+  
+  
+  
 
-    <div class="article-content">
+
+
+
+  <div class="intro-header"></div>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+
+<p>Everyday we deal with online platforms that use recommendation systems. There are different approaches to implement such systems and it depends on the product, the available data and more.</p>
+
+<p>This post will mainly focus on <strong>collaborative filtering using embeddings as a way to learn about latent factors</strong>. I learned about this approach months ago from <strong>fast.ai</strong> <a href="https://course.fast.ai/"> Practical Deep Learning for Coders</a> lessons. I also found out that <strong>StichFix</strong> wrote about the same concept in a blog post last year <a href="https://multithreaded.stitchfix.com/blog/2018/06/28/latent-style/">Understanding Latent Style</a>.</p>
+
+<p>Here will use the <a href="https://github.com/zygmuntz/goodbooks-10k">goodbooks-10k</a> dataset, which contains <em>&rdquo; around six million ratings for ten thousand books&rdquo;</em>.  The post will explain  the high-level concepts then it will show preliminary <strong>Keras</strong> models to demonstrate two methods in which we can use embeddings to represent our data. We will refer to the two methods as:</p>
+
+<ul>
+<li>Matrix factorization method</li>
+<li>Tabular data method</li>
+</ul>
+
+<p><strong>Note that the examples are for demo purposes and they are not intended to provide the best mode. Also I am not aware of a benchmark for this dataset, so the comparison with other models is out of this posts&rsquo; scope</strong></p>
+
+<h2 id="matrix-factorization-latent-factors-and-embeddings">Matrix Factorization, Latent Factors and Embeddings</h2>
+
+<p>In a platform like goodreads, we see book recommendations based on the history of the user, similarities with other users or other signals collected about the user behavior. In practice, different signals and algorithms are usually merged to get better results. But let&rsquo;s focus on one approach; <strong>item-based collaborative filtering</strong>. Using this approach, we learn about the similarities between the books using the ratings we already have. Starting with tabular data, the first step is to convert our table to a matrix with one row per user as shown in the following figure.</p>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/table_to_matrix.png?raw=true" alt="alt text" /></p>
+
+<p><strong>But what is the problem with that?</strong></p>
+
+<p>Usually we&rsquo;ll have thousands of users and items, so this matrix will be very sparse with dimensions <strong>(mXn)</strong> .</p>
+
+<p><strong>What is the common solution?</strong></p>
+
+<p>To reduce the complexity of the problem, it is common to deal with lower-dimension matrices using matrix factorization. The idea is to represet each user/item by a compact vector represting the latent factors.</p>
+
+<p><strong>And How can embeddings help?</strong></p>
+
+<p>Instead of the traditional ways, we can use embedding layers and learn about the latent factors while training our neural network using the given ratings. As a result we will have:</p>
+
+<ul>
+<li>Users embedding <strong>(mXk)</strong></li>
+<li>Items embedding <strong>(nXk)</strong></li>
+</ul>
+
+<p>Ideally, with a good model, users/items close to each other in the space should have similar characteristics.</p>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/embedding_matrix.png?raw=true" alt="" /></p>
+
+<p>Then we can use these matrices in two ways:</p>
+
+<p>1-  <strong>Matrix factorization method</strong>  where we take these matrices, calculate the element-wise product of <strong>(mXk),(kXm)</strong> then add other fully connected layers.</p>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/matrix_to_embedding2.png?raw=true" alt="" /></p>
+
+<p>2 - <strong>Tabular data method</strong> where we use the embedding matrices as lookup tables to get the vectors corresponding to each user/item. These vectors will be consideres as features and we can add other fully connected layers, or even try something else other than neural networks.</p>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/table_to_tabular.png?raw=true" alt="" /></p>
+
+<h2 id="dataset">Dataset</h2>
+
+<p>Now as we got the idea behind using embeddings, let&rsquo;s start with loading the goodreads <code>ratings</code> dataset. Notice that it is similar to the illustrated example above, where we have <strong>user_id, book_id, rating</strong>. There&rsquo;s  also other info about each book in the <code>books</code> dataframe, that we will use later.</p>
+
+<pre><code>## import libraries
+%matplotlib inline
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+</code></pre>
+
+<pre><code>## read data
+ratings = pd.read_csv(&quot;https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/ratings.csv&quot;)
+books = pd.read_csv(&quot;https://raw.githubusercontent.com/zygmuntz/goodbooks-10k/master/books.csv&quot;)
+
+ratings.head()
+</code></pre>
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user_id</th>
+      <th>book_id</th>
+      <th>rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>258</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>4081</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>260</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2</td>
+      <td>9296</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2</td>
+      <td>2318</td>
+      <td>3</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="unique-users-books">Unique users/books</h4>
+
+<pre><code>## unisue users, books
+n_users, n_books = len(ratings.user_id.unique()), len(ratings.book_id.unique())
+
+
+f'The dataset includes {len(ratings)} ratings by {n_users} unique users on {n_books} unique books.'
+</code></pre>
+
+<pre><code>'The dataset includes 5976479 ratings by 53424 unique users on 10000 unique books.'
+</code></pre>
+
+<h4 id="rating-distribution">Rating distribution</h4>
+
+<p>If we look at the distribution of ratings, We can notice that:</p>
+
+<ul>
+<li><p>the values are discrete (1 to 5), but we will deal with them as continious as we are ok with predicting intermediate values.</p></li>
+
+<li><p>the data is unbalanced, and most of the ratings are from 3 to 5. (<em>Ideally we should consier the impact of such imbalance on the model</em>)</p></li>
+</ul>
+
+<pre><code>%%capture
+!pip install ggplot
+from ggplot import *
+</code></pre>
+
+<pre><code>## plot distribution of ratings 
+ggplot(aes(x = 'rating'), data = ratings)+\
+geom_bar()+\
+ggtitle(&quot;Ratings Distribution&quot;)
+
+</code></pre>
+
+<p><img src="2019-02-01_goodreads-book-recommendation_files/2019-02-01_goodreads-book-recommendation_19_0.png" alt="png" /></p>
+
+<pre><code>&lt;ggplot: (-9223363250536390526)&gt;
+</code></pre>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/ratings_dist.png?raw=true" alt="" /></p>
+
+<h4 id="train-test-split">Train/Test Split</h4>
+
+<p>We can look further into the dataset and select books with number of reviews above a certain threshold, or exclude certain records. But for simplicity, we will use the data as is and keep 10% for testing.</p>
+
+<pre><code>from sklearn.model_selection import train_test_split
+
+## split the data to train and test dataframes
+train, test = train_test_split(ratings, test_size=0.1)
+
+f&quot;The training and testing data include {len(train), len(test)} records.&quot;
+</code></pre>
+
+<pre><code>'The training and testing data include (5378831, 597648) records.'
+</code></pre>
+
+<h2 id="keras-models">Keras Models</h2>
+
+<p>As we have our data ready, we can create Keras models to implement the concepts discussed above. We will use the functional API as we need to bulid multi-input models.</p>
+
+<pre><code>## import keras models, layers and optimizers
+from keras.models import Sequential, Model
+from keras.layers import Embedding, Flatten, Dense, Dropout, concatenate, multiply, Input
+from keras.optimizers import Adam
+
+## for model block diagram visualization
+from IPython.display import SVG
+from keras.utils.vis_utils import model_to_dot
+</code></pre>
+
+<pre><code>Using TensorFlow backend.
+</code></pre>
+
+<h3 id="1-matrix-factorization-method">1- Matrix factorization method</h3>
+
+<p>The core of this methods is having:</p>
+
+<ul>
+<li><strong>users and books embedding layers</strong> with the same number of factors.</li>
+<li><strong>user and books bias layers</strong> which can be considered as representation of the unique inherent characteristic of each user/book.</li>
+</ul>
+
+<p>We will take the element-wise product of the two embeddings and add the bias terms. The rest is all about experimenting with layers and tuning hyper parameters.</p>
+
+<h4 id="create-model">Create model</h4>
+
+<pre><code>## define embeddingg size (similar for both users and books)
+dim_embedddings = 30
+bias = 1
+
+# books
+book_input = Input(shape=[1],name='Book')
+book_embedding = Embedding(n_books+1, dim_embedddings, name=&quot;Book-Embedding&quot;)(book_input)
+book_bias = Embedding(n_books + 1, bias, name=&quot;Book-Bias&quot;)(book_input)
+
+# users
+user_input = Input(shape=[1],name='User')
+user_embedding = Embedding(n_users+1, dim_embedddings, name=&quot;User-Embedding&quot;)(user_input)
+user_bias = Embedding(n_users + 1, bias, name=&quot;User-Bias&quot;)(user_input)
+
+
+matrix_product = multiply([book_embedding, user_embedding])
+matrix_product = Dropout(0.2)(matrix_product)
+
+input_terms = concatenate([matrix_product, user_bias, book_bias])
+input_terms = Flatten()(input_terms)
+
+## add dense layers
+dense_1 = Dense(50, activation=&quot;relu&quot;, name = &quot;Dense1&quot;)(input_terms)
+dense_1 = Dropout(0.2)(dense_1)
+dense_2 = Dense(20, activation=&quot;relu&quot;, name = &quot;Dense2&quot;)(dense_1)
+dense_2 = Dropout(0.2)(dense_2)
+result = Dense(1, activation='relu', name='Activation')(dense_2)
+
+## define model with 2 inputs and 1 output
+model_mf = Model(inputs=[book_input, user_input], outputs=result)
+
+## show model summary
+model_mf.summary()
+   
+</code></pre>
+
+<pre><code>__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+Book (InputLayer)               (None, 1)            0                                            
+__________________________________________________________________________________________________
+User (InputLayer)               (None, 1)            0                                            
+__________________________________________________________________________________________________
+Book-Embedding (Embedding)      (None, 1, 30)        300030      Book[0][0]                       
+__________________________________________________________________________________________________
+User-Embedding (Embedding)      (None, 1, 30)        1602750     User[0][0]                       
+__________________________________________________________________________________________________
+multiply_1 (Multiply)           (None, 1, 30)        0           Book-Embedding[0][0]             
+                                                                 User-Embedding[0][0]             
+__________________________________________________________________________________________________
+dropout_1 (Dropout)             (None, 1, 30)        0           multiply_1[0][0]                 
+__________________________________________________________________________________________________
+User-Bias (Embedding)           (None, 1, 1)         53425       User[0][0]                       
+__________________________________________________________________________________________________
+Book-Bias (Embedding)           (None, 1, 1)         10001       Book[0][0]                       
+__________________________________________________________________________________________________
+concatenate_1 (Concatenate)     (None, 1, 32)        0           dropout_1[0][0]                  
+                                                                 User-Bias[0][0]                  
+                                                                 Book-Bias[0][0]                  
+__________________________________________________________________________________________________
+flatten_1 (Flatten)             (None, 32)           0           concatenate_1[0][0]              
+__________________________________________________________________________________________________
+Dense1 (Dense)                  (None, 50)           1650        flatten_1[0][0]                  
+__________________________________________________________________________________________________
+dropout_2 (Dropout)             (None, 50)           0           Dense1[0][0]                     
+__________________________________________________________________________________________________
+Dense2 (Dense)                  (None, 20)           1020        dropout_2[0][0]                  
+__________________________________________________________________________________________________
+dropout_3 (Dropout)             (None, 20)           0           Dense2[0][0]                     
+__________________________________________________________________________________________________
+Activation (Dense)              (None, 1)            21          dropout_3[0][0]                  
+==================================================================================================
+Total params: 1,968,897
+Trainable params: 1,968,897
+Non-trainable params: 0
+__________________________________________________________________________________________________
+</code></pre>
+
+<h4 id="show-model-diagram">Show model diagram</h4>
+
+<pre><code>SVG(model_to_dot(model_mf).create(prog='dot', format='svg'))
+</code></pre>
+
+<p><img src="2019-02-01_goodreads-book-recommendation_files/2019-02-01_goodreads-book-recommendation_32_0.svg" alt="svg" /></p>
+
+<h4 id="train-model">Train model</h4>
+
+<p>We will initially train the model for 4 epochs and monitor  the loss on the training and validation data.</p>
+
+<pre><code>## specify learning rate (or use the default)
+opt_adam = Adam(lr = 0.002)
+
+## compile model
+model_mf.compile(optimizer = opt_adam, loss = ['mse'], metrics = ['mean_absolute_error'])
+
+## fit model
+history_mf = model_mf.fit([train['user_id'], train['book_id']],
+                          train['rating'],
+                          batch_size = 256,
+                          validation_split = 0.005,
+                          epochs = 4,
+                          verbose = 0)
+</code></pre>
+
+<pre><code>## show loss at each epoch
+pd.DataFrame(history_mf.history)
+</code></pre>
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>loss</th>
+      <th>mean_absolute_error</th>
+      <th>val_loss</th>
+      <th>val_mean_absolute_error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.108056</td>
+      <td>0.786512</td>
+      <td>0.877477</td>
+      <td>0.746086</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.890867</td>
+      <td>0.752475</td>
+      <td>0.874341</td>
+      <td>0.745861</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.883530</td>
+      <td>0.748171</td>
+      <td>0.872553</td>
+      <td>0.744265</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.874442</td>
+      <td>0.743089</td>
+      <td>0.877095</td>
+      <td>0.746894</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="interpretation-of-embedding-bias-values">Interpretation of embedding/bias values</h4>
+
+<p>Ideally, if we have trained the model enough to learn about the latent factors of the users/books, the values of the bias or embedding matrcies should have a meaning about the underlying characteristcs of what they represent. Although this model is preliminary, we will see how we could interprent these values with a good model.</p>
+
+<p>First, we will create a dictionary with the book id and title.</p>
+
+<pre><code>## create a dictionary out of bookid, book original title
+books_dict = books.set_index('book_id')['original_title'].to_dict()
+</code></pre>
+
+<p>Then we will extract the book embedding weights, and we can see it has the expected dimensions.</p>
+
+<pre><code>book_embedding_weights = model_mf.layers[2].get_weights()[0]
+book_embedding_weights.shape
+</code></pre>
+
+<pre><code>(10001, 30)
+</code></pre>
+
+<p>To compress these these vectors into less dimensions, we can use <strong>Principal Component Analysis(PCA)</strong>, to reduce the <code>dim_embedddings</code> to three components.</p>
+
+<pre><code>## import PCA
+from sklearn.decomposition import PCA
+
+pca = PCA(n_components = 3) ## use 3 components
+book_embedding_weights_t = np.transpose(book_embedding_weights) ## pass the transpose of the embedding matrix
+book_pca = pca.fit(book_embedding_weights_t) ## fit
+
+## display the resulting matrix dimensions
+book_pca.components_.shape
+</code></pre>
+
+<pre><code>(3, 10001)
+</code></pre>
+
+<p>We can look at the percentage of variance explained by each of the selected components.</p>
+
+<pre><code>## display the variance explained by the 3 components
+book_pca.explained_variance_ratio_
+</code></pre>
+
+<pre><code>array([0.05605826, 0.04027387, 0.03940241], dtype=float32)
+</code></pre>
+
+<p>If the variance explained is very low, we might not be able to see a good interpretation. However, for demo purposes, we will just extract the first component/factor that explains the highest percentage of the variance. The array we get can be mapped to the books list.</p>
+
+<pre><code>from operator import itemgetter
+
+## extract first PCA
+pca0 = book_pca.components_[0]
+
+## get the value (pca0, book title)
+book_comp0 = [(f, books_dict[i]) for f,i in zip(pca0, list(books_dict.keys()))]
+</code></pre>
+
+<p>If we look at the two extremes on this axis, we will get the following results. <strong>Ideally with a good model, we should find the top ten books sharing a certain feature like (genre, movies, etc.), while the lowest ten should be on the opposite side.</strong></p>
+
+<p>I personally couldn&rsquo;t identify this in the following lists, especialy that the variance explained is very low. We we could infer reasons like:</p>
+
+<ul>
+<li>the model is still not good enough.</li>
+<li>the data requires filtering before building the model.</li>
+<li>I am not familiar with all these books.</li>
+<li>other reasons.</li>
+</ul>
+
+<p>So we can keep tuning the model and we might find a good interpretation for the embedding weights and their PCs.</p>
+
+<pre><code>## books corresponding to the highest values of pca0
+sorted(book_comp0, key = itemgetter(0), reverse = True)[:10]
+</code></pre>
+
+<pre><code>[(0.041030616, 'Marcelo in the Real World'),
+ (0.033737715,
+  'La increíble y triste historia de la cándida Eréndira y de su abuela desalmada'),
+ (0.033430003, 'The Heart of the Matter'),
+ (0.031954385, 'Tigers in Red Weather'),
+ (0.031844206, 'Inferno'),
+ (0.031438835, 'Strange Candy'),
+ (0.031019075, 'Going Bovine'),
+ (0.03061295, 'Mr Maybe'),
+ (0.03044088, 'The Brightest Star in the Sky'),
+ (0.029933348, 'The Road to Little Dribbling')]
+</code></pre>
+
+<pre><code>## books corresponding to the lowest values of pca0
+sorted(book_comp0, key = itemgetter(0))[:10]
+</code></pre>
+
+<pre><code>[(-0.049701463, 'The Reluctant Fundamentalist'),
+ (-0.046037737, 'Stolen Prey'),
+ (-0.043048386, 'Little Bear'),
+ (-0.041676216, 'Frog and Toad All Year'),
+ (-0.04117827, 'The Complete Works'),
+ (-0.039489016, 'For Love of Evil'),
+ (-0.037475895, &quot;I've Got You Under My Skin&quot;),
+ (-0.035478182, 'Анна Каренина'),
+ (-0.035430357, 'A Thousand Boy Kisses'),
+ (-0.03501414, 'The Exploits of Sherlock Holmes')]
+</code></pre>
+
+<h3 id="2-tabular-data-method">2- Tabular data method</h3>
+
+<p>In this method, we will just have users and books embedding layers that can have different dimensions. We will concatenate them together as if we have a table with <code>dim_embedding_user+dim_embedding_book</code> features. Then we can add dense layers, or even use these weights as features with other algorithms.</p>
+
+<h4 id="define-model">Define model</h4>
+
+<pre><code>## define the number of latent factors (can be different for the users and books)
+dim_embedding_user = 50
+dim_embedding_book = 50
+
+## book embedding
+book_input= Input(shape=[1], name='Book')
+book_embedding = Embedding(n_books + 1, dim_embedding_book, name='Book-Embedding')(book_input)
+book_vec = Flatten(name='Book-Flatten')(book_embedding)
+book_vec = Dropout(0.2)(book_vec)
+
+## user embedding
+user_input = Input(shape=[1], name='User')
+user_embedding = Embedding(n_users + 1, dim_embedding_user, name ='User-Embedding')(user_input)
+user_vec = Flatten(name ='User-Flatten')(user_embedding)
+user_vec = Dropout(0.2)(user_vec)
+
+## concatenate flattened values 
+concat = concatenate([book_vec, user_vec])
+concat_dropout = Dropout(0.2)(concat)
+
+## add dense layer (can try more)
+dense_1 = Dense(20, name ='Fully-Connected1', activation='relu')(concat)
+
+## define output (can try sigmoid instead of relu)
+result = Dense(1, activation ='relu',name ='Activation')(dense_1)
+
+## define model with 2 inputs and 1 output
+model_tabular = Model([user_input, book_input], result)
+
+## show model summary
+model_tabular.summary()
+</code></pre>
+
+<pre><code>__________________________________________________________________________________________________
+Layer (type)                    Output Shape         Param #     Connected to                     
+==================================================================================================
+Book (InputLayer)               (None, 1)            0                                            
+__________________________________________________________________________________________________
+User (InputLayer)               (None, 1)            0                                            
+__________________________________________________________________________________________________
+Book-Embedding (Embedding)      (None, 1, 50)        500050      Book[0][0]                       
+__________________________________________________________________________________________________
+User-Embedding (Embedding)      (None, 1, 50)        2671250     User[0][0]                       
+__________________________________________________________________________________________________
+Book-Flatten (Flatten)          (None, 50)           0           Book-Embedding[0][0]             
+__________________________________________________________________________________________________
+User-Flatten (Flatten)          (None, 50)           0           User-Embedding[0][0]             
+__________________________________________________________________________________________________
+dropout_4 (Dropout)             (None, 50)           0           Book-Flatten[0][0]               
+__________________________________________________________________________________________________
+dropout_5 (Dropout)             (None, 50)           0           User-Flatten[0][0]               
+__________________________________________________________________________________________________
+concatenate_2 (Concatenate)     (None, 100)          0           dropout_4[0][0]                  
+                                                                 dropout_5[0][0]                  
+__________________________________________________________________________________________________
+Fully-Connected1 (Dense)        (None, 20)           2020        concatenate_2[0][0]              
+__________________________________________________________________________________________________
+Activation (Dense)              (None, 1)            21          Fully-Connected1[0][0]           
+==================================================================================================
+Total params: 3,173,341
+Trainable params: 3,173,341
+Non-trainable params: 0
+__________________________________________________________________________________________________
+</code></pre>
+
+<h4 id="show-model-diagram-1">Show model diagram</h4>
+
+<pre><code>SVG(model_to_dot(model_tabular).create(prog='dot', format='svg'))
+</code></pre>
+
+<p><img src="2019-02-01_goodreads-book-recommendation_files/2019-02-01_goodreads-book-recommendation_57_0.svg" alt="svg" /></p>
+
+<h4 id="train-model-1">Train model</h4>
+
+<pre><code>## specify learning rate (or use the default by specifying optimizer = 'adam')
+opt_adam = Adam(lr = 0.002)
+
+## compile model
+model_tabular.compile(optimizer= opt_adam, loss= ['mse'], metrics=['mean_absolute_error'])
+
+## fit model
+history_tabular = model_tabular.fit([train['user_id'], train['book_id']],
+                                    train['rating'],
+                                    batch_size = 256,
+                                    validation_split = 0.005,
+                                    epochs = 4,
+                                    verbose = 0)
+</code></pre>
+
+<p>This model performs better that the first one after 4 epochs. Part of the experimentation is to train both for more epochs,  tune the hyperparamers or modify the architecture.</p>
+
+<pre><code>## show loss at each epoch
+pd.DataFrame(history_tabular.history)
+</code></pre>
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>loss</th>
+      <th>mean_absolute_error</th>
+      <th>val_loss</th>
+      <th>val_mean_absolute_error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.819832</td>
+      <td>0.701705</td>
+      <td>0.728423</td>
+      <td>0.657826</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.721092</td>
+      <td>0.661850</td>
+      <td>0.703210</td>
+      <td>0.649271</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.693019</td>
+      <td>0.645749</td>
+      <td>0.688836</td>
+      <td>0.636335</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.674404</td>
+      <td>0.635130</td>
+      <td>0.681535</td>
+      <td>0.645501</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h4 id="predict-ratings-of-test-data">Predict ratings of test data</h4>
+
+<p>If we want to check the model, we can use the test data which gives <code>mse</code> close to the validation loss.</p>
+
+<pre><code>## import libraries
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+## define a function to return arrays in the required form 
+def get_array(series):
+    return np.array([[element] for element in series])
+
+## predict on test data  
+predictions = model_tabular.predict([get_array(test['user_id']), get_array(test['book_id'])])
+
+f'mean squared error on test data is {mean_squared_error(test[&quot;rating&quot;], predictions)}'
+</code></pre>
+
+<pre><code>'mean squared error on test data is 0.6897965023610527'
+</code></pre>
+
+<h3 id="3-other-methods">3- Other methods</h3>
+
+<p>Although we saw preliminary models we could get the idea behind each of the methods and we have a starting point to experiment more. There&rsquo;s also another approach which almost combines both methods. It was published in a paper entitled <a href="https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf">Neural Collaborative Filtering</a>. I haven&rsquo;t experimented with it but I thought it was worth mentioning as we discuss similar methods.</p>
+
+<p><img src="https://github.com/OmaymaS/onceupondata/blob/master/static/post/2019-02-01_goodreads-book-recommendation/nn_paper.png?raw=true" alt="" />
+<em>Source: <a href="https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf">Neural Collaborative Filtering</a>, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua.</em></p>
+
+<h2 id="fast-ai-model">fast.ai Model</h2>
+
+<p>Also <a href="https://github.com/fastai/fastai/">fast.ai</a> library provides dedicated classes and fucntions for collaborative filtering problems built on top on PyTorch. It includes more advanced options by default like using the <a href="https://sgugger.github.io/the-1cycle-policy.html">The 1cycle policy</a> and other settings. The following few lines will implement the matrix factorization method. But I will not discuss further details in the post.</p>
+
+<pre><code>%%script false 
+
+## import fast.ai modules
+from fastai.collab import *
+from fastai.tabular import *
+
+## define user/item column names in the training data
+user, item = 'user_id','book_id'
+
+## find learning rate
+learn.lr_find()
+learn.recorder.plot()
+
+## create data bunch
+data = CollabDataBunch.from_df(train, seed=42)
+
+## specify the sigmoid limits
+y_range = [0, 5.5] ## 
+
+## define learner
+learn = collab_learner(data, n_factors=50, y_range=y_range)
+
+## fit the model and monitor mse
+learn.fit_one_cycle(3, 0.01)
+</code></pre>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In this post we had an overview about the use of embeddings for matrix factorization and feature creation. We trained preliminary models in Keras to understand the possible architectures for the two mentioned methods. We also had a glimpse of the implementation in fast.ai library. It is worth mentioning that in practice I would take more time to inspect the dataset  and might modify it unless it is one with a benchmark. I could also look into other metrics or specific groups which were less represented. But the main purpose of the post was to go over the main ideas and see code examples as a first step of experimentation.</p>
+
+<h2 id="references-and-readings">References and Readings</h2>
+
+<ul>
+<li>Practical Deep Learning for Coders <a href="https://course.fast.ai/videos/?lesson=4">Lesson 4: NLP, Tabular data, Collaborative filtering, Embeddings</a>, Jeremy Howard, fast.ai</li>
+<li><a href="https://multithreaded.stitchfix.com/blog/2018/06/28/latent-style/">Understanding Latent Style</a>, Erin Boyle and Jana Beck, StichFix</li>
+<li><a href="https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf">Neural Collaborative Filtering</a>, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua.</li>
+</ul>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+        
+          <li class="next">
+            <a href="/2016/06/15/a-shout-out-to-r-bloggers/" data-toggle="tooltip" data-placement="top" title="A shout Out to R bloggers">Next Post &rarr;</a>
+          </li>
+        
+      </ul>
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "onceupondata" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
       
 
-<h1 id="exploring-climate-change-data-in-the-major-cities-1900-2014">Exploring Climate Change Data In The Major Cities (1900-2014)</h1>
-
-<h1 id="overview">Overview</h1>
-
-<p>This script explores the climate change data compiled by Berkeley Earth. It focuses on 100 major cities in the time interval 1900-2014.</p>
-
-<h1 id="data-processing">Data Processing</h1>
-
-<h2 id="reading-and-cleaning-data">Reading and Cleaning Data</h2>
-
-<p>Here we read the data of the major cities.</p>
-
-<pre><code class="language-r">#read data
-dat&lt;-read.csv(&quot;../data/GlobalLandTemperaturesByMajorCity.csv&quot;,
-              stringsAsFactors = F,header = T)
-
-#convert date column to class date
-dat$dt&lt;-as.Date(dat$dt,format= &quot;%Y-%m-%d&quot;)
-</code></pre>
-
-<h2 id="subseting-and-nesting-data">Subseting and Nesting Data</h2>
-
-<p>Here we:</p>
-
-<ul>
-<li><p>filter the data starting from year 1900</p></li>
-
-<li><p>extract the month from the date column</p></li>
-
-<li><p>add a new variable with the offset from year 1900 <em>(e.g. 2 corresponds to 1902)</em></p></li>
-
-<li><p>group the data by (City,Country,Month) and nest the rest of the variables</p></li>
-</ul>
-
-<p>Now we have a row for each (city,month) combination, and a nested dataframe containing the rest of the data. At the end, we will have a dataframe with 1200 rows <em>(100 city x 12 months)</em>.</p>
-
-<pre><code class="language-r">#nest data, 100 major cities
-by_city_month&lt;-dat %&gt;% 
-        filter(year(dt)&gt;=1900) %&gt;%
-        mutate(Month=month(dt)) %&gt;%
-        mutate(yr1900=year(dt)-1900) %&gt;%
-        group_by(City,Country,Month) %&gt;%
-        nest()
-
-by_city_month
-</code></pre>
-
-<pre><code>Source: local data frame [1,200 x 4]
-
-      City        Country Month             data
-     &lt;chr&gt;          &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;
-1  Abidjan CÃ´te D'Ivoire     1 &lt;tbl_df [114,6]&gt;
-2  Abidjan CÃ´te D'Ivoire     2 &lt;tbl_df [114,6]&gt;
-3  Abidjan CÃ´te D'Ivoire     3 &lt;tbl_df [114,6]&gt;
-4  Abidjan CÃ´te D'Ivoire     4 &lt;tbl_df [114,6]&gt;
-5  Abidjan CÃ´te D'Ivoire     5 &lt;tbl_df [114,6]&gt;
-6  Abidjan CÃ´te D'Ivoire     6 &lt;tbl_df [114,6]&gt;
-7  Abidjan CÃ´te D'Ivoire     7 &lt;tbl_df [114,6]&gt;
-8  Abidjan CÃ´te D'Ivoire     8 &lt;tbl_df [114,6]&gt;
-9  Abidjan CÃ´te D'Ivoire     9 &lt;tbl_df [114,6]&gt;
-10 Abidjan CÃ´te D'Ivoire    10 &lt;tbl_df [113,6]&gt;
-..     ...            ...   ...              ...
-</code></pre>
-
-<h1 id="fitting-regression-models">Fitting regression Models</h1>
-
-<h2 id="defining-regression-functions">Defining Regression Functions</h2>
-
-<p>Here we will define regression functions to use for all the rows in the created dataframe. We will use <strong>yr1900</strong> as the predictor and <strong>AverageTemperature</strong> as the outcome. since it is hypothesized that the average temperature increases as we advance in time. The first model is a linear model. But since there are significant fluctuations in the average temperature over time, we will also define a generalized additive model to compare.</p>
-
-<pre><code class="language-r">#define function for linear model
-city_model_lm&lt;-function(df) {
-        lm(AverageTemperature~yr1900, data=df)
-}
-
-#define function for GAM
-city_model_gam&lt;-function(df) {
-        gam(AverageTemperature~s(yr1900), data=df)
-}
-</code></pre>
-
-<h2 id="fitting-the-models">Fitting The Models</h2>
-
-<p>Here we will use <strong>map</strong> function from <strong>purrr</strong> to fit both models for each row. Two new columns will be added to our dataframe. So now each row will also have lists of the linear model and GAM model details.</p>
-
-<pre><code class="language-r">#create columns for the models
-cmodels &lt;- by_city_month %&gt;%
-        mutate(Model=map(data,city_model_lm),
-               ModelGam=map(data,city_model_gam)
-               )
-</code></pre>
-
-<h2 id="extracting-models-details">Extracting Models&rsquo; Details</h2>
-
-<p>Here we will use <strong>broom</strong> functions:</p>
-
-<ul>
-<li><p><strong>glance</strong> to extract the details of the model</p></li>
-
-<li><p><strong>tidy</strong> to extract the model estimate</p></li>
-
-<li><p><strong>augment</strong> to extract the observations statistics.</p></li>
-</ul>
-
-<p>In addition we will extract <strong>r.squared</strong> from the linear model summary and <strong>AIC</strong> from the GAM model summary. All these values will be added in new columns, creating a new dataframe <em>cmodels_details</em>.</p>
-
-<pre><code class="language-r">cmodels_details&lt;-cmodels %&gt;%
-        mutate(
-                glance_lm=Model %&gt;% map(glance),  #model summary: rsquared...
-                rsq=glance_lm %&gt;% map_dbl(&quot;r.squared&quot;),  #extract rsquared
-                
-                glance_gam=ModelGam %&gt;% map(broom::glance), #GAM model summary
-                AIC_gam=glance_gam %&gt;% map_dbl(&quot;AIC&quot;), #extract AIC
-                
-                tidy_lm=Model %&gt;% map(tidy), #model estimate: coeff...
-                
-                augment_lm=Model %&gt;% map(augment), #observation stats: resid,hat...
-                res=augment_lm %&gt;% map(&quot;.resid&quot;) #extract resid
-               )
-</code></pre>
-
-<h3 id="r-squared-linear-model">R.squared (Linear Model)</h3>
-
-<p>Now if we arrange the new dataframe by the value of $R^2$, we can see that the highest value is around 0.75 for Jakarta in May.</p>
-
-<pre><code>Source: local data frame [6 x 4]
-
-      City   Country Month       rsq
-     &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;     &lt;dbl&gt;
-1  Jakarta Indonesia     5 0.7508542
-2  Jakarta Indonesia     8 0.6973673
-3  Jakarta Indonesia     9 0.6918638
-4  Jakarta Indonesia     6 0.6740595
-5  Jakarta Indonesia     7 0.6739689
-6 Surabaya Indonesia    10 0.6463481
-</code></pre>
-
-<p>And if we look at the distribution of the values of $R^2$ in the following histogram, we will find that most of the values are very low and few values are higher than 0.6. This indicates that a linear model is not the best one to describe the change in our data. Consequently, interpreting the coefficients will not be indicative. And this goes with the nature of the data, which have high variations and fluctuations.</p>
-
-<pre><code class="language-r">ggplot(cmodels_details,aes(rsq))+
-        geom_histogram()+
-        labs(x=&quot;R^2&quot;,
-             y=&quot;Count&quot;)+
-        ggtitle(&quot;Distribution of R^2&quot;)
-</code></pre>
-
-<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-8-1.png" alt="" /></p>
-
-<p>If we want to look at the top cities with $R^2&gt;0.6$, we can see that we have 9 entries, 6 of them for Jakarta, 2 for Surabaya, and 1 in  Singapore.</p>
-
-<pre><code>Source: local data frame [9 x 13]
-
-       City   Country Month             data    Model         ModelGam
-      &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt;           &lt;list&gt;   &lt;list&gt;           &lt;list&gt;
-1   Jakarta Indonesia     4 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-2   Jakarta Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-3   Jakarta Indonesia     6 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-4   Jakarta Indonesia     7 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-5   Jakarta Indonesia     8 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-6   Jakarta Indonesia     9 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-7 Singapore Singapore    11 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-8  Surabaya Indonesia     5 &lt;tbl_df [114,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-9  Surabaya Indonesia    10 &lt;tbl_df [113,6]&gt; &lt;S3: lm&gt; &lt;S3: gam/glm/lm&gt;
-Variables not shown: glance_lm &lt;list&gt;, rsq &lt;dbl&gt;, glance_gam &lt;list&gt;,
-  AIC_gam &lt;dbl&gt;, tidy_lm &lt;list&gt;, augment_lm &lt;list&gt;, res &lt;list&gt;.
-</code></pre>
-
-<p>Let&rsquo;s look at the 6 months in Jakarta with relatively high $R^2$</p>
-
-<pre><code class="language-r">Jak&lt;-cmodels_details %&gt;% 
-        filter(rsq&gt;0.6 &amp; City %in% &quot;Jakarta&quot;) %&gt;%
-        unnest(data)%&gt;%
-        group_by(Month)
-        
-
-ggplot(Jak,aes(x=yr1900,y=AverageTemperature,colour=factor(Month)))+
-        geom_smooth(method=&quot;lm&quot;,se=F)+
-        geom_point(aes(alpha=0.3))+
-        facet_wrap(~Month,ncol=2)+
-        labs(x=&quot;Year Offset From 1900&quot;,
-             y=&quot;Average Temperature&quot;)+
-        ggtitle(&quot;Jakarta Linear Models (April-September)&quot;)+
-        guides(colour=FALSE,alpha=FALSE)
-</code></pre>
-
-<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-10-1.png" alt="" /></p>
-
-<h3 id="aic-gam-model">AIC (GAM Model)</h3>
-
-<p>Now if we look at the distribution of AIC for the GAM model, we can see that we have a reasonable number of low AIC values, which indicates that the GAM model might be a good fit for more entries.</p>
-
-<pre><code class="language-r">ggplot(cmodels_details,aes(AIC_gam))+
-        geom_histogram()+
-        labs(x=&quot;AIC&quot;,
-             y=&quot;Count&quot;)+
-        ggtitle(&quot;Distribution of AIC&quot;)
-</code></pre>
-
-<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-11-1.png" alt="" /></p>
-
-<p><em>We can work more on finding the best fit to describe our data. But the high variations caused by the change in measurement equipment or longitude/latitude can make this hard. And with more info, we might find a better way to fit for different time intervals since the measuring equipments changed over time.</em></p>
-
-<h1 id="plotting-avergae-temprature-change">Plotting Avergae Temprature Change</h1>
-
-<p>Having the dataframe organized in this way, we can unnest the data corresponding to each city and plot the average temperature change for each month. In the following example, we will look at <strong>Singapore</strong></p>
-
-<pre><code class="language-r">trendPolt&lt;-function(dd){
-        
-        ggplot(dd,aes(x=dt,y=AverageTemperature,
-                      colour=factor(Month)))+
-                stat_smooth(method=&quot;gam&quot;, formula=y~s(x),se=FALSE)+
-                labs(x=&quot;Year&quot;,
-                     y=&quot;Average Temperature&quot;)+
-                scale_color_discrete(name=&quot;Month&quot;,
-                                     breaks=c(1:12),
-                                     labels=month.abb)+
-                ggtitle( paste(dd$City[1],&quot;GAM fit&quot;,sep=&quot; &quot;))
-                }
-  
-##plot trends for a certain city
-
-city_data&lt;- cmodels_details %&gt;%
-        filter(City %in% &quot;Singapore&quot;) %&gt;%
-        unnest(data)
-        
-
-  
-trendPolt(city_data)
-</code></pre>
-
-<p><img src="ClimateChangeExp_Data_files/figure-html/unnamed-chunk-12-1.png" alt="" /><br />
-Now you can pick any city and plot the trends to see if they are going up or fluctuating heavily.</p>
-
-<h1 id="shiny-app">Shiny App</h1>
-
-<p>Here is also a <a href="https://omaymas.shinyapps.io/Exploring_Climate_Change_1900-2014/">Shiny App</a> to explore the data. You can plot the trend of the average temperature change over time from 1900-2014 in one or more of the 100 major cities. You can also select/deselect one or more months. In addition, you can choose to plot the GAM trend/s, point plot/s or both.</p>
-
     </div>
-  </article>
+  </div>
+</div>
 
-  
-
-
-</main>
-
-      <footer class="footer">
-        <ul class="footer-links">
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/OmaymaS" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://stackoverflow.com/users/6535741/omaymas" title="StackOverflow">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-stack-overflow fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
           <li>
-            <a href="../../../index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+            <a href="/index.xml" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
           </li>
-          <li>
-            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="../../../images/hugo-logo.png" width="22" height="22"></a>
-          </li>
+          
         </ul>
-      </footer>
+        <p class="credits copyright text-muted">
+          
+          &nbsp;&bull;&nbsp;
+          2019
 
+          
+            &nbsp;&bull;&nbsp;
+            <a href="/">Once Upon Data</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.53</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
     </div>
-    
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/highlight.min.js"></script>
+<script> hljs.initHighlightingOnLoad(); </script>
+<script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
+<script src="/js/load-photoswipe.js"></script>
 
 
 
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/highlight.min.js"></script>
-
-
-
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/r.min.js"></script>
-<script src="//cdn.bootcss.com/highlight.js/9.11.0/languages/yaml.min.js"></script>
-<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
-
-
-
-    
-<script src="../../../js/math-code.js"></script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    processEscapes: true
-  }
-});
-</script>
-<script async src="//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
-
-    
   </body>
 </html>
 
