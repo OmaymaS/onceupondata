@@ -7,13 +7,13 @@ tags: [R, Shiny, SatRday]
 
 ---
 
+This month three [SatRdays](https://satrdays.org/) took place on the same day around the world. I was invited to one of them, [SatRday Johannesburg](https://joburg2019.satrdays.org/), to give a training and a talk at. I was excited about it because it was my first #rstats event in Africa and I wanted to contribute to events in the region where few conferences are held relative to Europe or the US. The workshop I gave was about [Building Web Applications in Shiny](https://github.com/OmaymaS/intro_to_shiny_workshop). And this is what I will focus on in this post.
+
 {{< gallery >}}
   {{< figure link="/post/2019-04-27-satrday-johannesburg/ws_1.jpg" >}}
   {{< figure link="/post/2019-04-27-satrday-johannesburg/ws_2.jpg" >}}
   {{< figure link="/post/2019-04-27-satrday-johannesburg/ws_5.jpg" >}}
 {{< /gallery >}}
-
-This month three [SatRdays](https://satrdays.org/) took place on the same day around the world. I was invited to one of them, [SatRday Johannesburg](https://joburg2019.satrdays.org/), to give a training and a talk at. I was excited about it because it was my first #rstats event in Africa and I wanted to contribute to events in the region where few conferences are held relative to Europe or the US. The workshop I gave was about [Building Web Applications in Shiny](https://github.com/OmaymaS/intro_to_shiny_workshop). And this is what I will focus on in this post.
 
 
 ### My history with learning and teaching Shiny
@@ -41,7 +41,7 @@ The point is to  make participants understand dependencies and imagine the propa
 
 ### Finally...
 
-I am glad to have this opportunity to meet such motivated participants from different backgrounds where everyone of us learned something by the end of the workshop. I'd also like to thank the committee who organized the event and brought us all together
+I am glad to have this opportunity to meet such motivated participants from different backgrounds where everyone of us learned something by the end of the workshop. I'd also like to thank the committee who organized the event and brought us all together.
 
 
 ### Resources
