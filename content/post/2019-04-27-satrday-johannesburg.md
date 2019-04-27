@@ -41,7 +41,7 @@ The point is to  make participants understand dependencies and imagine the propa
 
 ### Finally...
 
-I am glad to have this opportunity to meet such motivated participants from different backgrounds where everyone of us learned something by the end of the workshop. I'd also like to thank the committee who organized the event and brought us all together.
+I am glad I had this opportunity to meet such motivated participants from different backgrounds where everyone of us learned something by the end of the workshop. I'd also like to thank the committee who organized the event and brought us all together.
 
 
 ### Resources
