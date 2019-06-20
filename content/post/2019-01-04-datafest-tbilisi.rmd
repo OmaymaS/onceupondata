@@ -49,16 +49,16 @@ I have always admired how good teachers could lower the barrier of entry to a fi
 
 - *"The good thing about R it makes me feel that the language speaks to me."*
 
-Some participants even tweeted about how the workshop inspired them to learn more like Juliana who was actually very attentive and captured a syntax error *(missing \")* in my slides!
+Some participants even tweeted about how the workshop inspired them to learn more like Juliana who was actually very attentive and captured a syntax error *(missing \")* in my slides. Also [Iaroslava](https://twitter.com/Iaroslava_Mizai) stated that she got motivated to use `R` in data visualization besides other tools. In addition, she founded [R-Ladies Kyiv](https://twitter.com/RLadiesKyiv) chapter.
 
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Thank you <a href="https://twitter.com/OmaymaS_?ref_src=twsrc%5Etfw">@OmaymaS_</a> for such a great inspiration. I have been mostly focused on drag and drop tools and JS, and now I work in R too. <a href="https://twitter.com/RLadiesTbilisi?ref_src=twsrc%5Etfw">@RLadiesTbilisi</a> <a href="https://t.co/z7a65cGuer">https://t.co/z7a65cGuer</a></p>&mdash; Iaroslava Mizai 🇺🇦 (@Iaroslava_Mizai) <a href="https://twitter.com/Iaroslava_Mizai/status/1081642851899981824?ref_src=twsrc%5Etfw">January 5, 2019</a></blockquote>
+blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Finally started learning R through <a href="https://twitter.com/DataCamp?ref_src=twsrc%5Etfw">@DataCamp</a>. Thanks <a href="https://twitter.com/OmaymaS_?ref_src=twsrc%5Etfw">@OmaymaS_</a> and <a href="https://twitter.com/DataFestTbilisi?ref_src=twsrc%5Etfw">@DataFestTbilisi</a> for inspiring me</p>&mdash; Juliana Romanyshyn (@JulRomanyshyn) <a href="https://twitter.com/JulRomanyshyn/status/1061658363325566981?ref_src=twsrc%5Etfw">November 11, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+I <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Thank you <a href="https://twitter.com/OmaymaS_?ref_src=twsrc%5Etfw">@OmaymaS_</a> for such a great inspiration. I have been mostly focused on drag and drop tools and JS, and now I work in R too. <a href="https://twitter.com/RLadiesTbilisi?ref_src=twsrc%5Etfw">@RLadiesTbilisi</a> <a href="https://t.co/z7a65cGuer">https://t.co/z7a65cGuer</a></p>&mdash; Iaroslava Mizai 🇺🇦 (@Iaroslava_Mizai) <a href="https://twitter.com/Iaroslava_Mizai/status/1081642851899981824?ref_src=twsrc%5Etfw">January 5, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Finally started learning R through <a href="https://twitter.com/DataCamp?ref_src=twsrc%5Etfw">@DataCamp</a>. Thanks <a href="https://twitter.com/OmaymaS_?ref_src=twsrc%5Etfw">@OmaymaS_</a> and <a href="https://twitter.com/DataFestTbilisi?ref_src=twsrc%5Etfw">@DataFestTbilisi</a> for inspiring me</p>&mdash; Juliana Romanyshyn (@JulRomanyshyn) <a href="https://twitter.com/JulRomanyshyn/status/1061658363325566981?ref_src=twsrc%5Etfw">November 11, 2018</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-I believe this wouldn't hav been possible without the great effort by R-Ladies Tbilisi especially [Liili Abuladze](https://rladies.org/georgia-rladies/name/liili-abuladze/) and [Tamuna Margievi](https://rladies.org/georgia-rladies/name/tamuna-margievi/) who coordinated with DataFest organizers to have [**R-Ladies Room for R lovers**](https://datafest.ge/agenda-day2.html).
+believe this wouldn't hav been possible without the great effort by R-Ladies Tbilisi especially [Liili Abuladze](https://rladies.org/georgia-rladies/name/liili-abuladze/) and [Tamuna Margievi](https://rladies.org/georgia-rladies/name/tamuna-margievi/) who coordinated with DataFest organizers to have [**R-Ladies Room for R lovers**](https://datafest.ge/agenda-day2.html).
 
 After all, I enjoyed the event and I'd like to give more hands-on workshops in the future!
 
