@@ -1,6 +1,6 @@
 ---
 title: 'The Reporting/Dashboarding Dilemma!'
-subtitle: 'Data scientists and dashboards: acomplicated relationship'
+subtitle: 'Data scientists and dashboards: a complicated relationship'
 date: '2019-07-03'
 slug: dashboards-dilemma
 categories: []
@@ -57,7 +57,7 @@ Actually, the first couple of dashboards usually fuels the enthusiasm of the sta
 - communicating with third parties for external issues *(e.g. if you use Tableau Online or similar hosting options)*.
 - and more...
 
-All this and more lies beneath the dashboard. This requires a lot of attention and significant amount of work from the data scientist. Sometimes it even requires additional skills that a dedicated designer can offer. That's why it is not fair to tell a data scientist, it is just a dashboard let's do it! 
+All this and more lies beneath the dashboard. This requires a lot of attention and significant amount of work from the data scientist. Sometimes it even requires additional skills that a dedicated designer can offer. That's why it is not fair to tell a data scientist, *it is just a dashboard let's do it*! 
 
 
 
@@ -65,7 +65,7 @@ All this and more lies beneath the dashboard. This requires a lot of attention a
 
 Some people have valid arguments like **"The purpose of a data science team is to serve the organization according to its data-related needs"**.
 
-In principle, it is true that any team should bring value to the organization **within its scope**. And it highly depends on what's communicated during the hiring process. When people get hired they come with certain expectations for the role. Many data scientists think about end-to-end analysis or projects where reporting is just a part of their work in the whole cycle. They'd gladly create a dashboard if it is the best way to communicate their work, certain metrics related to a new algorithm or results of an experiment. But once reporting starts to dominate their work for weeks or months with all the related tasks, some might get frustrated. It is as if you gave them DevOps work or Front-End tasks, you cannot expect them to do this **just to serve the organization**. 
+In principle, it is true that any team should bring value to the organization **within its scope**. And it highly depends on what's communicated during the hiring process. When people get hired they come with certain expectations for the role. Many data scientists think about end-to-end analyses or projects where reporting is just a part of their work in the whole cycle. They'd gladly create a dashboard if it was the best way to communicate their work, certain metrics related to a new algorithm or results of an experiment. But once reporting starts to dominate their work for weeks or months with all the related tasks, some might get frustrated. It is as if you gave them DevOps work or Front-End tasks, you cannot expect them to do this **just to serve the organization**. 
 
 
 ### So what can we do about this?
@@ -74,10 +74,10 @@ Although it seems like something that differs from a case to another, I believe 
 
 - **Organizations** need to be clear about their expectations during the hiring process. They will definitely experiment with any new team, but they should assess their needs in advance and discuss the job description transparently, away from the general templates recruiters send in isolation of reality.
 
-- **Job applicants** who have certain preferences and priorities should communicate that and ask enough questions to make an informed decision. They should expect that things could change when they join/ form a new team. After all their priorities will determine their tolerance accept changes.
+- **Job applicants** who have certain preferences and priorities should communicate that and ask enough questions to make an informed decision. They should expect that things could change when they join/ form a new team. After all their priorities will determine their tolerance to accept changes.
 
-- **Team Leads**, who are hiring should encourage candidates to share their interests and priorities. *(I personally used to ask interviwees about their expectation of the distribution of time on different tasks, if they would hate specific tasks to dominate their work, what they would like to learn, etc.)*. And those who are leading teams should advocate for their team members, empower them, communicate their concerns with the leadership and show them the ROI of their work.
+- **Team Leads**, who are hiring should encourage candidates to share their interests and priorities. *(I personally used to ask interviwees about their expectations of the distribution of time on different tasks, if they would hate specific tasks to dominate their work, what they would like to learn, etc.)*. And those who are leading teams should advocate for their team members, empower them, communicate their concerns with the leadership and show them the ROI of their work.
 
-And I hope team leaders in different organizations could share a lot of experience in this context for others to benefit from. because it is something beyond "just dashboards"!
+After all, I hope team leaders in different organizations could share more in this context for others to benefit from. because it is something beyond "just dashboards"!
 
 
