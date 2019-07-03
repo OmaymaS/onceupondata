@@ -61,7 +61,7 @@ All this and more lies beneath the dashboard. This requires a lot of attention a
 
 
 
-### But aren't data science teams there to serve their organization?
+### But aren't data science teams there to serve their organizations?
 
 Some people have valid arguments like **"The purpose of a data science team is to serve the organization according to its data-related needs"**.
 
