@@ -316,7 +316,7 @@ public class main {
 <p>Now it is time to compile your program, but first you need to download <code>h2o-genmodel.jar</code> <em>in the same directory</em> with <code>iris_km_model.java</code> and <code>main.java</code>.</p>
 <pre><code>$ cd saved_models
 $ curl http://localhost:54321/3/h2o-genmodel.jar &gt; h2o-genmodel.jar</code></pre>
-<p>Having the three files, you can compile your progarm as follows:</p>
+<p>Having the three files, you can compile your program as follows:</p>
 <pre><code>$ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java main.java</code></pre>
 <p>If things work fine you will get no errors and you will find new <code>.class</code> files generated in the same directory.</p>
 </div>

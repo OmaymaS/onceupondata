@@ -329,7 +329,7 @@ $ cd saved_models
 $ curl http://localhost:54321/3/h2o-genmodel.jar > h2o-genmodel.jar
 ```
 
-Having the three files, you can compile your progarm as follows:
+Having the three files, you can compile your program as follows:
 
 ```
 $ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java main.java
