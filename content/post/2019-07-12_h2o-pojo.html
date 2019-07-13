@@ -26,12 +26,12 @@ h2o.init()</code></pre>
 </div>
 <div id="import-data" class="section level3">
 <h3>Import data</h3>
-<p>We will start with importing the <code>iris</code> dataset using <code>h2o.importFile</code>.</p>
+<p>Once we make sure you are connected to h2o, we will import the <code>iris</code> dataset, which we are going to use in our example, using <code>h2o.importFile()</code>.</p>
 <pre class="r"><code>## import data
 iris_path = system.file(&quot;extdata&quot;, &quot;iris.csv&quot;, package = &quot;h2o&quot;)
 
 iris_hex = h2o.importFile(path = iris_path, destination_frame = &quot;iris_hex&quot;)</code></pre>
-<p>We can check the returned dataframe and it is clear that there are four columns corresponding to the flowers features and the last column corresponds to the class/label.</p>
+<p>We can check the returned dataframe, which has four columns corresponding to the flowers features and a the last column corresponds to the class/label.</p>
 <pre class="r"><code>## display dataframe
 iris_hex</code></pre>
 <pre><code>   C1  C2  C3  C4          C5
@@ -86,8 +86,10 @@ Centroid Statistics:
 <div id="convert-h2o-model-to-pojo" class="section level3">
 <h3>Convert <code>h2o</code> model to <code>POJO</code></h3>
 <p>To convert your model to <code>POJO</code>, you can simply use <code>h2o.download_pojo()</code> with a path to save the java file.</p>
-<pre class="r"><code>h2o.download_pojo(iris_km_model, path = &quot;.&quot;)</code></pre>
-<p>You can expand the following section to see the code corresponding to the <code>POJO</code> model.</p>
+<pre class="r"><code>## download pojo model (replace &quot;saved_models&quot; with your path)
+h2o.download_pojo(iris_km_model, path = here::here(&quot;saved_models&quot;))</code></pre>
+<p>A java file, entitles <code>iris_km_model.java</code>, will be created in the given directory.</p>
+<p><em>You can expand the following section to see the code corresponding to the <code>POJO</code> model in this file.</em></p>
 <details>
 <p><summary><b>Click to expand</b></summary></p>
 <pre class="java"><code>/*
@@ -280,7 +282,7 @@ class iris_km_model_CENTERS implements java.io.Serializable {
 <p>Now you need to write the main program <code>main.java</code> and save it with in the same directory with <code>iris_km_model.java</code>. The program is supposed to take four values and return the predicted cluster.</p>
 <p>Note that you need to:</p>
 <ul>
-<li><p>provide the the name of the java file that includes the model that you downloaded earlier in the previous step(<code>iris_km_model</code>).</p></li>
+<li><p>provide the the pojo model name included in the file downloaded earlier in the previous step(<code>iris_km_model</code>).</p></li>
 <li><p>use the right class for your model, which is <code>ClusteringModelPrediction</code> here. You can see further details about classes on the <a href="http://h2o-release.s3.amazonaws.com/h2o/master/3591/docs-website/h2o-genmodel/javadoc/index.html">POJO Model Javadoc page</a></p></li>
 </ul>
 <pre class="java"><code>import java.io.*;
@@ -311,17 +313,55 @@ public class main {
 </div>
 <div id="compile" class="section level3">
 <h3>Compile</h3>
-<p>Now it is time to compile our program, but first we need to download <code>h2o-genmodel.jar</code> <em>in the same directory</em> with <code>iris_km_model.java</code> and <code>main.java</code>.</p>
-<pre><code>$ curl http://localhost:54321/3/h2o-genmodel.jar &gt; h2o-genmodel.jar</code></pre>
-<p>Having the three files, we can compile our progarm as follows:</p>
+<p>Now it is time to compile your program, but first you need to download <code>h2o-genmodel.jar</code> <em>in the same directory</em> with <code>iris_km_model.java</code> and <code>main.java</code>.</p>
+<pre><code>$ cd saved_models
+$ curl http://localhost:54321/3/h2o-genmodel.jar &gt; h2o-genmodel.jar</code></pre>
+<p>Having the three files, you can compile your progarm as follows:</p>
 <pre><code>$ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java main.java</code></pre>
 <p>If things work fine you will get no errors and you will find new <code>.class</code> files generated in the same directory.</p>
 </div>
 <div id="run-the-programmake-predictions" class="section level3">
 <h3>Run the program/make predictions</h3>
-<p>To get predictions using the compiled program you should write <code>java -cp &quot;.;h2o-genmodel.jar&quot; main</code> followed by the four expected inputs as follows:</p>
+<p>Now you are ready to use the compiled program and make predictions. For this, you should write <code>java -cp &quot;.;h2o-genmodel.jar&quot; main</code> followed by the four expected inputs <em>(corresponding to C1, C2, C3, C4)</em> as follows:</p>
 <pre><code>$java -cp &quot;.;h2o-genmodel.jar&quot; main  6.4 3.2 5.3 2.3</code></pre>
-<p>The printed result will include whatever format you specified in the main.java program. Here I set it to return the input values then the predicted cluster.</p>
+<p>The printed result will include whatever format you specified in the <code>main.java</code> program. Here I set it to return the input values then the predicted cluster.</p>
 <pre><code>Input values: 6.4 3.2 5.3 2.3
 cluster: 1</code></pre>
+<p><strong>NOTE</strong>:
+- I used <code>;</code> in <code>$java -cp &quot;.;h2o-genmodel.jar&quot;</code> as I am using Windows. Probably it will differ with other operating systems and you will need to use <code>:</code>.</p>
+<ul>
+<li>There could better ways to do the same thing, but this was a minimal example with some basics for demo purposes.</li>
+</ul>
+</div>
+<div id="session-info" class="section level3">
+<h3>Session info</h3>
+<pre><code>&gt; sessionInfo()
+R version 3.5.0 (2018-04-23)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows &gt;= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252 LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] h2o_3.22.1.1
+
+loaded via a namespace (and not attached):
+ [1] compiler_3.5.0  bookdown_0.9    htmltools_0.3.6 tools_3.5.0     RCurl_1.95-4.12 yaml_2.2.0     
+ [7] Rcpp_1.0.1      rmarkdown_1.12  blogdown_0.11   knitr_1.22      jsonlite_1.6    xfun_0.5       
+[13] digest_0.6.18   bitops_1.0-6    evaluate_0.13 </code></pre>
+</div>
+<div id="extra-resources" class="section level2">
+<h2>Extra Resources</h2>
+<ul>
+<li><p><a href="https://h2o-release.s3.amazonaws.com/h2o/rel-turing/1/docs-website/h2o-docs/pojo-quick-start.html#what-is-a-pojo">POJO Quick Start</a></p></li>
+<li><p><a href="http://h2o-release.s3.amazonaws.com/h2o/master/3591/docs-website/h2o-genmodel/javadoc/index.html">POJO Model Javadoc page</a></p></li>
+</ul>
 </div>

@@ -22,7 +22,7 @@ In this post, we will see how to:
 
 ### Initialize `h2o`
 
-First of all, we need to load `h2o` library and connect to  an `h2o` instance.
+First of all, we need to load `h2o` library and connect to an `h2o` instance.
 
 ```{r, results=FALSE}
 ## load packages
@@ -35,7 +35,7 @@ h2o.init()
 
 ### Import data
 
-We will start with importing the `iris` dataset using `h2o.importFile`. 
+Once we make sure you are connected to h2o, we will import the `iris` dataset, which we are going to use in our example, using `h2o.importFile()`. 
 
 
 ```{r,  results=FALSE}
@@ -45,7 +45,7 @@ iris_path = system.file("extdata", "iris.csv", package = "h2o")
 iris_hex = h2o.importFile(path = iris_path, destination_frame = "iris_hex")
 ```
 
-We can check the returned dataframe and it is clear that there are four columns corresponding to the flowers features and the last column corresponds to the class/label.
+We can check the returned dataframe, which has four columns corresponding to the flowers features and a the last column corresponds to the class/label.
 
 ```{r}
 ## display dataframe
@@ -79,10 +79,13 @@ iris_km_model
 To convert your model to `POJO`, you can simply use `h2o.download_pojo()` with a path to save the java file.
 
 ```{r, eval = FALSE}
-h2o.download_pojo(iris_km_model, path = ".")
+## download pojo model (replace "saved_models" with your path)
+h2o.download_pojo(iris_km_model, path = here::here("saved_models"))
 ```
 
-You can expand the following section to see the code corresponding to the `POJO` model.
+A java file, entitles `iris_km_model.java`, will be created in the given directory. 
+
+*You can expand the following section to see the code corresponding to the `POJO` model in this file.*
 
 <details>
   <summary><b>Click to expand</b></summary>
@@ -282,7 +285,7 @@ Now you need to write the main program `main.java` and save it with in the same 
 
 Note that you need to:
 
--  provide the the name of the java file that includes the model that you downloaded earlier in the previous step(`iris_km_model`).
+-  provide the the pojo model name included in the file downloaded earlier in the previous step(`iris_km_model`).
 
 - use the right class for your model, which is `ClusteringModelPrediction` here. You can see further details about classes on the [POJO Model Javadoc page](http://h2o-release.s3.amazonaws.com/h2o/master/3591/docs-website/h2o-genmodel/javadoc/index.html)
 
@@ -319,13 +322,14 @@ public class main {
 
 ### Compile 
 
-Now it is time to compile our program, but first we need to download `h2o-genmodel.jar` *in the same directory* with `iris_km_model.java` and `main.java`. 
+Now it is time to compile your program, but first you need to download `h2o-genmodel.jar` *in the same directory* with `iris_km_model.java` and `main.java`. 
 
 ```
+$ cd saved_models
 $ curl http://localhost:54321/3/h2o-genmodel.jar > h2o-genmodel.jar
 ```
 
-Having  the three files, we can compile our progarm as follows:
+Having the three files, you can compile your progarm as follows:
 
 ```
 $ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java main.java
@@ -335,21 +339,59 @@ If things work fine you will get no errors and you will find new `.class` files 
 
 ### Run the program/make predictions
 
-To get predictions using the compiled program you should write `java -cp ".;h2o-genmodel.jar" main` followed by the four expected inputs as follows:
+Now you are ready to use the compiled program and make predictions. For this, you should write `java -cp ".;h2o-genmodel.jar" main` followed by the four expected inputs *(corresponding to C1, C2, C3, C4)* as follows:
 
 ```
 $java -cp ".;h2o-genmodel.jar" main  6.4 3.2 5.3 2.3
 ```
 
-The printed result will include whatever format you specified in the main.java program. Here I set it to return the input values then the predicted cluster.
+The printed result will include whatever format you specified in the `main.java` program. Here I set it to return the input values then the predicted cluster.
 
 ```
 Input values: 6.4 3.2 5.3 2.3
 cluster: 1
 ```
 
+**NOTE**:
+- I used `;` in `$java -cp ".;h2o-genmodel.jar"` as I am using Windows. Probably it will differ with other operating systems and you will need to use `:`.
+
+- There could better ways to do the same thing, but this was a minimal example with some basics for demo purposes. 
 
 
+### Session info
+
+```
+> sessionInfo()
+R version 3.5.0 (2018-04-23)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows >= 8 x64 (build 9200)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=English_United States.1252  LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252 LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] h2o_3.22.1.1
+
+loaded via a namespace (and not attached):
+ [1] compiler_3.5.0  bookdown_0.9    htmltools_0.3.6 tools_3.5.0     RCurl_1.95-4.12 yaml_2.2.0     
+ [7] Rcpp_1.0.1      rmarkdown_1.12  blogdown_0.11   knitr_1.22      jsonlite_1.6    xfun_0.5       
+[13] digest_0.6.18   bitops_1.0-6    evaluate_0.13 
+```
+
+
+## Extra Resources 
+
+
+- [POJO Quick Start](https://h2o-release.s3.amazonaws.com/h2o/rel-turing/1/docs-website/h2o-docs/pojo-quick-start.html#what-is-a-pojo)
+
+- [POJO Model Javadoc page](http://h2o-release.s3.amazonaws.com/h2o/master/3591/docs-website/h2o-genmodel/javadoc/index.html)
 
 
 
