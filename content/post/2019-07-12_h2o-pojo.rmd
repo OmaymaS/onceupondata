@@ -1,6 +1,6 @@
 ---
 title: From H2O to POJO Models
-subtitle: ''
+subtitle: 'Getting started with a minimal example'
 date: '2019-07-13'
 slug: h2o-pojo-models
 categories: []
