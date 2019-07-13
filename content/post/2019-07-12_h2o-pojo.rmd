@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment ="", eval =
 A while ago, I was experimenting with `h2o` and wanted to generate a Plain Old Java Object (POJO) model. I found the documentation useful but I decided to write a post with a simple example for future reference. 
 
 In this post, we will see how to:
+
 - build a simple `h2o` model in `R`.
 - convert the model to `POJO`.
 - create a `main` program in Java to use the `POJO` model. 
