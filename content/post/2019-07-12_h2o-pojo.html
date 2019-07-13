@@ -277,8 +277,8 @@ class iris_km_model_CENTERS implements java.io.Serializable {
 }</code></pre>
 </details>
 </div>
-<div id="create-main-program" class="section level3">
-<h3>Create <code>main</code> program</h3>
+<div id="create-main-java-program" class="section level3">
+<h3>Create <code>main</code> java program</h3>
 <p>Now you need to write the main program <code>main.java</code> and save it with in the same directory with <code>iris_km_model.java</code>. The program is supposed to take four values and return the predicted cluster.</p>
 <p>Note that you need to:</p>
 <ul>
@@ -311,8 +311,8 @@ public class main {
   }
 }</code></pre>
 </div>
-<div id="compile" class="section level3">
-<h3>Compile</h3>
+<div id="compile-java-program" class="section level3">
+<h3>Compile java program</h3>
 <p>Now it is time to compile your program, but first you need to download <code>h2o-genmodel.jar</code> <em>in the same directory</em> with <code>iris_km_model.java</code> and <code>main.java</code>.</p>
 <pre><code>$ cd saved_models
 $ curl http://localhost:54321/3/h2o-genmodel.jar &gt; h2o-genmodel.jar</code></pre>
@@ -320,8 +320,8 @@ $ curl http://localhost:54321/3/h2o-genmodel.jar &gt; h2o-genmodel.jar</code></p
 <pre><code>$ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java main.java</code></pre>
 <p>If things work fine you will get no errors and you will find new <code>.class</code> files generated in the same directory.</p>
 </div>
-<div id="run-the-programmake-predictions" class="section level3">
-<h3>Run the program/make predictions</h3>
+<div id="make-predictions" class="section level3">
+<h3>Make predictions</h3>
 <p>Now you are ready to use the compiled program and make predictions. For this, you should write <code>java -cp &quot;.;h2o-genmodel.jar&quot; main</code> followed by the four expected inputs <em>(corresponding to C1, C2, C3, C4)</em> as follows:</p>
 <pre><code>$java -cp &quot;.;h2o-genmodel.jar&quot; main  6.4 3.2 5.3 2.3</code></pre>
 <p>The printed result will include whatever format you specified in the <code>main.java</code> program. Here I set it to return the input values then the predicted cluster.</p>

@@ -279,7 +279,7 @@ class iris_km_model_CENTERS implements java.io.Serializable {
 </details>  
 
 
-### Create `main` program
+### Create `main` java program
 
 Now you need to write the main program `main.java` and save it with in the same directory with `iris_km_model.java`. The program is supposed to take four values and return the predicted cluster. 
 
@@ -320,7 +320,7 @@ public class main {
 ```
 
 
-### Compile 
+### Compile java program 
 
 Now it is time to compile your program, but first you need to download `h2o-genmodel.jar` *in the same directory* with `iris_km_model.java` and `main.java`. 
 
@@ -337,7 +337,7 @@ $ javac -cp h2o-genmodel.jar -J-Xmx2g -J-XX:MaxPermSize=128m iris_km_model.java 
 
 If things work fine you will get no errors and you will find new `.class` files generated in the same directory.
 
-### Run the program/make predictions
+### Make predictions
 
 Now you are ready to use the compiled program and make predictions. For this, you should write `java -cp ".;h2o-genmodel.jar" main` followed by the four expected inputs *(corresponding to C1, C2, C3, C4)* as follows:
 
