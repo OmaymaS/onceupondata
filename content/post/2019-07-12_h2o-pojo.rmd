@@ -353,9 +353,10 @@ cluster: 1
 ```
 
 **NOTE**:
+
 - I used `;` in `$java -cp ".;h2o-genmodel.jar"` as I am using Windows. Probably it will differ with other operating systems and you will need to use `:`.
 
-- There could better ways to do the same thing, but this was a minimal example with some basics for demo purposes. 
+- There could be better ways to do the same thing, but this was a minimal example with some basics for demo purposes. 
 
 
 ### Session info
