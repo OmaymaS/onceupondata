@@ -10,9 +10,11 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 ### Full-Length Talks (20-60 mins)
 
-#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/)
+#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) **(Keynote Speaker)**
 
-#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day1.html)
+- Interpreting Machine Learning Models: Why and How!
+
+#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day1.html) **(Invited Talk)**
 
 - The Data Lorax: Planting the Seeds of Fairness in Data Products
 
@@ -53,14 +55,14 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 ### Workshops
 
+#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
+
+- Building web applications with Shiny.
+
 #### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) 
 
 - Tidyverse for data manipulation and visualization.
 - Delving into the depths of ggplot.
-
-#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
-
-- Building web applications with Shiny.
 
 ## Other Activities 
 
