@@ -5,7 +5,7 @@ date: '2020-01-18'
 slug: data-projects-workflows
 categories: []
 tags: [R, python, data]
-subtitle: 'or how to navigate chaos and bring order!'
+subtitle: 'or how to navigate chaos and bring order to data projects!'
 ---
 
 **"I thought my code was clear and organized, but I figured out it was not!"**, that's how a data analyst told me after a couple of sessions I held to examine the workflows of different team members and discuss their practices. I like to help people reach this realization to see the value of improving their workflows to them as well as to others with whom they collaborate. And when I say workflows I mean how to organize a project? how to make analysis reproducible? How to read, save and version related data? and so on.
