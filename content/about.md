@@ -4,7 +4,7 @@ date: "2018-10-30"
 ---
 
 
-I am Data Scientist with electrical engineering background. I like to engage with data, challenge assumptions and help others make data-informed decisions. For the last two years, I worked on developing algorithms and analyzing users data at a tech company providing a marketplace for jobs and career services. Prior to that I obtained my Master’s degree in “Systems Engineering and Engineering Management” with a focus on electronics where I worked with wearable sensors data. During my work I was involved in operations, engineering, R&D and data science roles which helps me see a holistic view of the projects I work on.
+I am Data Scientist with electronics engineering background. I like to engage with data, build data products and help others make data-informed decisions. I always ask they whys and the why nots and I encourage others to question their assumptions. I care about algorithmic fairness and I try to trigger others to think about it. I also enjoy teaching coding and data-science related skills. And I am a certified R-Tidyverse instructor and also holds an instructor certification from [The Carpentries](https://carpentries.org/).
 
 ## Talks
 
@@ -55,11 +55,15 @@ I am Data Scientist with electrical engineering background. I like to engage wit
 
 ### Workshops
 
-#### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
+#### Jan 2020 (Teaching Assistant)  - [Rstudio::conf](https://joburg2019.satrdays.org/) 
+
+- Deep Learning with Keras and TensorFlow in R 
+
+#### Apr 2019 (Main Instructor) - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
 
 - Building web applications with Shiny.
 
-#### Nov 2018 - [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) 
+#### Nov 2018 (Main Instructor) - [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) 
 
 - Tidyverse for data manipulation and visualization.
 - Delving into the depths of ggplot.
