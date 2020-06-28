@@ -1,6 +1,6 @@
 ---
 title: Objective Function Engineering as an Interface Design Problem
-subtitle: 'Will individuals ever be able to control algorithms?'
+subtitle: 'Individual users control over algorithms?'
 date: '2020-06-28'
 slug: objective-function-engineering-interface-design
 categories: []
