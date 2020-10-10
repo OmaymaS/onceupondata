@@ -10,6 +10,10 @@ I am Data Scientist with electronics engineering background. I like to engage wi
 
 ### Full-Length Talks (20-60 mins)
 
+#### Feb 2020 - [Data Science Meetup - Düsseldorf] **(Invited Talk)**
+
+- Machine Learning Interpretability: WHy and How!
+
 #### Apr 2019 - [SatRday Johannesburg](https://joburg2019.satrdays.org/) **(Keynote Speaker)**
 
 - Interpreting Machine Learning Models: Why and How!
