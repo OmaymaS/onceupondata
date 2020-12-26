@@ -1,10 +1,10 @@
 ---
 title: 'The Joy and Sorrow of the Data Science World'
-subtitle: 'Sharing stories of data practitioners!'
+subtitle: 'The untold stories of data practitioners!'
 date: '2020-10-10'
 slug: joy-sorrow-data-science-world-stories
 categories: []
-tags: [data science]
+tags: [data science, machine learning]
 ---
 
 
