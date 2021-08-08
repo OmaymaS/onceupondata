@@ -4,7 +4,7 @@ relativeurls = false
 title = "Once Upon Data"
 theme = "beautifulhugo"
 googleAnalytics = "UA-102384456-1"
-disqusShortname = "onceupondata"
+# disqusShortname = "onceupondata"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 
