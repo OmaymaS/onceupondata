@@ -1,6 +1,6 @@
 baseurl = "https://onceupondata.com/"
 DefaultContentLanguage = "en"
-title = "Onceupondata"
+#title = "Onceupondata"
 theme = "beautifulhugo"
 metaDataFormat = "yaml"
 pygmentsStyle = "trac"
