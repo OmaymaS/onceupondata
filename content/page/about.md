@@ -53,9 +53,9 @@ I am Data Scientist with electronics engineering background. I like to engage wi
 
 ### Online 
 
-#### [DataCamp](https://www.datacamp.com)
+#### [DataCamp]
 
-- Interactive Data Visualization with rbokeh[*](https://www.datacamp.com/courses/interactive-data-visualization-with-rbokeh)
+- Interactive Data Visualization with rbokeh
 
 ### Workshops
 
@@ -74,4 +74,5 @@ I am Data Scientist with electronics engineering background. I like to engage wi
 
 ## Other Activities 
 
+- Reviewer,Abstract Review Committee: [UseR 2021](https://user2021.r-project.org/about/program-committee/)
 - Mentor: [NASA SPACE HACK - London](https://nasaspacehack.splashthat.com/)
