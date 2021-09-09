@@ -4,7 +4,13 @@
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
         {{ .Content }}
-
+        
+        {{ if .Params.date }}
+          <div>
+            <h2 class="date">{{ .Date.Format "2006/01/02" }}</h2>
+        </div>
+        {{ end }}
+        
         {{ if .Params.tags }}
           <div class="blog-tags">
             {{ range .Params.tags }}
