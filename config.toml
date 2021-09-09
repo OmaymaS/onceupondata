@@ -13,7 +13,7 @@ pygmentsCodefencesGuessSyntax = true
 #googleAnalytics = "XXX"
 
 [Params]
-  homeTitle = "Onceupondata" # Set a different text for the header on the home page
+  # homeTitle = "Onceupondata" # Set a different text for the header on the home page
   #subtitle = "Build a beautiful and simple website in minutes"
   mainSections = ["post","posts"]
   logo = "img/logo.png" # Expecting square dimensions
