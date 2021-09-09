@@ -158,9 +158,9 @@ There are two extra shortcodes provided (along with the customized figure shortc
 This simply adds the html5 detail attribute, supported on all *modern* browsers. Use it like this:
 
 ```
-{{% details "This is the details title (click to expand)" %}}
+{{< details "This is the details title (click to expand)" >}}
 This is the content (hidden until clicked).
-{{% /details %}}
+{{< /details >}}
 ```
 
 #### Split

@@ -1,21 +1,34 @@
 baseurl = "https://onceupondata.com/"
 DefaultContentLanguage = "en"
-relativeurls = false
-title = "Once Upon Data"
+title = "Onceupondata"
 theme = "beautifulhugo"
-googleAnalytics = "UA-102384456-1"
-# disqusShortname = "onceupondata"
-ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
-
+metaDataFormat = "yaml"
+pygmentsStyle = "trac"
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+pygmentsCodefencesGuessSyntax = true
+#pygmentsUseClassic = true
+#pygmentOptions = "linenos=inline"
+#disqusShortname = "XXX"
+#googleAnalytics = "XXX"
 
 [Params]
-  subtitle = ""
-  logo = "img/logo.jpg"
-  favicon = ""
+  homeTitle = "Onceupondata" # Set a different text for the header on the home page
+  #subtitle = "Build a beautiful and simple website in minutes"
+  mainSections = ["post","posts"]
+  logo = "img/logo.png" # Expecting square dimensions
+  #favicon = "img/favicon.ico"
   dateFormat = "January 2, 2006"
   commit = false
   rss = true
-  comments = true
+  comments = false
+  readingTime = true
+  wordCount = true
+  useHLJS = true
+  socialShare = true
+  delayDisqus = true
+  showRelatedPosts = true
+  hideAuthor = true
 #  gcse = "012345678901234567890:abcdefghijk" # Get your code from google.com/cse. Make sure to go to "Look and Feel" and change Layout to "Full Width" and Theme to "Classic"
 
 #[[Params.bigimg]]
@@ -24,31 +37,53 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 #[[Params.bigimg]]
 #  src = "img/sphere.jpg"
 #  desc = "Sphere"
+#  # position: see values of CSS background-position.
+#  position = "center top"
 #[[Params.bigimg]]
 #  src = "img/hexagon.jpg"
 #  desc = "Hexagon"
 
-
-[permalinks]
-post = "/:year/:month/:day/:slug/"
-
 [Author]
-    stackoverflow = "users/6535741/omaymas"
-    github = "OmaymaS"
+  # name = "Some Person"
+  # website = "yourwebsite.com"
+  # email = "youremail@domain.com"
+  # facebook = "username"
+  # github = "username"
+  # gitlab = "username"
+  # bitbucket = "username"
+  # twitter = "username"
+  # reddit = "username"
+  # linkedin = "username"
+  # xing = "username"
+  # stackoverflow = "users/XXXXXXX/username"
+  # snapchat = "username"
+  # instagram = "username"
+  # youtube = "user/username" # or channel/channelname
+  # soundcloud = "username"
+  # spotify = "username"
+  # bandcamp = "username"
+  # itchio = "username"
+  # vk = "username"
+  # paypal = "username"
+  # telegram = "username"
+  # 500px = "username"
+  # codepen = "username"
+  # mastodon = "url"
+  # kaggle = "username"
+  # weibo = "username"
+  # slack = "username"
 
 [[menu.main]]
-  name = "About"
-  url = "/about/"
+    name = "Blog"
+    url = ""
+    weight = 1
+
 [[menu.main]]
-  name = "GitHub"
-  url = "https://github.com/OmaymaS"
+    name = "About"
+    url = "page/about/"
+    weight = 3
 
-
-# options for highlight.js (version, additional languages, and theme)
-highlightjsVersion = "9.11.0"
-highlightjsCDN = "//cdn.bootcss.com"
-highlightjsLang = ["r", "yaml"]
-highlightjsTheme = "github"
-
-MathJaxCDN = "//cdn.bootcss.com"
-MathJaxVersion = "2.7.1"
+[[menu.main]]
+    name = "Tags"
+    url = "tags"
+    weight = 3
