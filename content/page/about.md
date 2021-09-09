@@ -74,5 +74,5 @@ I am Data Scientist with electronics engineering background. I like to engage wi
 
 ## Other Activities 
 
-- Reviewer,Abstract Review Committee: [UseR 2021](https://user2021.r-project.org/about/program-committee/)
+- Reviewer, Abstract Review Committee: [UseR 2021](https://user2021.r-project.org/about/program-committee/)
 - Mentor: [NASA SPACE HACK - London](https://nasaspacehack.splashthat.com/)
