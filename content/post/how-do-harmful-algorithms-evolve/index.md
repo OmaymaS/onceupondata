@@ -13,13 +13,13 @@ type: ''
 **How do harmful data products and algorithms get enforced on us and impact our lives?**
 a question that is widely discussed nowadays, although I am not sure if “widely” is a right description of the level of attention it takes. But there is another question that I find crucial which is, **How do these products emerge in the first place and gain credibility?** **How do crappy senseless products reach the market, proliferate our lives and put us in a reactive mode to analyze and prove their obvious worthlessness or harm?**
 
-I always think about these questions, especially that I work in the tech industry and observe the new products and  services in  the market. I can imagine different scenarios for the emergence of bad data products and the dynamics behind these decisions. One of the scenarios I would like to discuss here is strongly related to **adopting ideas coming from pseudoscience or even solid research, without much reflection or verification**. I recently could imagine an example while reading [“Why We Sleep" by Matthew Walker](https://www.goodreads.com/book/show/34466963-why-we-sleep). one of the best selling books in the past couple of years. 
+I always think about these questions, especially that I work in the tech industry and observe the new products and  services in  the market. I can imagine different scenarios for the emergence of bad data products and the dynamics behind these decisions. 
 
-I have to clarify that this article is not a book review or a thorough investigation into the research and conclusions mentioned in the book. I am just picking some ideas that bugged me and explaining why I think they could be seeds for bad data products.
+One of the scenarios I would like to discuss here is strongly related to **adopting ideas coming from pseudoscience or even solid research, without much reflection or verification**. I recently could imagine an example while reading [“Why We Sleep" by Matthew Walker](https://www.goodreads.com/book/show/34466963-why-we-sleep); one of the best selling books in the past couple of years. I have to clarify that this article is not a book review or a thorough investigation into the research and conclusions mentioned in the book. I am just picking some ideas that bugged me and explaining why I think they could be seeds for bad data products.
 
-## About the book!
+## What caught my attention in the book?
 
-So few months ago, I was reading “Why We Sleep" by Matthew Walker. I have seen how many people were fascinated by the book, taking it as **THE reference** about sleeping. I am not an expert in the field of sleep science and the author seems to have the credentials to get the readers convinced by the cited research and conclusions. But while reading, I felt skeptical about the definitive tone, shallow correlations, & the relevance of some cited research. But this is another story out of the scope of this article. Here, I will just focus on a couple of things that triggered me, which I could associate to the evolution of data products.
+So few months ago, I was reading “Why We Sleep" by Matthew Walker. I have seen how many people were fascinated by the book, taking it as **THE REFERENCE** about sleeping. I am not an expert in the field of sleep science and the author seems to have the credentials to get the readers convinced by the cited research and conclusions. But while reading, I felt skeptical about the definitive tone, shallow correlations, & the relevance of some cited research. But this is another story out of the scope of this article. Here, I will just focus on a couple of things that triggered me, which I could associate to the evolution of data products.
 
 
 Apart from the research and results shared by the author, the author tries to provide his own  vision for a better world with better sleep for more people as he believes it improves lots of aspects including health, education, and even GDP *(which is one of the unconvincing correlations in the book)* !
@@ -37,7 +37,7 @@ The author talks about the ethical behavior and performance of employees given d
 > Of note to those in business, many of these studies report deleterious effects on business outcomes on the basis of only very modest reductions in sleep amount within an individual, perhaps twenty- to sixty-minute differences between an employee who is honest, creative, innovate, collaborative, and productive and one who is not.
 
 
-This was one of the most troubling parts to me, coming from someone with a scientific background. It seemed like statements that were written only for the sake of supporting the narrative of the book which linked EVERYTHING to sleep. I even looked up the mentioned reference, and didn’t find it convincing to reach a broad statement like *“Ethical deviance linked to a lack of sleep also weasels its way onto the work stage in a different guise, called social loafing”* based on results from a study where *“2 experiments, 64 male students worked almost continuously for 20 hr without sleep under varying social conditions”*. 
+This was one of the most troubling parts to me, coming from someone with a scientific background. It seemed like statements that were written only for the sake of supporting the narrative of the book which linked EVERYTHING to sleep. I even looked up the mentioned reference *[Social loafing under fatigue]*, and didn’t find it convincing to reach a broad statement like *“Ethical deviance linked to a lack of sleep also weasels its way onto the work stage in a different guise, called social loafing”* based on results from a study where *“2 experiments, 64 male students worked almost continuously for 20 hr without sleep under varying social conditions”*. 
 
 But I can imagine that lots of readers will take the point about ethical deviance as an important insight from a trustworthy source. They will propagate it, mention in their presentations, and potentially use in decisions or algorithms related to employees hiring, firing, promotion, etc. 
 
@@ -67,7 +67,7 @@ I believe there are good and bad ideas everywhere and everyone can share on any 
 - The ideas and theories present a potential profitable business opportunity, and in a time where the hype about data, AI, wearables is in its peak, someone will pick these ideas and take them forward, mostly with no inherent bad intentions.
 
 
-## And why such products 
+## And why such products grow and get worse?
 
 So following  this path, it ends up with  an enthusiastic product team in an established company or most probably a startup, who got fascinated by the ideas of the author which were backed by “science” as they saw it. They will start to transform it into products, pitch it to investors, get busy working on the codebase and the powering algorithm, etc. Now they  are the accountable, not the originator of the idea, but I wonder how many would ask questions like:
 
@@ -91,7 +91,7 @@ These and many other questions are rarely asked, because founders think that the
 
 ## So what can we do about it?
 
-So in this article, I tried to imagine a path from ideas by credible sources to product implementation. There could be sth already in the market similar to the examples I mentioned. Most probably, nobody would have bad intentions along this way, but some would be so privileged to even think about anything beyond their bubble, and many would just accept what's presented to them without questioning what it means to create a certain product. And that's the biggest problem! 
+In this article, I tried to imagine a path from ideas by credible sources to product implementation. There could be sth already in the market similar to the examples I mentioned. Most probably, nobody would have bad intentions along this way, but some would be so privileged to even think about anything beyond their bubble, and many would just accept what's presented to them without questioning what it means to create a certain product. And that's the biggest problem! 
 
 That's why even if we cannot prevent every harmful algorithm before it gets developed, we can at least as individual contributors, researchers or even founders, be more critical about the ideas we adopt, resist working on potential harmful products and question the ideas and hypotheses presented to us even if they come from credible sources.
 
