@@ -1,5 +1,5 @@
 ---
-title: How do harmful algorithms evolve? (Part 1)
+title: How do harmful algorithms evolve? 
 subtitle: 'The seeds of bad data products'
 author: ''
 date: '2021-09-12'
