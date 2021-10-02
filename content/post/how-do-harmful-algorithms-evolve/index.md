@@ -1,6 +1,6 @@
 ---
-title: The Seeds of Bad Data Products 
-subtitle: How Do Harmful Algorithms Evolve? 
+title: The Seeds of Bad Data Products!
+subtitle: The adoption of not-so-scientific facts and the path to harmful algorithms
 author: ''
 date: '2021-09-12'
 slug: [how-do-harmful-algorithms-evolve]
@@ -90,7 +90,7 @@ These and many other questions are rarely asked, because founders think that the
 
 ## So what can we do about it?
 
-In this article, I tried to imagine a path from ideas by credible sources to product implementation. There could be something already in the market similar to the examples I mentioned. Most probably, nobody would have bad intentions along this way, but some would be so privileged to even think about anything beyond their bubble, and many would just accept what's presented to them without questioning what it means to create a certain product. And that's the biggest problem! 
+In this article, I tried to imagine a path from ideas by sources *that are considered credible* to product implementation. There could be already something in the market similar to the examples I mentioned. Most probably, nobody would have bad intentions along this way, but some would be so privileged to even think about anything beyond their bubble, and many would just accept what's presented to them without questioning what it means to create a certain product. And that's the biggest problem! 
 
 That's why even if we cannot prevent every harmful algorithm before it gets developed, we can at least, as individual contributors, researchers or even founders, be more critical about the ideas we adopt, resist working on potential harmful products and question the ideas and hypotheses presented to us even if they come from credible sources.
 
