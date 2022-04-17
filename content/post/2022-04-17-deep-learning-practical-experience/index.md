@@ -15,7 +15,7 @@ I was recently following one of the few examples, in which someone shared their 
 I found this experience sharing very valuable in a field that lacks such informal discussions, like the ones where Roger bounces ideas with Hilary and Lucy . I decided to take this blog post as an opportunity to talk about different points, inspired by Roger’s comments but not limited to them. So here are some statements that may come from anyone who goes through a similar experience:
 
 - **I have NO mental model/intuition about how deep learning works.**
-- **I don’t have a clear strategy for hyper parameters selection/tuning.**
+- **I don’t have a clear strategy for hyperparameters selection/tuning.**
 - **I cannot experiment quickly because an iteration takes a long time.**
 - **I am not sure what to do after training a model and checking the metrics.**
 - **I see all computer vision examples about classification.**
@@ -44,24 +44,24 @@ I’d recommend you diversify your sources. It will take a bit of time, but you�
 
 ## Model/Hyperparameter tuning
 
-After gaining better understanding, it is normal to feel overwhelmed by the amount of parameters and combinations. So how to pick the hyper parameters is a valid question to ask. The short answer is: **it’s a mix of experimentation, mostly starting with recommended values used in libraries like keras/torch/fastai for specific problems.** In practice, there are different levels of control and strategies from starting with default values to Automl.
+After gaining better understanding, it is normal to feel overwhelmed by the amount of parameters and combinations. So how to pick the hyper parameters is a valid question to ask. The short answer is: **it’s a mix of experimentation, mostly starting with recommended values used in libraries like keras/torch/fastai for specific problems.** In practice, there are different levels of control and strategies from starting with default values to AutoMl.
 
 ### Start with default values
 
 It is worth noting that the common start point is the high level APIs that allow you to use a pre-trained model with known architecture like Resnet as a base for your model. So you are not expected to build something from scratch when you have the option to use transfer learning, as long as it fits your use case and goals.
 
 ### Use your domain knowledge to improve your strategy
-Apart from the default values you can develop a better strategy of hyper parameters tuning especially if you know the properties of your data. So if you are working with images, you should have some hypotheses about the transformations *(e.g. cropping, squishing)* or data augmentation *(e.g. flipping, rotating)* options to avoid. I assume that your curiosity already led you to read about data augmentation but if not, I recommend you have a look and play with the options using your library of choice. 
+Apart from the default values you can develop a better strategy of hyperparameters tuning especially if you know the properties of your data. So if you are working with images, you should have some hypotheses about the transformations *(e.g. cropping, squishing)* or data augmentation *(e.g. flipping, rotating)* options to avoid. I assume that your curiosity already led you to read about data augmentation but if not, I recommend you have a look and play with the options using your library of choice. 
 
-### Automate hyper parameter tuning if applicable
+### Automate hyperparameter tuning if applicable
 
-The other extreme is to automate your experiments by giving a range of values, similar to the process used with other tree-based models. You can just specify different combinations of hyper parameters, or use AutoML tools to do this for you in a more efficient way. This can be done once to get the best values in order to use them with this type of data. If you reach this point, it is definitely better to do it on an instance with good resources in terms of memory, GPU, etc. You’ll find tools on cloud platforms that make the process easier (e.g. [GCP](https://cloud.google.com/vertex-ai/docs/training/using-hyperparameter-tuning)). Also open source libraries like [AutoGluon](https://auto.gluon.ai/stable/index.html) usually provide examples about [cloud training](https://auto.gluon.ai/stable/tutorials/cloud_fit_deploy/cloud-aws-sagemaker-training.html). 
+The other extreme is to automate your experiments by giving a range of values, similar to the process used with other tree-based models. You can just specify different combinations of hyperparameters, or use AutoML tools to do this for you in a more efficient way. This can be done once to get the best values in order to use them with this type of data. If you reach this point, it is definitely better to do it on an instance with good resources in terms of memory, GPU, etc. You’ll find tools on cloud platforms that make the process easier (e.g. [GCP](https://cloud.google.com/vertex-ai/docs/training/using-hyperparameter-tuning)). Also open source libraries like [AutoGluon](https://auto.gluon.ai/stable/index.html) usually provide examples about [cloud training](https://auto.gluon.ai/stable/tutorials/cloud_fit_deploy/cloud-aws-sagemaker-training.html). 
 
 I’d say that you don’t have to jump immediately to Automl because it is a time/resource consuming process and there’s usually something to do with the data first to improve your results. But whatever strategy you take, you may still wonder about what to do after checking the model performance and looking into the metrics. 
 
 ## What to do after checking the metrics
 
-I believe the strategies here are not limited to deep learning models. It is about any model development process. Assuming that you had a baseline model *(e.g. random predictions, linear model, etc.)* and the first iteration of your deep learning model *(or any other type)* gave you a better result but you’d like to try more. Some people will jump into changing hyper parameters or AutoML but as mentioned before, inspecting data is also a crucial part. 
+I believe the strategies here are not limited to deep learning models. It is about any model development process. Assuming that you had a baseline model *(e.g. random predictions, linear model, etc.)* and the first iteration of your deep learning model *(or any other type)* gave you a better result but you’d like to try more. Some people will jump into changing hyperparameters or AutoML but as mentioned before, inspecting data is also a crucial part. 
 
 
 ### Refine your data
@@ -87,7 +87,7 @@ It is also useful to consider having several challenge datasets, and testing on 
 
 ### Revisit model hyperpatameters
 
-While iterating, you'll find out that you might repeat the steps of refining data, adjusting  hyperparameters, etc. With more trials and expoloration, you'll find some methods to reduce training time and improve performance like [**learning Rate finder**](https://fastai1.fast.ai/callbacks.lr_finder.html), [**Discriminative Learning Rates**](https://github.com/fastai/fastbook/blob/master/05_pet_breeds.ipynb) or other ideas. But try not to overwhelm yourself with everything at the same time.
+While iterating, you'll find out that you might repeat the steps of refining data, adjusting  hyperparameters, etc. With more trials and exploration, you'll find some methods to reduce training time and improve performance like [**learning Rate finder**](https://fastai1.fast.ai/callbacks.lr_finder.html), [**Discriminative Learning Rates**](https://github.com/fastai/fastbook/blob/master/05_pet_breeds.ipynb) or other ideas. But try not to overwhelm yourself with everything at the same time.
 
 
 ## Problem framing (classification/regression)
@@ -104,7 +104,7 @@ Till now, everything mentioned here is about models in general. You might have n
 In this post I shared my tips and thoughts based on my experience while being aware that others might have different strategies or perspectives. To have a better journey, I'd recommend you:
 
 - Come to terms with the fact that you won’t find a way to explain things in deep learning in the same way you do with linear/logistic regression, etc. It is a different mindset.
-- Try to develop a better intuition to help you improve your model development strategies. Additionally, do the math or look into visual representations to understand the signififcance of the hyper parameters.
+- Try to develop a better intuition to help you improve your model development strategies. Additionally, do the math or look into visual representations to understand the significance of the hyperparameters.
 - Expect to spend a significant time checking, filtering and adding to your data if possible as long as you are not using a benchmark data set. Don’t assume that deep learning methods will solve your data problems.
 - Consider reframing your problem if applicable. If not, dig deeper beyond the "Getting Started" tutorial and ask in public. There's a lot of hidden research about narrow applications and different methods.
 
