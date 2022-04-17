@@ -103,10 +103,13 @@ Till now, everything mentioned here is about models in general. You might have n
 
 In this post I shared my tips and thoughts based on my experience while being aware that others might have different strategies or perspectives. To have a better journey, I'd recommend you:
 
-- Come to terms with the fact that you won’t find a way to explain things in deep learning in the same way you do with linear/logistic regression, etc. It is a different mindset.
-- Try to develop a better intuition to help you improve your model development strategies. Additionally, do the math or look into visual representations to understand the significance of the hyperparameters.
-- Expect to spend a significant time checking, filtering and adding to your data if possible as long as you are not using a benchmark data set. Don’t assume that deep learning methods will solve your data problems.
-- Consider reframing your problem if applicable. If not, dig deeper beyond the "Getting Started" tutorial and ask in public. There's a lot of hidden research and libraries about narrow applications and different methods.
+- **Come to terms with the fact that you won’t find a way to explain things in deep learning in the same way you do with linear/logistic regression, etc. It is a different mindset.**
+
+- **Try to develop a better intuition to help you improve your model development strategies. Additionally, do the math or look into visual representations to understand the significance of the hyperparameters.**
+
+- **Expect to spend a significant time checking, filtering and adding to your data if possible as long as you are not using a benchmark data set. Don’t assume that deep learning methods will solve your data problems.**
+
+- **Consider reframing your problem if applicable. If not, dig deeper beyond the "Getting Started" tutorial and ask in public. There's a lot of hidden research and libraries about narrow applications and different methods.**
 
 
 
