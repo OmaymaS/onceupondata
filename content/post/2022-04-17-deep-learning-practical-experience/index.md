@@ -10,9 +10,9 @@ type: ''
 ---
 **In the world of data science and machine learning, people tend to talk about the shiny stories, publishable methods, state of the art experiments, the rainbows and butterflies. In reality, practitioners struggle with lots of challenges while learning and applying new methods, but their practical lived experiences are rarely shared for different reasons.**
 
-I was recently following one of the few examples, in which someone shared their journey to the world of deep learning, without a lot of filtering. In [Not So Standard Deviation](https://nssdeviations.com/), the podcast Roger co-hosts with Hilary Parker, Roger explained his thought process and experiments with a specific use case involving images used to predict air pollution levels. He described the practical caveats which are under-documented in the online material directed to anyone who is starting with model development including machine learning, deep learning or whatever people call them at any point!
+I was recently following one of the few examples, in which someone shared their journey to the world of deep learning, without a lot of filtering. In [Not So Standard Deviation](https://nssdeviations.com/), the podcast [Roger Peng](https://twitter.com/rdpeng) co-hosts with [Hilary Parker](https://twitter.com/hspter), Roger explained his thought process and experiments with a specific use case involving images used to predict air pollution levels. He described the practical caveats which are under-documented in the online material directed to anyone who is starting with model development including machine learning, deep learning or whatever people call them at any point!
 
-I found this experience sharing very valuable in a field that lacks such informal discussions, like the ones where Roger bounces ideas with Hilary and Lucy . I decided to take this blog post as an opportunity to talk about different points, inspired by Roger’s comments but not limited to them. So here are some statements that may come from anyone who goes through a similar experience:
+I found this experience sharing very valuable in a field that lacks such informal discussions, as Roger did bouncing ideas with Hilary and [Lucy](https://twitter.com/lucystats). I decided to take this blog post as an opportunity to talk about different points, inspired by Roger’s comments but not limited to them. So here are some statements that may come from anyone who goes through a similar experience:
 
 - **I have NO mental model/intuition about how deep learning works.**
 - **I don’t have a clear strategy for hyperparameters selection/tuning.**
@@ -44,7 +44,7 @@ I’d recommend you diversify your sources. It will take a bit of time, but you�
 
 ## Model/Hyperparameter tuning
 
-After gaining better understanding, it is normal to feel overwhelmed by the amount of parameters and combinations. So how to pick the hyper parameters is a valid question to ask. The short answer is: **it’s a mix of experimentation, mostly starting with recommended values used in libraries like keras/torch/fastai for specific problems.** In practice, there are different levels of control and strategies from starting with default values to AutoMl.
+After gaining better understanding, it is normal to feel overwhelmed by the amount of parameters and combinations. So how to pick the hyperparameters is a valid question to ask. The short answer is: **it’s a mix of experimentation, mostly starting with recommended values used in libraries like keras/torch/fastai for specific problems.** In practice, there are different levels of control and strategies from starting with default values to AutoMl.
 
 ### Start with default values
 
@@ -87,7 +87,7 @@ It is also useful to consider having several challenge datasets, and testing on 
 
 ### Revisit model hyperpatameters
 
-While iterating, you'll find out that you might repeat the steps of refining data, adjusting  hyperparameters, etc. With more trials and exploration, you'll find some methods to reduce training time and improve performance like [**learning Rate finder**](https://fastai1.fast.ai/callbacks.lr_finder.html), [**Discriminative Learning Rates**](https://github.com/fastai/fastbook/blob/master/05_pet_breeds.ipynb) or other ideas. But try not to overwhelm yourself with everything at the same time.
+While iterating, you'll find out that you might repeat the steps of refining data, adjusting  hyperparameters, etc. With more trials and exploration, you'll find some methods to reduce training time and improve performance like [**Learning Rate Finder**](https://fastai1.fast.ai/callbacks.lr_finder.html), [**Discriminative Learning Rates**](https://github.com/fastai/fastbook/blob/master/05_pet_breeds.ipynb) or other ideas. But try not to overwhelm yourself with everything at the same time.
 
 
 ## Problem framing (classification/regression)
