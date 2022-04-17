@@ -38,7 +38,7 @@ I’d recommend you diversify your sources. It will take a bit of time, but you�
  
 - **Stanford Course CS-230/1** [Cheat Sheet on Convolutional neural networks (CNN)](https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-convolutional-neural-networks) and [material](https://cs231n.github.io/convolutional-networks/) (+[lectures](https://youtu.be/bNb2fEVKeEo)). If you’d like to have a visual representation of concepts like convolution layers, filters, padding, pooling, etc. you’ll find this helpful.
 
-- **Fastai material by Jermey Howard** *([fastai](https://www.fast.ai/) is a high level API on top of pytorch)*. For instance [this part](https://www.youtube.com/watch?v=9C06ZPF8Uuc&t=2996s) simplifies the concept of a convolution layer and filters (+[relevant material](https://github.com/fastai/courses/tree/master/deeplearning1/excel)). There are new versions of the course but I just grabbed this part from 2018.
+- **Fastai material by Jermey Howard** *([fastai](https://www.fast.ai/) is a high level API on top of pytorch)*. For instance [this part](https://www.youtube.com/watch?v=9C06ZPF8Uuc&t=2996s) simplifies the concept of a convolution layer and filters (+[relevant material](https://github.com/fastai/courses/tree/master/deeplearning1/excel)).[^1] 
 
 - **Brandon Rohrer's** [material on CNN](https://end-to-end-machine-learning.teachable.com/courses/516029/lectures/9533964).
 
@@ -112,4 +112,4 @@ If you reached this point, you might feel that the post didn't make things easie
 - **Consider reframing your problem if applicable. If not, dig deeper beyond the "Getting Started" tutorial and ask in public. There's a lot of hidden research and libraries about narrow applications and different methods.**
 
 
-
+[^1]:There are new versions of the fastai course. I just included this part from 2018 as I could locate it in the linked video.
