@@ -101,7 +101,7 @@ Till now, everything mentioned here is about models in general. You might have n
 
 ## Conclusion 
 
-In this post I shared my tips and thoughts based on my experience while being aware that others might have different strategies or perspectives. To have a better journey, I'd recommend you:
+If you reached this point, you might feel that the post didn't make things easier or answer your question about *"what to do exactly"*, but it wasn't meant to provide a particular path or answers. The main point was to share tips and thoughts based on my experience while being aware that others might have different strategies or perspectives. And to conclude, here are my final  recommendations 
 
 - **Come to terms with the fact that you won’t find a way to explain things in deep learning in the same way you do with linear/logistic regression, etc. It is a different mindset.**
 
