@@ -34,7 +34,16 @@ I belong to the second group. That’s why I can relate to experiences through w
 
 When I started to experiment with deep learning a few years ago, I had this inner repulsion towards it because I couldn’t completely get comfortable dealing with a black box. The "Getting Started" tutorials were not satisfactory. What altered this feeling **a bit** was gaining a better understanding of how it worked and what to expect, by going through the math and building better intuition. 
 
-I’d recommend you diversify your sources. It will take a bit of time, but you’ll be able to gather the bits and pieces from different perspectives. I’d say the following are some of the good resources, mainly focusing on computer vision:
+I'd say that people go to deep learning as an obvious choice when their problems belong to  computer vision and NLP. For tabular data, bagging and boosting models are usually good enough and even beats deep learning. 
+
+I’d recommend to:
+
+1. start by having a high level idea about the basic concepts and the common models used with images, text and tabular data.
+
+2. diversify your sources. It will take a bit of time, but you’ll be able to gather the bits and pieces from different perspectives. 
+
+
+When it comes to computer vision, I’d say the following are some of the good resources:
  
 - **Stanford Course CS-230/1** [Cheat Sheet on Convolutional neural networks (CNN)](https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-convolutional-neural-networks) and [material](https://cs231n.github.io/convolutional-networks/) (+[lectures](https://youtu.be/bNb2fEVKeEo)). If you’d like to have a visual representation of concepts like convolution layers, filters, padding, pooling, etc. you’ll find this helpful.
 
@@ -77,7 +86,7 @@ So as you look into residuals in linear models, you can check the “loss” val
 - questioning how your dataset was built in the first place! 
 
 
-**What if you decided you needed to add more examples?**
+**What if you decided that more data is needed?**
 
 1. Make sure that data comes with the same format, annotations are added based on the same guidelines, and all cases are represented in your train/valid/test datasets. 
 
@@ -89,15 +98,19 @@ It is also useful to consider having several challenge datasets, and testing on 
 
 While iterating, you'll find out that you might repeat the steps of refining data, adjusting  hyperparameters, etc. With more trials and exploration, you'll find some methods to reduce training time and improve performance like [**Learning Rate Finder**](https://fastai1.fast.ai/callbacks.lr_finder.html), [**Discriminative Learning Rates**](https://github.com/fastai/fastbook/blob/master/05_pet_breeds.ipynb) or other ideas. But try not to overwhelm yourself with everything at the same time.
 
+### Don't iterate forever 
+
+You might have the urge to keep trying different values and experimenting with different options, but you need to find a point to stop. It depends on your application and consequences. For instance, you might have a proxy of the acceptable metrics values or error range before training to stop when you get closer. If you go to the extreme and use AutoML, you'll accept the best result given certain training resources. Once you stop, you'll need to test on unseen examples and monitor you model if it is continuously used.
 
 ## Problem framing (classification/regression)
 
-Till now, everything mentioned here is about models in general. You might have noticed that most of the computer vision tutorials online are about **image classification, object detection, action recognition, etc.**. Coming with a different problem like Roger’s including **“predicting air pollution level as a continuous variable based on images”** is uncommon to see. When you are faced with an uncommon use case, you have some options to consider:
-1. Reframe the problem to fit into common use cases. For instance, bin your target value, turn it into a categorical variable indicating “pollution level” and turn it into a classification problem where you'll get the probability for each pollution level group. This might be unfavorable for you but it is worth trying if applicable.
+Till now, everything mentioned here is about models in general, and computer vision in specific. You might have noticed that most of the computer vision tutorials online are about **image classification, object detection, action recognition, etc.**. Coming with a different problem like Roger’s including **“predicting air pollution level as a continuous variable based on images”** where he framed it as regression problem is uncommon to see in this form. Usually image probles go with CNNs to use their power of feature extraction while considering the spatial relations. But it seemed to me that Roger wanted to use his pre-calculated features and feed to a series of dense layers.
 
-2. If you want a close comparison with your linear model, use the same pre-generated features with dense layers as in any regression problem. But this won’t give you the power of feature generation in CNNs.
+When faced with an uncommon use case, you have some options to consider including:
 
-3. Dig deeper for use cases similar to yours. You might find methods using the CNN with the last layer replaced, or using the features generated to feed to another model, etc. But all this will require more search and experimentation.
+1. Reframing the problem to fit into common use cases. For instance, bin your target value, turn it into a categorical variable indicating “pollution level” and turn it into a classification problem where you'll get the probability for each :"pollution level" group. This might be unfavorable for you but it is worth trying if applicable.
+
+2. Digging deeper for use cases similar to yours. You might find methods using the CNN with the last layer replaced, or using the features generated to feed to another model, etc. But all this will require more search and experimentation.
 
 ## Conclusion 
 
