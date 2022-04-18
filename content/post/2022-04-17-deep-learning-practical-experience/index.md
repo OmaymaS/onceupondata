@@ -34,13 +34,13 @@ I belong to the second group. That’s why I can relate to experiences through w
 
 When I started to experiment with deep learning a few years ago, I had this inner repulsion towards it because I couldn’t completely get comfortable dealing with a black box. The "Getting Started" tutorials were not satisfactory. What altered this feeling **a bit** was gaining a better understanding of how it worked and what to expect, by going through the math and building better intuition. 
 
-I'd say that people go to deep learning as an obvious choice when their problems belong to  computer vision and NLP. For tabular data, bagging and boosting models are usually good enough and even beats deep learning. 
+I'd say that people go to deep learning as an obvious choice when their problems belong to  computer vision and NLP. For tabular data, bagging and boosting models are usually good enough and even beat deep learning. 
 
 I’d recommend to:
 
 1. start by having a high level idea about the basic concepts and the common models used with images, text and tabular data.
 
-2. diversify your sources. It will take a bit of time, but you’ll be able to gather the bits and pieces from different perspectives. 
+2. diversify your sources. It will take some time, but you’ll be able to gather the bits and pieces from different perspectives. 
 
 
 When it comes to computer vision, I’d say the following are some of the good resources:
@@ -104,7 +104,7 @@ You might have the urge to keep trying different values and experimenting with d
 
 ## Problem framing (classification/regression)
 
-Till now, everything mentioned here is about models in general, and computer vision in specific. You might have noticed that most of the computer vision tutorials online are about **image classification, object detection, action recognition, etc.**. Coming with a different problem like Roger’s including **“predicting air pollution level as a continuous variable based on images”** where he framed it as regression problem is uncommon to see in this form. Usually image probles go with CNNs to use their power of feature extraction while considering the spatial relations. But it seemed to me that Roger wanted to use his pre-calculated features and feed to a series of dense layers.
+Till now, everything mentioned here is about models in general, and computer vision in specific. You might have noticed that most of the computer vision tutorials online are about **image classification, object detection, action recognition, etc.**. Coming with a different problem like Roger’s including **“predicting air pollution level as a continuous variable based on images”** where he framed it as regression problem is uncommon to see in this form. Usually image problems go with CNNs to use their power of feature extraction while considering the spatial relations. It seemed to me that Roger wanted to use his pre-calculated features and feed to a series of dense layers.
 
 When faced with an uncommon use case, you have some options to consider including:
 
