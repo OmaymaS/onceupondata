@@ -7,10 +7,11 @@ pygmentsStyle = "trac"
 pygmentsUseClasses = true
 pygmentsCodeFences = true
 pygmentsCodefencesGuessSyntax = true
+googleAnalytics = "UA-102384456-1"
 #pygmentsUseClassic = true
 #pygmentOptions = "linenos=inline"
 #disqusShortname = "XXX"
-#googleAnalytics = "XXX"
+
 
 [Params]
   # homeTitle = "Onceupondata" # Set a different text for the header on the home page
