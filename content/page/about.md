@@ -4,7 +4,7 @@ date: "2018-10-30"
 ---
 
 
-I am Data Scientist with electronics engineering background. I like to engage with data, build data products and help others make data-informed decisions. I always ask they whys and the why nots and I encourage others to question their assumptions. I care about algorithmic fairness and I try to trigger others to think about it. I also enjoy teaching coding and data-science related skills. And I am a certified R-Tidyverse instructor and also holds an instructor certification from [The Carpentries](https://carpentries.org/).
+I am Data Scientist (Machine Learning focus) with electronics engineering background. I like to engage with data, build data products and help others make data-informed decisions. I always ask they whys and the why nots and I encourage others to question their assumptions. One of the things I care about is algorithmic fairness and I try to trigger others to think about it. I am a certified instructor from [The Carpentries](https://carpentries.org/) and Posit(previosuly Rstudio) and I enjoy teaching coding and data-science related skills.
 
 ## Talks
 
