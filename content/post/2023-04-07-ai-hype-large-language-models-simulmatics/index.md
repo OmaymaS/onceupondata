@@ -101,7 +101,7 @@ For instance, when Meta’s [Galactica](https://www.technologyreview.com/2022/11
 </center>
 
 
-### 5- Tech for Oppression 
+### 5- Technology for Oppression 
 
 Despite the multiple failures of Simulmatics, they were getting into more collaborations with the military and government. They just cared about the profit without any moral ground. As a result, they got involved in the Vietnam war and worked on a counterinsurgency program, to collect data *"not only on revolutionary movements abroad, but also on the U.S. student movement, black rebellions, strikes"*[^1] and more! After the Collapse of Simulmatics, Pool pursued other projects focused on linking and collecting data for different purposes. 
 
