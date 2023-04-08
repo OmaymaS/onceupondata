@@ -5,7 +5,6 @@ date: '2023-04-07'
 slug: [ai-hype-large-language-models-gpt-simulmatics]
 categories: 
 tags: [AI, Large language Models, LLMs, Machine learning]
-image: 'images/pool.png'
 ---
 
 <blockquote>
