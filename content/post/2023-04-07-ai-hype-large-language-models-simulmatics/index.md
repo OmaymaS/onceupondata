@@ -124,6 +124,6 @@ Looking at these recurring patterns in the tech world it should be obvious to ev
 
 - On the other hand, there were the persistent voices who questioned the scientific methodology, opposed the use of flawed products and protested against the technology of oppression. 
 
-It is definitely a tedious and draining task for those who keep pushing back and raising awareness. So hopefully more people learn from history, not to fall prey for the hype, and amplify the reasonable voices!
+It is definitely a tedious and draining task for those who keep pushing back and raising awareness. So hopefully more people learn from history, not to fall prey for the hype, and join forces to amplify the reasonable voices!
 
 [^1]: [IF THEN: How the Simulmatics Corporation Invented the Future](https://scholar.harvard.edu/jlepore/publications/if-then-how-simulmatics-corporation-invented-future)
