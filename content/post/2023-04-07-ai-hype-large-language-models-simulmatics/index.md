@@ -82,7 +82,7 @@ Imagine how many people nowadays work at labs and corporations on AI related pro
 
 #### 4-2 Violation of Scientific Methodology   
 
-During Simulmatic's involvement in the Vietnam War, Ithiel de Sola Pool: one of the main figures of the company who was a quantitative behavioral scientist, wanted to evaluate *“the effectiveness of television as a tool for counterinsurgency”*[^1]. A lieutenant at ARPA who had a PhD in Psychology *“worked with him on the project and entirely lost faith in him as a scientist”*[^1]. Another military official stated that it **“sounded as though someone had taken a book of rules about scientific methodology, then systematically violated each one”**[^1]
+During Simulmatic's involvement in the Vietnam War, Ithiel de Sola Pool: one of the main figures of the company who was a quantitative behavioral scientist, wanted to evaluate *“the effectiveness of television as a tool for counterinsurgency”*[^1]. A lieutenant at ARPA who had a PhD in Psychology *“worked with him on the project and entirely lost faith in him as a scientist”*[^1]. Another military official stated that it ***“sounded as though someone had taken a book of rules about scientific methodology, then systematically violated each one”***[^1]
 
 Now with OpenAI’s ChatGPT, we can see several systematic violations for scientific methodologies, on top of which comes:
 
