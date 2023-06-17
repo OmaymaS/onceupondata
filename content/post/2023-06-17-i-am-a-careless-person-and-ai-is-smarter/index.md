@@ -10,7 +10,7 @@ tags: [AI, Machine Learning, LLMs, Large Language Models]
 
 <blockquote>
 
-*“I am a careless person,”* he said “AI will help me write better feedback.”,
+*“I am a careless person,”* he said “AI will help me write better feedback.”.
 
 *“Isn’t it better to try to be thoughful and think before writing?”* I said.
 
