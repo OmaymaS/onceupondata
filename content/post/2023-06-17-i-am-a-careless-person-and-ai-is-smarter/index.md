@@ -1,5 +1,5 @@
 ---
-title: 'I Am a Careless Person and AI Is Smarter'
+title: 'I Am a Careless Person and AI Is Smarter Than Me!'
 subtitle: 'A Self Fulfilling Prophecy'
 date: '2023-06-17'
 slug: [ai-self-fulfilling-prophecy]
