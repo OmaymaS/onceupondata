@@ -10,14 +10,15 @@ tags: [AI, Machine Learning, LLMs, Large Language Models]
 
 <blockquote>
 
-*“I am a careless person,”* he said “AI will help me write better feedback.”
+*“I am a careless person,”* he said “AI will help me write better feedback.”,
 
 *“Isn’t it better to try to be thoughful and think before writing?”* I said.
 
 *“But AI can be my teacher. AI is much smarter”* he said with absolute certainty.
 
-*“This could be his self fulfilling prophecy!”* I thought and shrugged, ending the conversation ¯\\_(ツ)_/¯.
+*“This could be his self fulfilling prophecy!”* I thought and shrugged, ending the conversation. ¯\\_(ツ)_/¯.
 </blockquote>
+
 
 # The "All You Need is AI" Mindset!
 
