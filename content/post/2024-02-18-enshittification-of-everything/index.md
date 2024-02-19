@@ -1,8 +1,8 @@
 ---
 title: On The Enshittification of Everything!
-subtitle: 'How Does Generative AI Affect Us?!'
+subtitle: 'Melting Down in The AI Summer!'
 author: OmaymaS
-date: '2024-02-18'
+date: '2024-02-20'
 slug: [on-the-enshittification-of-everything-generative-ai]
 categories: [AI, Machine Learning, LLMs, Large Language Models, Generative AI]
 tags: [AI, Machine Learning, LLMs, Large Language Models, Generative AI]
