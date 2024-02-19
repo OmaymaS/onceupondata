@@ -2,7 +2,7 @@
 title: On The Enshittification of Everything!
 subtitle: Melting Down in The AI Summer!
 author: OmaymaS
-date: '2024-02-20'
+date: '2024-02-19'
 slug: [on-the-enshittification-of-everything-generative-ai]
 categories: [AI, Machine Learning, LLMs, Large Language Models, Generative AI]
 tags: [AI, Machine Learning, LLMs, Large Language Models, Generative AI]
