@@ -1,6 +1,6 @@
 ---
 title: On The Enshittification of Everything!
-subtitle: 'Melting Down in The AI Summer!'
+subtitle: Melting Down in The AI Summer!
 author: OmaymaS
 date: '2024-02-20'
 slug: [on-the-enshittification-of-everything-generative-ai]
