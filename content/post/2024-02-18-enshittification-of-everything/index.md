@@ -15,7 +15,7 @@ tags: [AI, Machine Learning, LLMs, Large Language Models, Generative AI]
 It is one of the AI summer days, where almost every executive is hyped up about AI *(regardless of what it means)*. I enter a hall full of people in the tech industry attending an event held by a mid-size tech company!
 
 ### Scene #1
-An executive is getting ready by putting his slides on the screen. I can immediately see an ugly AI-generated cover image. The executive gladly starts his presentation by referring to how he used AI, *which is definitely GenAI in this context*. He moves on with his slides which include more ugly, themeless or clip-art style images. **I look around and wonder, do people see how visually bad the slides are?**
+An executive is getting ready by putting his slides on the screen. I can immediately see an ugly AI-generated cover image. The executive proudly starts his presentation by referring to how he used AI, *which is definitely GenAI in this context*. He moves on with his slides which include more ugly, themeless or clip-art style images. **I look around and wonder, do people see how visually bad the slides are?**
 
 ### Scene #2
 Another high level manager follows the executive to deliver a presentation. In the middle, she smiles and says *“Since everyone has to use AI these days, here’s an AI-generated image”.* The image is no better than any stock vector art. I would say it is even worse! **I wonder, has she thought about whether she really “had to use AI”?**
@@ -32,7 +32,7 @@ At the end of the event, the attendees applaud the speakers and *I leave with ma
 
 # The Promise of "Revolutionizing" Everything!
 
-With every tech hype there’s a promise of revolutionizing everything, raising productivity and providing abundance. One can not totally discard the “potential” positive impact of any new technology. But it is important to:
+With every tech hype there’s a promise of revolutionizing everything, raising productivity and providing abundance. One can not completely discard the “potential” positive impact of any new technology. But it is important to:
 
 1. be aware of how it came to existence considering the underlying content theft and exploitation.
 
@@ -114,15 +114,15 @@ Whenever I hear something like this, I would like to ask why?why?why?!
 - Why would you consciously contribute to the uglification of your work?
 - Why wouldn't you use a couple of brain cells to look for a stock image and give credit or pay a few dollars to buy a design/font/photo from an artist? The outcome would have been better!
 
-It is even more confusing for me, that the outcome in the presentations for every single speaker was objectively bad. They accepted this and even felt good about it!
+It is even more confusing for me, that the outcome in the presentations for every single speaker, in the AI summer day, was objectively bad. They accepted this and even felt good about it!
 
-Same for many things I see online, where the quality is poor, the art is not impressive, the style is not unique! 
+Same for many things I see online, where the quality is poor, the art is not impressive and the style is not unique! 
 
 # So Where Do We Go from Here?
 
 Given all that, not only do we see degradation in the content, but also in the human's critical thinking and standards. 
 
-For those who benefit from the hype, you are expected to see videos that don't make sense and cheer for them. You are supposed to feel compelled to use "AI" and be proud regardless of the result. You are should be hypnotized and feel impressed with each and every thing with a label of "AI"!
+For those who benefit from the hype, you are expected to see videos that don't make sense and cheer for them. You are supposed to feel compelled to use "AI" and be proud regardless of the result. You should be hypnotized and feel impressed with each and every thing with a label of "AI"!
 
 But it doesn't have to be like this! You have a choice see things through your own eyes. You have a choice to raise your standards. And you have a choice to ["resist the urge to be impressed"](https://medium.com/@emilymenonbender/on-nyt-magazine-on-ai-resist-the-urge-to-be-impressed-3d92fd9a0edd)! [^1]! 
 
