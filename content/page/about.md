@@ -1,14 +1,31 @@
 ---
 title: "About"
-date: "2018-10-30"
+date: "2024-04-16"
 ---
 
 
-I am Data Scientist (Machine Learning focus) with electronics engineering background. I like to engage with data, build data products and help others make data-informed decisions. I always ask they whys and the why nots and I encourage others to question their assumptions. One of the things I care about is algorithmic fairness and I try to trigger others to think about it. I am a certified instructor from [The Carpentries](https://carpentries.org/) and Posit(previosuly Rstudio) and I enjoy teaching coding and data-science related skills.
+I am Principal Data Scientist (Machine Learning) with electronics engineering background. I like to engage with data, build data products and help others make data-informed decisions. I always ask they whys and the why nots and I encourage others to question their assumptions. I care about algorithmic fairness and I try to trigger others to think about it. I am a certified instructor from different entities including [The Carpentries](https://carpentries.org/) and I enjoy teaching coding and data-science related skills.
+
 
 ## Talks
 
 ### Full-Length Talks (20-60 mins)
+
+#### Nov 2023 - [Digitale Leute Summit](https://www.digitale-leute.de/summit/23/) **(Invited Talk)**
+
+- Cloudy with a Chance of AI: System Design Beyond Prototypes
+
+#### Oct 2023 - TechGetTogether Conference
+
+- Drawing the F***ing Owl: How to Really Build AI-Based Products!
+
+#### Nov 2022 - TechGetTogether Conference
+
+- Machine Learning System Dynamics: Beyond Model Development
+
+#### Oct 2022 - Hochschule Fresenius **(Guest Lecture)**
+
+- A Glimpse of The Data Science and Machine Learning World in Practice.
 
 #### Feb 2020 - [Data Science Meetup - Düsseldorf] **(Invited Talk)**
 
@@ -53,24 +70,32 @@ I am Data Scientist (Machine Learning focus) with electronics engineering backgr
 
 ### Online 
 
-#### [DataCamp]
+#### [DataCamp](https://www.datacamp.com)
 
-- Interactive Data Visualization with rbokeh
+- Interactive Data Visualization with rbokeh[*](https://www.datacamp.com/courses/interactive-data-visualization-with-rbokeh)
 
 ### Workshops
 
+#### Dec 2023 - [Organisation for Economic Co-operation and Development](https://2023-12-12-swc-git-online-swc-oecd-9eb5781da4a1073d43b0b7bb5005.gitlab.io/)
+
+- Git and Gitlab.
+
+#### March 2022 - [University of Strasbourg](https://unistra.github.io/2023-03-02-unistra/)
+
+- Programming and Plotting in Python + Git.
+
 #### Jan 2020 (Teaching Assistant)  - [Rstudio::conf](https://joburg2019.satrdays.org/) 
 
-- Deep Learning with Keras and TensorFlow in R 
+- Deep Learning with Keras and TensorFlow in R.
 
 #### Apr 2019 (Main Instructor) - [SatRday Johannesburg](https://joburg2019.satrdays.org/) 
 
-- Building web applications with Shiny.
+- Building Web Applications with Shiny.
 
 #### Nov 2018 (Main Instructor) - [Datafest Tbilisi](https://datafest.ge/agenda-day2.html) 
 
-- Tidyverse for data manipulation and visualization.
-- Delving into the depths of ggplot.
+- Tidyverse for Data Manipulation and Visualization.
+- Delving into The Depths of ggplot.
 
 ## Other Activities 
 
