@@ -78,7 +78,7 @@ I also knew that the hype was impacting academia to a certain level. So I was pr
 
 Two years later, I still recall this dinner and my thoughts after it. I could see the same patterns over and over about the AI discourse in industry and academia: **the disconnect from reality, avoiding the current issues and putting more weight on less critical hypothetical questions**. 
 
-I came to peace with the fact that there will be very few spaces where people genuinely care about the current issues related to AI. And I have to accept that I will be consistently disappointed during in my quest to find these communities!
+I came to peace with the fact that there will be very few spaces where people genuinely care about the current issues related to AI. And I have to accept that I will be consistently disappointed in my quest to find these communities!
 
 
 
