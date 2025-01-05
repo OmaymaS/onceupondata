@@ -2,7 +2,7 @@
 title: A Winter Night in an AI Summer
 subtitle: AI Discourse and The Disconnect from Reality 
 author: OmaymaS
-date: '2024-02-19'
+date: '2025-01-05'
 slug: [Philosophy-responsible-ai]
 categories: [AI, Machine Learning, LLMs, Large Language Models, Generative AI, Philosophy]
 tags: [AI, Machine Learning, LLMs, Large Language Models, Generative AI, Philosophy]
